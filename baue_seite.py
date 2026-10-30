@@ -64,8 +64,13 @@ KOPF = """<!doctype html>
       refresh: (id) => laden(id), params: () => ({}), setParams: () => {}, resetParams: () => {},
       calc: () => {}, loader: () => {},
     };
+    // Nachrichten kommen aus einem eigenen Zweig, den ein Ablauf alle 5 Minuten neu schreibt.
+    const NEWS_LIVE = "https://raw.githubusercontent.com/bopsinger/marktuebersicht/nachrichten/news.json";
     function laden(id) {
-      return fetch("daten/" + id + ".json?t=" + Date.now(), {cache: "no-store"})
+      const url = id === "news" ? NEWS_LIVE + "?t=" + Date.now() : "daten/" + id + ".json?t=" + Date.now();
+      return fetch(url, {cache: "no-store"})
+        .then((r) => { if (!r.ok) throw new Error(r.status); return r; })
+        .catch(() => fetch("daten/" + id + ".json?t=" + Date.now(), {cache: "no-store"}))
         .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
         .then((j) => { daten[id] = {status: "ok", data: j.rows || []}; })
         .catch(() => { if (daten[id].status !== "ok") daten[id] = {status: "error", data: []}; })
@@ -74,6 +79,8 @@ KOPF = """<!doctype html>
     window.addEventListener("DOMContentLoaded", () => {
       allesZeichnen();
       QUELLEN.forEach(laden);
+      setInterval(() => laden("news"), 5 * 60 * 1000);  // Nachrichten alle 5 Minuten
+      setInterval(() => QUELLEN.forEach(laden), 30 * 60 * 1000);  // übrige Daten alle 30 Minuten
       let breite = window.innerWidth;
       window.addEventListener("resize", () => { if (Math.abs(window.innerWidth - breite) > 40) { breite = window.innerWidth; allesZeichnen(); } });
       const ziel = document.getElementById(location.hash.slice(1));
@@ -88,7 +95,7 @@ KOPF = """<!doctype html>
 
 FUSS = """
 </div>
-<p class="mu-fuss">Daten: Yahoo Finance, CNBC, CoinMarketCap, US-Finanzministerium, Bundesbank, Bank of England, japanisches Finanzministerium, Bank of Canada, Reserve Bank of Australia, SNB, CFETS, State Street Global Market Portfolio 2026, S&amp;P GSCI. Aktualisierung jeden Werktag morgens und abends. Keine Anlageberatung.</p>
+
 </body>
 </html>
 """

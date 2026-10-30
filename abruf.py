@@ -162,8 +162,10 @@ LAENDER = [
 
 # Top News zuerst, in der Reihenfolge der Redaktion; die Märkte-Meldungen füllen nur auf, wenn der erste Feed zu wenig liefert.
 NEWS_FEEDS = [
-    ("CNBC Top News", "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114"),
-    ("CNBC Märkte", "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258"),
+    # Quelle, Adresse. CNBC deckt die USA und die Weltmärkte ab, die NZZ ergänzt Europa und die Schweiz.
+    # Beide Listen stehen in der Reihenfolge ihrer Redaktion und werden abwechselnd gemischt.
+    ("CNBC", "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114"),
+    ("NZZ", "https://www.nzz.ch/finanzen.rss"),
 ]
 NEWS_ANZAHL = 20
 
@@ -548,17 +550,16 @@ def krypto_gesamt():
 
 
 def nachrichten():
-    aus, gesehen = [], set()
+    listen, gesehen = [], set()
     for quelle, url in NEWS_FEEDS:
-        if len(aus) >= NEWS_ANZAHL:
-            break
         try:
             wurzel = ET.fromstring(hole(url, text=True))
         except Exception as e:  # noqa: BLE001
             FEHLER.append(f"News {quelle}: {e}")
             continue
+        liste = []
         for item in wurzel.iter("item"):
-            titel = (item.findtext("title") or "").strip()
+            titel = " ".join((item.findtext("title") or "").split())
             link = (item.findtext("link") or "").strip()
             if not titel or not link.startswith("https://") or titel.lower() in gesehen:
                 continue
@@ -568,7 +569,14 @@ def nachrichten():
                 zeit = email.utils.parsedate_to_datetime(item.findtext("pubDate")).astimezone(dt.timezone.utc).isoformat()
             except Exception:  # noqa: BLE001
                 pass
-            aus.append({"id": f"n{len(aus) + 1}", "titel": titel, "quelle": quelle, "link": link, "zeit": zeit})
+            liste.append({"titel": titel, "quelle": quelle, "link": link, "zeit": zeit})
+        listen.append(liste)
+    # abwechselnd mischen: 1. CNBC, 1. NZZ, 2. CNBC, ...
+    aus = []
+    for i in range(max((len(l) for l in listen), default=0)):
+        for liste in listen:
+            if i < len(liste):
+                aus.append(liste[i])
     aus = aus[:NEWS_ANZAHL]
     for i, n in enumerate(aus):
         n["id"] = f"n{i + 1}"
@@ -819,4 +827,13 @@ def main(ziel, vorher=None):
 
 if __name__ == "__main__":
     # Aufruf: python3 abruf.py <ausgabeordner> [<aktien.json des letzten Laufs>]
-    main(sys.argv[1] if len(sys.argv) > 1 else ".", sys.argv[2] if len(sys.argv) > 2 else None)
+    #         python3 abruf.py --nachrichten <ausgabeordner>   (nur news.json, für die 5-Minuten-Aktualisierung)
+    if len(sys.argv) > 1 and sys.argv[1] == "--nachrichten":
+        ziel = sys.argv[2] if len(sys.argv) > 2 else "."
+        news = nachrichten()
+        with open(f"{ziel}/news.json", "w", encoding="utf-8") as f:
+            json.dump({"rows": news, "stand": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")},
+                      f, ensure_ascii=False, separators=(",", ":"))
+        print(json.dumps({"anzahl": len(news), "fehler": FEHLER}, ensure_ascii=False))
+    else:
+        main(sys.argv[1] if len(sys.argv) > 1 else ".", sys.argv[2] if len(sys.argv) > 2 else None)

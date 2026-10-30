@@ -41,7 +41,8 @@
   .mu-neu:disabled { opacity: .5; cursor: progress; }
   .mu-pa { flex-basis: 100%; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
   .mu-pa b { font-weight: var(--cds-font-weight-medium); font-variant-numeric: tabular-nums; }
-  .mu-mehr { display: grid; gap: var(--cds-gap-md); }
+  .mu-mehr { display: grid; gap: var(--cds-gap-md); min-width: 0; }
+  .mu-mehr > *, .mu-abschnitt > *, .mu-gruppe > * { min-width: 0; }
   .mu-mehr > summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: var(--cds-gap-xs); width: fit-content; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: 999px; background: var(--color-panel); }
   .mu-mehr > summary::-webkit-details-marker { display: none; }
   .mu-mehr > summary::before { content: "▸"; transition: transform var(--cds-dur-slow); }
@@ -81,7 +82,7 @@
   .mu-plus { color: var(--color-ok); }
   .mu-minus { color: var(--color-bad); }
   .mu-null { color: var(--color-fg-muted); }
-  .mu-spark { display: block; width: 100%; height: 44px; touch-action: none; }
+  .mu-spark { display: block; width: 100%; height: 44px; touch-action: pan-y; }
   .mu-tipp { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; font-variant-numeric: tabular-nums; z-index: 2; }
   .mu-tipp span { color: var(--cds-text-secondary); margin-right: var(--cds-gap-xs); }
 
@@ -95,7 +96,18 @@
   .mu-tab th:first-child, .mu-tab td:first-child { text-align: left; }
   .mu-ytd { font-size: var(--cds-font-size-body); font-variant-numeric: tabular-nums; white-space: nowrap; }
   /* Titeltabellen: Zahlenspalten haben feste Breite und Vorrang, der Name bekommt den Rest und wird gekürzt. */
-  .mu-titeltab { table-layout: fixed; min-width: 22rem; }
+  .mu-titeltab { table-layout: fixed; min-width: 19rem; }
+  @media (max-width: 560px) {
+    .mu-titeltab { font-size: 11px; }
+    .mu-titeltab col.mu-col-wert { width: 3.9rem; }
+    .mu-titeltab col.mu-col-pz { width: 3.15rem; }
+    .mu-karte, .mu-kachel, .mu-zinsen, .mu-kuchen { padding: var(--cds-pad-sm); }
+    .mu-karte-kopf { flex-wrap: wrap; }
+    .mu-kuchen { gap: var(--cds-gap-md); }
+    .mu-kuchen-zeile { grid-template-columns: .75rem 1fr auto 3.4rem; font-size: 12px; }
+    .mu-info-text { width: calc(100vw - 32px); }
+  }
+  .mu-quellen { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
   .mu-titeltab col.mu-col-wert { width: 4.8rem; }
   .mu-titeltab col.mu-col-pz { width: 3.7rem; }
   .mu-titeltab td.mu-name, .mu-titeltab th:first-child { overflow: hidden; text-overflow: ellipsis; }
@@ -143,7 +155,7 @@
   <section class="mu-abschnitt" id="news">
     <div class="mu-h2">
       <h2>Nachrichten</h2>
-      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Nachrichten">i<span class="mu-info-text" role="tooltip">Top News von CNBC in der Reihenfolge der Redaktion, wichtigste zuerst. Die fünf wichtigsten stehen oben, die übrigen 15 unter „Weitere Meldungen“. Ein Klick öffnet den Artikel in einem neuen Fenster.</span></span>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Nachrichten">i<span class="mu-info-text" role="tooltip">Top News von CNBC (USA und Weltmärkte) und Finanzmeldungen der NZZ (Europa und Schweiz), jeweils in der Reihenfolge der Redaktion und abwechselnd gemischt. Die fünf wichtigsten stehen oben, die übrigen 15 unter „Weitere Meldungen“. Auf der öffentlichen Seite werden die Nachrichten alle 5 Minuten neu geladen. Ein Klick öffnet den Artikel in einem neuen Fenster.</span></span>
     </div>
     <ul class="mu-news" data-draw="news" data-von="0" data-bis="5" data-source="news"></ul>
     <details class="mu-mehr">
@@ -247,6 +259,10 @@
     <div class="mu-kacheln dash-skeleton" data-draw="kacheln" data-klasse="Krypto" data-source="werte verlauf">—</div>
   </section>
 
+  <div class="mu-h2 mu-quellen">
+    <span>Datenquellen</span>
+    <span class="mu-info" tabindex="0" role="button" aria-label="Datenquellen">i<span class="mu-info-text" role="tooltip">Yahoo Finance (Kurse, Wechselkurse), CNBC und NZZ (Nachrichten), CoinMarketCap (Krypto gesamt), US-Finanzministerium, Bundesbank, Bank of England, japanisches Finanzministerium, Bank of Canada, Reserve Bank of Australia, Schweizerische Nationalbank und CFETS (Renditen), SIFMA, Savills, World Gold Council und CPM Group (Marktwerte der Anlageklassen), S&amp;P GSCI (Rohstoffgewichte). Kurse und Renditen werden an Werktagen stündlich von 7 bis 22 Uhr aktualisiert, Nachrichten alle 5 Minuten.</span></span>
+  </div>
 </div>
 
 <script>
