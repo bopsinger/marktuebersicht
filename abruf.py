@@ -165,7 +165,7 @@ NEWS_FEEDS = [
     # Quelle, Adresse. CNBC deckt die USA und die Weltmärkte ab, die NZZ ergänzt Europa und die Schweiz.
     # Beide Listen stehen in der Reihenfolge ihrer Redaktion und werden abwechselnd gemischt.
     ("CNBC", "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114"),
-    ("NZZ", "https://www.nzz.ch/finanzen.rss"),
+    ("NZZ", "https://www.nzz.ch/wirtschaft.rss"),
 ]
 NEWS_ANZAHL = 20
 
