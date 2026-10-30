@@ -54,7 +54,7 @@ ROHSTOFFE = [
     ("silber", "Silber", "Edelmetalle", "USD/Unze", ["SI=F"]),
     ("platin", "Platin", "Edelmetalle", "USD/Unze", ["PL=F"]),
     ("palladium", "Palladium", "Edelmetalle", "USD/Unze", ["PA=F"]),
-    ("uran", "Uran (Sprott Physical Uranium Trust)", "Uran", "USD/Anteil", ["SRUUF"]),
+    ("uran", "Uran (Sprott Physical Uranium Trust)", "Energie", "USD/Anteil", ["SRUUF"]),
     ("kupfer", "Kupfer", "Industriemetalle", "USD/lb", ["HG=F"]),
     ("alu", "Aluminium", "Industriemetalle", "USD/t", ["ALI=F"]),
     ("weizen", "Weizen", "Agrar", "US-Cent/Bushel", ["ZW=F"]),
@@ -91,6 +91,9 @@ MITGLIEDER = {
 #   Silber: CPM Group, oberirdischer Bestand rund 1,6 Mio. t (Stand 2018; Schätzungen reichen von 0,6 bis 2,5 Mio. t)
 #   Krypto: CoinMarketCap, gesamte Marktkapitalisierung
 UNZEN_JE_TONNE = 32150.7466
+# Savills-Jahreswerte in Bio. USD (Berichte 2021 bis 2025); 2023 aus dem Rückgang 2024 (−0,5 %) zurückgerechnet.
+IMMO_JAHRE = [("2020-12-31", 326.5), ("2021-12-31", 390.5), ("2022-12-31", 379.7), ("2023-12-31", 395.3), ("2024-12-31", 393.3)]
+IMMO_J1, IMMO_J5 = -0.5, 21.3  # Savills: 2024 gegenüber 2023 und gegenüber 2019
 ANLAGEKLASSEN = [
     # id, Name, Ausgangswert Mrd. USD, Stichtag, Stellvertreter, Beschreibung, Art
     ("ak-immobilien", "Immobilien", 393300, dt.date(2024, 12, 31), [], "Savills, Stand Anfang 2025", "statisch"),
@@ -578,6 +581,7 @@ def nachrichten():
 def zeile(basis, daten):
     v = veraenderungen(daten["reihe"], daten["letzt"], daten["vortag"])
     v["pa10"] = round(((1 + v["j10"] / 100) ** 0.1 - 1) * 100, 2) if v["j10"] is not None and v["j10"] > -100 else None
+    v["pa5"] = round(((1 + v["j5"] / 100) ** 0.2 - 1) * 100, 2) if v["j5"] is not None and v["j5"] > -100 else None
     return {**basis, "kurs": round(daten["letzt"], 4) if daten["letzt"] is not None else None,
             "waehrung": daten["waehrung"], "stand": daten["stand"], **v}
 
@@ -684,8 +688,10 @@ def main(ziel, vorher=None):
         if art == "statisch":
             z = {"id": kid, "klasse": "Anlageklasse", "gruppe": "Anlageklasse", "name": name, "region": "",
                  "symbol": beschreibung, "einheit": "USD, Schätzung", "format": "kompakt", "kurs": basis * 1e9,
-                 "waehrung": "USD", "stand": stichtag.isoformat(), "t1": None, "ytd": None, "j1": None, "j5": None, "j10": None}
+                 "waehrung": "USD", "stand": stichtag.isoformat(), "t1": None, "ytd": None,
+                 "j1": IMMO_J1, "j5": IMMO_J5, "j10": None}
             klassen.append(z)
+            verlauf += [{"id": kid, "datum": tag, "wert": wert * 1e12} for tag, wert in IMMO_JAHRE]
             continue
         if not d:
             continue
