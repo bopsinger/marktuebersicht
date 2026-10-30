@@ -88,20 +88,17 @@ MITGLIEDER = {
 #   Aktien, Anleihen: SIFMA Capital Markets Fact Book 2026 (Stand Ende 2025)
 #   Immobilien: Savills, Total value of global real estate (Stand Anfang 2025; nur jährlich, deshalb nicht fortgeschrieben)
 #   Gold: World Gold Council, oberirdischer Bestand Ende 2025 (220 700 t) × aktueller Goldpreis
+#   Silber: CPM Group, oberirdischer Bestand rund 1,6 Mio. t (Stand 2018; Schätzungen reichen von 0,6 bis 2,5 Mio. t)
 #   Krypto: CoinMarketCap, gesamte Marktkapitalisierung
-#   Rohstoffe: haben keinen Bestand mit Marktwert; gezeigt wird der Wert des weltweiten Rohstoffhandels pro Jahr
-#   (Schätzung 24,7 Bio. USD für 2025), mit dem S&P GSCI fortgeschrieben. Er fliesst nicht in die Anteile ein.
-GOLD_TONNEN = 220700
 UNZEN_JE_TONNE = 32150.7466
 ANLAGEKLASSEN = [
     # id, Name, Ausgangswert Mrd. USD, Stichtag, Stellvertreter, Beschreibung, Art
     ("ak-immobilien", "Immobilien", 393300, dt.date(2024, 12, 31), [], "Savills, Stand Anfang 2025", "statisch"),
     ("ak-anleihen", "Anleihen", 160700, dt.date(2025, 12, 31), ["AGG", "BNDX"], "SIFMA Ende 2025; Ø AGG und BNDX", "fort"),
     ("ak-aktien", "Aktien", 157800, dt.date(2025, 12, 31), ["ACWI"], "SIFMA Ende 2025; MSCI ACWI", "fort"),
-    ("ak-gold", "Gold", None, None, ["GC=F"], "WGC 220 700 t × Goldpreis", "gold"),
+    ("ak-gold", "Gold", 220700, None, ["GC=F"], "WGC 220 700 t × Goldpreis", "bestand"),
+    ("ak-silber", "Silber", 1600000, None, ["SI=F"], "CPM Group rund 1,6 Mio. t × Silberpreis", "bestand"),
     ("ak-krypto", "Krypto", None, None, ["CMC"], "CoinMarketCap", "cmc"),
-    ("ak-rohstoffe", "Rohstoffe (Handel pro Jahr)", 24700, dt.date(2025, 12, 31), ["^SPGSCI"],
-     "Jährlicher Handelswert, Schätzung 2025; S&P GSCI", "fluss"),
 ]
 
 # Sektorgewichte des S&P GSCI 2026 (Anteil am weltweiten Produktionswert, gültig ab der Januar-Umstellung 2026)
@@ -654,7 +651,7 @@ def main(ziel, vorher=None):
     gesamt = sicher(krypto_gesamt)
     if gesamt:
         werte.append(zeile({"id": "gesamt", "klasse": "Krypto", "gruppe": "Krypto", "name": "Krypto gesamt",
-                            "region": f"BTC-Dominanz {gesamt['dominanz']:.0f} %".replace(".", ",") if gesamt["dominanz"] else "",
+                            "region": f"BTC-Dominanz {gesamt['dominanz']:.0f} %" if gesamt["dominanz"] else "",
                             "symbol": "TOTAL", "einheit": "USD", "format": "kompakt"}, gesamt))
         verlauf += [{"id": "gesamt", "datum": p[0].isoformat(), "wert": round(p[1])} for p in wochenreihe(gesamt["reihe"])]
     for (rid, name, sym), d in zip(KRYPTO, krypto_daten):
@@ -680,8 +677,8 @@ def main(ziel, vorher=None):
     for kid, name, basis, stichtag, symbole, beschreibung, art in ANLAGEKLASSEN:
         if art == "cmc":
             d = gesamt
-        elif art == "gold":
-            d = sicher(yahoo_reihe, symbole[0])  # echter Goldpreis, nicht normiert
+        elif art == "bestand":
+            d = sicher(yahoo_reihe, symbole[0])  # echter Metallpreis, nicht normiert
         else:
             d = mittelreihe(symbole) if symbole else None
         if art == "statisch":
@@ -694,8 +691,8 @@ def main(ziel, vorher=None):
             continue
         if art == "cmc":
             wert = d["letzt"]
-        elif art == "gold":
-            wert = GOLD_TONNEN * UNZEN_JE_TONNE * d["letzt"]
+        elif art == "bestand":
+            wert = basis * UNZEN_JE_TONNE * d["letzt"]  # oberirdischer Bestand in Tonnen × Preis je Unze
         else:
             alt = schluss_vor(d["reihe"], stichtag)
             wert = basis * 1e9 * d["letzt"] / alt if alt else None
@@ -709,7 +706,7 @@ def main(ziel, vorher=None):
     summe = sum(z["kurs"] for z in klassen if z["kurs"] and not z.get("fluss"))
     for z in klassen:
         z["anteil"] = round(z["kurs"] / summe * 100, 1) if z["kurs"] and summe and not z.get("fluss") else None
-        z["region"] = (f"{z['anteil']:.1f} % des Gesamtmarkts".replace(".", ",") if z["anteil"]
+        z["region"] = (f"{z['anteil']:.1f} % des Gesamtmarkts" if z["anteil"]
                        else ("nicht im Anteil" if z.get("fluss") else ""))
     werte[:0] = klassen
 

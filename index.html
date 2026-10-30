@@ -49,6 +49,16 @@
   .mu-mehr > summary:hover { color: var(--color-fg); border-color: var(--color-fg-muted); }
   .mu-mehr > summary:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
   .mu-mehr[open] > summary { margin-bottom: var(--cds-gap-sm); }
+  .mu-kuchen { position: relative; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: flex; flex-wrap: wrap; align-items: center; gap: var(--cds-gap-xl); min-height: 16rem; }
+  .mu-kuchen svg { flex: 0 0 auto; width: min(260px, 100%); height: auto; }
+  .mu-kuchen-legende { flex: 1 1 18rem; min-width: 0; display: grid; gap: 0; font-variant-numeric: tabular-nums; }
+  .mu-kuchen-zeile { display: grid; grid-template-columns: .75rem 1fr auto 4.2rem; align-items: center; gap: var(--cds-gap-sm); padding: var(--cds-pad-xs) 0; border-bottom: 1px solid var(--color-border-line); }
+  .mu-kuchen-zeile:last-child { border-bottom: 0; }
+  .mu-kuchen-zeile i { width: .75rem; height: .75rem; border-radius: 3px; }
+  .mu-kuchen-zeile .mu-kz-name { font-weight: var(--cds-font-weight-medium); }
+  .mu-kuchen-zeile .mu-kz-wert { color: var(--color-fg-muted); text-align: right; }
+  .mu-kuchen-zeile .mu-kz-anteil { text-align: right; font-weight: var(--cds-font-weight-medium); }
+  .mu-kuchen-summe { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); padding-top: var(--cds-pad-sm); }
   .mu-struktur { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); display: grid; gap: var(--cds-gap-sm); min-height: 5rem; }
   .mu-balken { display: flex; height: 14px; border-radius: var(--cds-radius); overflow: hidden; gap: 2px; }
   .mu-balken span { display: block; min-width: 2px; }
@@ -145,16 +155,16 @@
   <section class="mu-abschnitt" id="anlageklassen">
     <div class="mu-h2">
       <h2>Anlageklassen</h2>
-      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Anlageklassen">i<span class="mu-info-text" role="tooltip">Geschätzter weltweiter Wert je Anlageklasse in US-Dollar, aus den breitesten frei verfügbaren Schätzungen. Immobilien: 393,3 Bio. (Savills, alle Wohn-, Gewerbe- und Agrarimmobilien der Welt, Stand Anfang 2025; Savills schätzt nur jährlich, deshalb ohne tägliche Veränderung). Anleihen: 160,7 Bio. und Aktien: 157,8 Bio. (SIFMA Capital Markets Fact Book 2026, Stand Ende 2025), seither fortgeschrieben mit dem Mittel aus AGG und BNDX bzw. mit dem MSCI ACWI. Gold: oberirdischer Bestand von 220 700 Tonnen (World Gold Council, Ende 2025) zum aktuellen Goldpreis. Krypto: Marktkapitalisierung von CoinMarketCap. Rohstoffe haben keinen Bestand mit Marktwert; gezeigt wird der geschätzte Wert des weltweiten Rohstoffhandels pro Jahr (24,7 Bio. USD für 2025, Marktforschung, grobe Schätzung), fortgeschrieben mit dem S&amp;P GSCI. Er fliesst als Jahresgrösse nicht in die Anteile ein. Private Equity und Private Debt fehlen, weil es dafür keine täglichen Werte gibt.</span></span>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Anlageklassen">i<span class="mu-info-text" role="tooltip">Geschätzter weltweiter Wert je Anlageklasse in US-Dollar, aus den breitesten frei verfügbaren Schätzungen. Immobilien: 393,3 Bio. (Savills, alle Wohn-, Gewerbe- und Agrarimmobilien der Welt, Stand Anfang 2025; Savills schätzt nur jährlich, deshalb ohne tägliche Veränderung). Anleihen: 160,7 Bio. und Aktien: 157,8 Bio. (SIFMA Capital Markets Fact Book 2026, Stand Ende 2025), seither fortgeschrieben mit dem Mittel aus AGG und BNDX bzw. mit dem MSCI ACWI; bei Anleihen nur die Kursänderung, neu ausgegebene Anleihen sind nicht erfasst. Gold: oberirdischer Bestand von 220 700 Tonnen (World Gold Council, Ende 2025) zum aktuellen Goldpreis. Silber: rund 1,6 Mio. Tonnen (CPM Group, Stand 2018; andere Schätzungen reichen von 0,6 bis 2,5 Mio. Tonnen) zum aktuellen Silberpreis. Krypto: Marktkapitalisierung von CoinMarketCap. Übrige Rohstoffe fehlen, weil sie verbraucht und nicht als Bestand gehalten werden; Private Equity und Private Debt fehlen, weil es dafür keine täglichen Werte gibt.</span></span>
     </div>
-    <div class="mu-struktur dash-skeleton" data-draw="struktur" data-klasse="Anlageklasse" data-feld="anteil" data-source="werte">—</div>
+    <div class="mu-kuchen dash-skeleton" data-draw="kuchen" data-klasse="Anlageklasse" data-source="werte">—</div>
     <div class="mu-kacheln dash-skeleton" data-draw="kacheln" data-klasse="Anlageklasse" data-source="werte verlauf">—</div>
   </section>
 
   <section class="mu-abschnitt" id="indizes">
     <div class="mu-h2">
       <h2>Aktienindizes</h2>
-      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Aktienindizes">i<span class="mu-info-text" role="tooltip">Stand in Punkten, in Klammern die Veränderung seit Jahresbeginn (YTD). Darunter die Veränderung zum Vortag (1T) sowie über 1, 5 und 10 Jahre, jeweils in Lokalwährung. Die erste Kachel ist der gleich gewichtete Durchschnitt aller Indizes: je Zeitraum das Mittel der einzelnen Veränderungen, die Linie zeigt die auf 100 gesetzten Indizes im Mittel. So siehst du, welcher Index besser oder schlechter als der Durchschnitt lief. Jede Kachel zeigt zusätzlich die annualisierte Rendite über 10 Jahre (geometrisch, ohne Dividenden). China: Shanghai Composite, da für den CSI 300 keine Kurshistorie verfügbar ist.</span></span>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Aktienindizes">i<span class="mu-info-text" role="tooltip">Stand in Punkten, in Klammern die Veränderung seit Jahresbeginn (YTD). Darunter die Veränderung zum Vortag (1T) sowie über 1, 5 und 10 Jahre, jeweils in Lokalwährung. Die erste Kachel ist der gleich gewichtete Durchschnitt aller Indizes: je Zeitraum das Mittel der einzelnen Veränderungen, die Linie zeigt die auf 100 gesetzten Indizes im Mittel. So siehst du, welcher Index besser oder schlechter als der Durchschnitt lief. Jede Kachel zeigt zusätzlich die annualisierte Rendite über 10 Jahre (geometrisch, ohne Dividenden; der DAX enthält sie als Performanceindex bereits). China: Shanghai Composite, da für den CSI 300 keine Kurshistorie verfügbar ist.</span></span>
     </div>
     <div class="mu-kacheln dash-skeleton" data-draw="kacheln" data-klasse="Aktien" data-source="werte verlauf">—</div>
   </section>
@@ -395,7 +405,7 @@
       ytd.dataset.source = 'werte'; ytd.dataset.field = 'ytd'; ytd.dataset.where = 'id=' + r.id;
       ytd.hidden = r.ytd == null || r.format === 'prozent';
       kurs.append(wert, ytd, MU.neu('span', 'mu-einheit', r.einheit === 'Punkte' ? (r.waehrung || '') : r.einheit));
-      if (r.pa10 != null && r.klasse === 'Aktien') {
+      if (r.pa10 != null && ['Aktien', 'Rohstoffe', 'Krypto'].includes(r.klasse)) {
         const pa = MU.neu('div', 'mu-pa');
         const z = MU.neu('b', MU.klasse(r.pa10), MU.prozent(r.pa10));
         z.dataset.source = 'werte'; z.dataset.field = 'pa10'; z.dataset.where = 'id=' + r.id;
@@ -422,6 +432,72 @@
       return k;
     });
     el.replaceChildren(...kacheln);
+  });
+</script>
+
+<script>
+  // Kuchengrafik der Anlageklassen: Ring mit Anteilen, daneben Liste mit Wert und Anteil am Gesamtmarkt.
+  dash.draw('kuchen', (el) => {
+    const w = dash.data('werte');
+    if (w.status !== 'ok') { MU.fehler(el, 'werte'); return; }
+    el.classList.remove('dash-skeleton');
+    const zeilen = w.data.filter((r) => r.klasse === el.dataset.klasse && r.anteil != null).sort((a, b) => b.kurs - a.kurs);
+    const summe = d3.sum(zeilen, (r) => r.kurs);
+    const NS = 'http://www.w3.org/2000/svg', R = 120;
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '-130 -130 260 260');
+    svg.setAttribute('width', '100%');
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', zeilen.map((r) => r.name + ' ' + MU.anteil(r.anteil)).join(', '));
+    const bogen = d3.arc().innerRadius(R * 0.58).outerRadius(R).padAngle(0.012).cornerRadius(2);
+    const tipp = MU.neu('div', 'mu-tipp'); tipp.hidden = true;
+    d3.pie().sort(null).value((r) => r.kurs)(zeilen).forEach((s, i) => {
+      const p = document.createElementNS(NS, 'path');
+      p.setAttribute('d', bogen(s));
+      p.setAttribute('fill', dash.colors[i % dash.colors.length]);
+      p.dataset.source = 'werte'; p.dataset.field = 'anteil'; p.dataset.where = 'id=' + s.data.id;
+      const zeige = (ev) => {
+        tipp.replaceChildren(MU.neu('span', null, s.data.name), document.createTextNode(MU.kompakt(s.data.kurs) + ' USD · ' + MU.anteil(s.data.anteil)));
+        tipp.hidden = false;
+        const k = el.getBoundingClientRect();
+        tipp.style.left = Math.max(4, Math.min(k.width - tipp.offsetWidth - 4, ev.clientX - k.left + 12)) + 'px';
+        tipp.style.top = Math.max(4, ev.clientY - k.top - tipp.offsetHeight - 8) + 'px';
+      };
+      p.addEventListener('pointermove', zeige);
+      p.addEventListener('pointerdown', zeige);
+      p.addEventListener('pointerleave', () => { tipp.hidden = true; });
+      svg.appendChild(p);
+      if (s.data.anteil >= 4) {
+        const [x, y] = bogen.centroid(s);
+        const t = document.createElementNS(NS, 'text');
+        t.setAttribute('x', x); t.setAttribute('y', y); t.setAttribute('text-anchor', 'middle'); t.setAttribute('dominant-baseline', 'middle');
+        t.setAttribute('fill', '#0c1117'); t.setAttribute('font-size', '13'); t.setAttribute('font-weight', '600'); t.setAttribute('pointer-events', 'none');
+        t.textContent = Math.round(s.data.anteil) + ' %';
+        svg.appendChild(t);
+      }
+    });
+    const mitte = document.createElementNS(NS, 'text');
+    mitte.setAttribute('text-anchor', 'middle'); mitte.setAttribute('y', '-4'); mitte.setAttribute('fill', 'var(--color-fg)');
+    mitte.setAttribute('font-size', '22'); mitte.setAttribute('font-family', 'var(--font-anthropic-serif)');
+    mitte.textContent = MU.kompakt(summe);
+    const unter = document.createElementNS(NS, 'text');
+    unter.setAttribute('text-anchor', 'middle'); unter.setAttribute('y', '18'); unter.setAttribute('fill', 'var(--color-fg-muted)'); unter.setAttribute('font-size', '11');
+    unter.textContent = 'USD gesamt';
+    svg.append(mitte, unter);
+    const legende = MU.neu('div', 'mu-kuchen-legende');
+    zeilen.forEach((r, i) => {
+      const z = MU.neu('div', 'mu-kuchen-zeile');
+      const punkt = MU.neu('i'); punkt.style.background = dash.colors[i % dash.colors.length];
+      const wert = MU.neu('span', 'mu-kz-wert', MU.kompakt(r.kurs) + ' USD');
+      wert.dataset.source = 'werte'; wert.dataset.field = 'kurs'; wert.dataset.where = 'id=' + r.id;
+      const anteil = MU.neu('span', 'mu-kz-anteil', MU.anteil(r.anteil));
+      anteil.dataset.source = 'werte'; anteil.dataset.field = 'anteil'; anteil.dataset.where = 'id=' + r.id;
+      const name = MU.neu('span', 'mu-kz-name', r.name); name.title = r.symbol;
+      z.append(punkt, name, wert, anteil);
+      legende.appendChild(z);
+    });
+    legende.appendChild(MU.neu('div', 'mu-kuchen-summe', 'Gesamtmarkt ' + MU.kompakt(summe) + ' USD (Schätzung)'));
+    el.replaceChildren(svg, legende, tipp);
   });
 </script>
 
