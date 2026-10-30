@@ -83,17 +83,25 @@ MITGLIEDER = {
             "SPM.MI", "SRG.MI", "STLAM.MI", "STMMI.MI", "TEN.MI", "TIT.MI", "TRN.MI", "UCG.MI", "UNI.MI", "AVIO.MI"],
 }
 
-# Anlageklassen von oben: Marktwerte aus dem State Street Global Market Portfolio 2026 (Stand 31.3.2026, Mrd. USD),
-# seither mit einem Stellvertreter fortgeschrieben (Marktwert heute = Wert am 31.3.2026 × Kursveränderung seither).
-GMP_STICHTAG = dt.date(2026, 3, 31)
+# Anlageklassen von oben. Ausgangswerte (Mrd. USD) aus den breitesten frei verfügbaren Schätzungen,
+# seit ihrem Stichtag mit einem Stellvertreter fortgeschrieben (Wert heute = Ausgangswert × Kursveränderung seither).
+#   Aktien, Anleihen: SIFMA Capital Markets Fact Book 2026 (Stand Ende 2025)
+#   Immobilien: Savills, Total value of global real estate (Stand Anfang 2025; nur jährlich, deshalb nicht fortgeschrieben)
+#   Gold: World Gold Council, oberirdischer Bestand Ende 2025 (220 700 t) × aktueller Goldpreis
+#   Krypto: CoinMarketCap, gesamte Marktkapitalisierung
+#   Rohstoffe: haben keinen Bestand mit Marktwert; gezeigt wird der Wert des weltweiten Rohstoffhandels pro Jahr
+#   (Schätzung 24,7 Bio. USD für 2025), mit dem S&P GSCI fortgeschrieben. Er fliesst nicht in die Anteile ein.
+GOLD_TONNEN = 220700
+UNZEN_JE_TONNE = 32150.7466
 ANLAGEKLASSEN = [
-    # id, Name, Marktwert 31.3.2026 in Mrd. USD (None = nicht messbar), Stellvertreter, Beschreibung des Stellvertreters
-    ("ak-aktien", "Aktien", 99300, ["ACWI"], "MSCI ACWI (iShares)"),
-    ("ak-anleihen", "Anleihen", 88400, ["AGG", "BNDX"], "Ø US-Aggregate (AGG) und Welt ex USA (BNDX)"),
-    ("ak-gold", "Gold", 13500, ["GC=F"], "Gold-Terminkontrakt"),
-    ("ak-immobilien", "Immobilien", 7050, ["REET"], "iShares Global REIT"),
-    ("ak-krypto", "Krypto", None, ["CMC"], "CoinMarketCap, gesamte Marktkapitalisierung"),
-    ("ak-rohstoffe", "Übrige Rohstoffe", None, ["^SPGSCI"], "S&P GSCI"),
+    # id, Name, Ausgangswert Mrd. USD, Stichtag, Stellvertreter, Beschreibung, Art
+    ("ak-immobilien", "Immobilien", 393300, dt.date(2024, 12, 31), [], "Savills, Stand Anfang 2025", "statisch"),
+    ("ak-anleihen", "Anleihen", 160700, dt.date(2025, 12, 31), ["AGG", "BNDX"], "SIFMA Ende 2025; Ø AGG und BNDX", "fort"),
+    ("ak-aktien", "Aktien", 157800, dt.date(2025, 12, 31), ["ACWI"], "SIFMA Ende 2025; MSCI ACWI", "fort"),
+    ("ak-gold", "Gold", None, None, ["GC=F"], "WGC 220 700 t × Goldpreis", "gold"),
+    ("ak-krypto", "Krypto", None, None, ["CMC"], "CoinMarketCap", "cmc"),
+    ("ak-rohstoffe", "Rohstoffe (Handel pro Jahr)", 24700, dt.date(2025, 12, 31), ["^SPGSCI"],
+     "Jährlicher Handelswert, Schätzung 2025; S&P GSCI", "fluss"),
 ]
 
 # Sektorgewichte des S&P GSCI 2026 (Anteil am weltweiten Produktionswert, gültig ab der Januar-Umstellung 2026)
@@ -572,6 +580,7 @@ def nachrichten():
 
 def zeile(basis, daten):
     v = veraenderungen(daten["reihe"], daten["letzt"], daten["vortag"])
+    v["pa10"] = round(((1 + v["j10"] / 100) ** 0.1 - 1) * 100, 2) if v["j10"] is not None and v["j10"] > -100 else None
     return {**basis, "kurs": round(daten["letzt"], 4) if daten["letzt"] is not None else None,
             "waehrung": daten["waehrung"], "stand": daten["stand"], **v}
 
@@ -668,27 +677,40 @@ def main(ziel, vorher=None):
         return {"reihe": reihe, "letzt": reihe[-1][1], "vortag": reihe[-2][1] if len(reihe) > 1 else None,
                 "waehrung": "USD", "stand": dt.datetime.combine(reihe[-1][0], dt.time(), dt.timezone.utc).isoformat()}
     klassen = []
-    for kid, name, basis, symbole, beschreibung in ANLAGEKLASSEN:
-        d = gesamt if symbole == ["CMC"] else mittelreihe(symbole)
+    for kid, name, basis, stichtag, symbole, beschreibung, art in ANLAGEKLASSEN:
+        if art == "cmc":
+            d = gesamt
+        elif art == "gold":
+            d = sicher(yahoo_reihe, symbole[0])  # echter Goldpreis, nicht normiert
+        else:
+            d = mittelreihe(symbole) if symbole else None
+        if art == "statisch":
+            z = {"id": kid, "klasse": "Anlageklasse", "gruppe": "Anlageklasse", "name": name, "region": "",
+                 "symbol": beschreibung, "einheit": "USD, Schätzung", "format": "kompakt", "kurs": basis * 1e9,
+                 "waehrung": "USD", "stand": stichtag.isoformat(), "t1": None, "ytd": None, "j1": None, "j5": None, "j10": None}
+            klassen.append(z)
+            continue
         if not d:
             continue
-        if symbole == ["CMC"]:
+        if art == "cmc":
             wert = d["letzt"]
-        elif basis:
-            alt = schluss_vor(d["reihe"], GMP_STICHTAG)
-            wert = basis * 1e9 * d["letzt"] / alt if alt else None
+        elif art == "gold":
+            wert = GOLD_TONNEN * UNZEN_JE_TONNE * d["letzt"]
         else:
-            wert = None
+            alt = schluss_vor(d["reihe"], stichtag)
+            wert = basis * 1e9 * d["letzt"] / alt if alt else None
         z = zeile({"id": kid, "klasse": "Anlageklasse", "gruppe": "Anlageklasse", "name": name, "region": "",
-                   "symbol": beschreibung, "einheit": "USD, geschätzt" if wert else "Marktwert nicht messbar",
+                   "symbol": beschreibung, "einheit": "USD pro Jahr, Schätzung" if art == "fluss" else "USD, Schätzung",
                    "format": "kompakt"}, d)
         z["kurs"] = round(wert) if wert else None
+        z["fluss"] = art == "fluss"
         klassen.append(z)
         verlauf += [{"id": kid, "datum": p[0].isoformat(), "wert": round(p[1], 4)} for p in wochenreihe(d["reihe"])]
-    summe = sum(z["kurs"] for z in klassen if z["kurs"])
+    summe = sum(z["kurs"] for z in klassen if z["kurs"] and not z.get("fluss"))
     for z in klassen:
-        z["anteil"] = round(z["kurs"] / summe * 100, 1) if z["kurs"] and summe else None
-        z["region"] = f"{z['anteil']:.1f} % des Gesamtmarkts".replace(".", ",") if z["anteil"] else ""
+        z["anteil"] = round(z["kurs"] / summe * 100, 1) if z["kurs"] and summe and not z.get("fluss") else None
+        z["region"] = (f"{z['anteil']:.1f} % des Gesamtmarkts".replace(".", ",") if z["anteil"]
+                       else ("nicht im Anteil" if z.get("fluss") else ""))
     werte[:0] = klassen
 
     # Rohstoffstruktur: GSCI-Gewichte 2026, mit der Kursentwicklung seit Jahresbeginn fortgeschrieben

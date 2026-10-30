@@ -1,11 +1,10 @@
-# Holt jeden Werktag morgens (nach Börsenschluss in Asien) und abends (nach Börsenschluss in den USA)
-# die Daten neu, baut die Seite und veröffentlicht sie über GitHub Pages.
+# Holt an Werktagen stündlich von 07:17 bis 22:17 Uhr (UTC 06:17 bis 21:17) die Daten neu,
+# baut die Seite und veröffentlicht sie über GitHub Pages. Für öffentliche Repositorys kostenlos.
 name: Daten aktualisieren
 
 on:
   schedule:
-    - cron: "47 6 * * 1-5"   # 07:47 MEZ / 08:47 MESZ
-    - cron: "47 21 * * 1-5"  # 22:47 MEZ / 23:47 MESZ
+    - cron: "17 6-21 * * 1-5"
   workflow_dispatch:
   push:
     branches: [main]

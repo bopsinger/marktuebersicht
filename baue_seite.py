@@ -61,16 +61,19 @@ KOPF = """<!doctype html>
       onData: (fn) => { beobachter.push(fn); },
       setLink: (name) => { try { history.replaceState(null, "", "#" + name); } catch (e) {} },
       colors: ["#5b9cf6", "#3fbf7f", "#e8a33d", "#c678dd", "#56b6c2", "#f0605d", "#d19a66", "#98c379"],
-      refresh: () => {}, params: () => ({}), setParams: () => {}, resetParams: () => {},
+      refresh: (id) => laden(id), params: () => ({}), setParams: () => {}, resetParams: () => {},
       calc: () => {}, loader: () => {},
     };
-    window.addEventListener("DOMContentLoaded", () => {
-      allesZeichnen();
-      QUELLEN.forEach((id) => fetch("daten/" + id + ".json", {cache: "no-cache"})
+    function laden(id) {
+      return fetch("daten/" + id + ".json?t=" + Date.now(), {cache: "no-store"})
         .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
         .then((j) => { daten[id] = {status: "ok", data: j.rows || []}; })
-        .catch(() => { daten[id] = {status: "error", data: []}; })
-        .finally(allesZeichnen));
+        .catch(() => { if (daten[id].status !== "ok") daten[id] = {status: "error", data: []}; })
+        .finally(allesZeichnen);
+    }
+    window.addEventListener("DOMContentLoaded", () => {
+      allesZeichnen();
+      QUELLEN.forEach(laden);
       let breite = window.innerWidth;
       window.addEventListener("resize", () => { if (Math.abs(window.innerWidth - breite) > 40) { breite = window.innerWidth; allesZeichnen(); } });
       const ziel = document.getElementById(location.hash.slice(1));

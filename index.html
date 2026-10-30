@@ -34,6 +34,11 @@
 
   .mu-kacheln { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fill, minmax(min(100%, 15.5rem), 1fr)); min-height: 9rem; }
   .mu-kachel { position: relative; display: grid; gap: var(--cds-gap-sm); align-content: start; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); min-width: 0; }
+  .mu-kopfzeile { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--cds-gap-sm); }
+  .mu-neu { font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-md); border: 1px solid var(--color-fg-muted); border-radius: 999px; background: var(--color-panel); color: var(--color-fg); cursor: pointer; white-space: nowrap; }
+  .mu-neu:hover { border-color: var(--color-fg); }
+  .mu-neu:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+  .mu-neu:disabled { opacity: .5; cursor: progress; }
   .mu-pa { flex-basis: 100%; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
   .mu-pa b { font-weight: var(--cds-font-weight-medium); font-variant-numeric: tabular-nums; }
   .mu-mehr { display: grid; gap: var(--cds-gap-md); }
@@ -110,7 +115,10 @@
 <div class="mu">
   <header class="mu-kopf">
     <h1 class="mu-titel">Marktübersicht</h1>
-    <p class="mu-lage" data-draw="lage" data-source="werte">—</p>
+    <div class="mu-kopfzeile">
+      <p class="mu-lage" data-draw="lage" data-source="werte">—</p>
+      <button type="button" class="mu-neu" id="mu-neu" title="Lädt den neuesten gespeicherten Datenstand">↻ Daten neu laden</button>
+    </div>
     <nav class="mu-nav" aria-label="Abschnitte">
       <button type="button" data-ziel="news">Nachrichten</button>
       <button type="button" data-ziel="anlageklassen">Anlageklassen</button>
@@ -137,7 +145,7 @@
   <section class="mu-abschnitt" id="anlageklassen">
     <div class="mu-h2">
       <h2>Anlageklassen</h2>
-      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Anlageklassen">i<span class="mu-info-text" role="tooltip">Geschätzter weltweiter Marktwert je Anlageklasse in US-Dollar. Ausgangspunkt ist das Global Market Portfolio 2026 von State Street (Stand 31.3.2026): Aktien 99,3 Bio., Anleihen 88,4 Bio. (Staats-, Unternehmens-, Schwellenländer-, inflationsgeschützte, verbriefte und Wandelanleihen), Gold 13,5 Bio., Immobilien 7,05 Bio. (investierbarer, professionell gehaltener Bestand, nicht alle Immobilien der Welt). Seither mit einem Stellvertreter fortgeschrieben: Marktwert heute = Wert am 31.3.2026 × Kursveränderung seither. Krypto: tatsächliche Marktkapitalisierung von CoinMarketCap. Übrige Rohstoffe haben keinen Marktwert im Sinne eines Bestands; gezeigt wird nur die Entwicklung des S&P GSCI. Private Equity und Private Debt (zusammen rund 5,6 % des Portfolios) fehlen, weil es dafür keine täglichen Kurse gibt. Veränderungen beziehen sich auf den Stellvertreter (beim Drüberfahren über den Namen zu sehen).</span></span>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Anlageklassen">i<span class="mu-info-text" role="tooltip">Geschätzter weltweiter Wert je Anlageklasse in US-Dollar, aus den breitesten frei verfügbaren Schätzungen. Immobilien: 393,3 Bio. (Savills, alle Wohn-, Gewerbe- und Agrarimmobilien der Welt, Stand Anfang 2025; Savills schätzt nur jährlich, deshalb ohne tägliche Veränderung). Anleihen: 160,7 Bio. und Aktien: 157,8 Bio. (SIFMA Capital Markets Fact Book 2026, Stand Ende 2025), seither fortgeschrieben mit dem Mittel aus AGG und BNDX bzw. mit dem MSCI ACWI. Gold: oberirdischer Bestand von 220 700 Tonnen (World Gold Council, Ende 2025) zum aktuellen Goldpreis. Krypto: Marktkapitalisierung von CoinMarketCap. Rohstoffe haben keinen Bestand mit Marktwert; gezeigt wird der geschätzte Wert des weltweiten Rohstoffhandels pro Jahr (24,7 Bio. USD für 2025, Marktforschung, grobe Schätzung), fortgeschrieben mit dem S&amp;P GSCI. Er fliesst als Jahresgrösse nicht in die Anteile ein. Private Equity und Private Debt fehlen, weil es dafür keine täglichen Werte gibt.</span></span>
     </div>
     <div class="mu-struktur dash-skeleton" data-draw="struktur" data-klasse="Anlageklasse" data-feld="anteil" data-source="werte">—</div>
     <div class="mu-kacheln dash-skeleton" data-draw="kacheln" data-klasse="Anlageklasse" data-source="werte verlauf">—</div>
@@ -146,7 +154,7 @@
   <section class="mu-abschnitt" id="indizes">
     <div class="mu-h2">
       <h2>Aktienindizes</h2>
-      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Aktienindizes">i<span class="mu-info-text" role="tooltip">Stand in Punkten, in Klammern die Veränderung seit Jahresbeginn (YTD). Darunter die Veränderung zum Vortag (1T) sowie über 1, 5 und 10 Jahre, jeweils in Lokalwährung. Die erste Kachel ist der gleich gewichtete Durchschnitt aller Indizes: je Zeitraum das Mittel der einzelnen Veränderungen, die Linie zeigt die auf 100 gesetzten Indizes im Mittel. So siehst du, welcher Index besser oder schlechter als der Durchschnitt lief. Die annualisierte Rendite rechnet die mittlere 10-Jahres-Veränderung auf ein Jahr um (geometrisch). China: Shanghai Composite, da für den CSI 300 keine Kurshistorie verfügbar ist.</span></span>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Aktienindizes">i<span class="mu-info-text" role="tooltip">Stand in Punkten, in Klammern die Veränderung seit Jahresbeginn (YTD). Darunter die Veränderung zum Vortag (1T) sowie über 1, 5 und 10 Jahre, jeweils in Lokalwährung. Die erste Kachel ist der gleich gewichtete Durchschnitt aller Indizes: je Zeitraum das Mittel der einzelnen Veränderungen, die Linie zeigt die auf 100 gesetzten Indizes im Mittel. So siehst du, welcher Index besser oder schlechter als der Durchschnitt lief. Jede Kachel zeigt zusätzlich die annualisierte Rendite über 10 Jahre (geometrisch, ohne Dividenden). China: Shanghai Composite, da für den CSI 300 keine Kurshistorie verfügbar ist.</span></span>
     </div>
     <div class="mu-kacheln dash-skeleton" data-draw="kacheln" data-klasse="Aktien" data-source="werte verlauf">—</div>
   </section>
@@ -266,6 +274,12 @@
     },
   };
 
+  document.querySelectorAll('.mu-neu').forEach((b) => b.addEventListener('click', () => {
+    b.disabled = true;
+    ['werte', 'aktien', 'zinsen', 'verlauf', 'news'].forEach((id) => dash.refresh(id));
+    setTimeout(() => { b.disabled = false; }, 2500);
+  }));
+
   document.querySelectorAll('.mu-nav button').forEach((b) => b.addEventListener('click', () => {
     const ziel = document.getElementById(b.dataset.ziel);
     if (ziel) { ziel.scrollIntoView({behavior: 'smooth', block: 'start'}); dash.setLink(ziel.id); }
@@ -381,7 +395,7 @@
       ytd.dataset.source = 'werte'; ytd.dataset.field = 'ytd'; ytd.dataset.where = 'id=' + r.id;
       ytd.hidden = r.ytd == null || r.format === 'prozent';
       kurs.append(wert, ytd, MU.neu('span', 'mu-einheit', r.einheit === 'Punkte' ? (r.waehrung || '') : r.einheit));
-      if (r.pa10 != null) {
+      if (r.pa10 != null && r.klasse === 'Aktien') {
         const pa = MU.neu('div', 'mu-pa');
         const z = MU.neu('b', MU.klasse(r.pa10), MU.prozent(r.pa10));
         z.dataset.source = 'werte'; z.dataset.field = 'pa10'; z.dataset.where = 'id=' + r.id;
