@@ -1,0 +1,577 @@
+<meta name="dash-one-writer">
+<style>
+  /* Raster: Kopfzeile mit Lagesatz, dann je Anlageklasse ein Abschnitt mit Kacheln oder Tabelle. */
+  /* Immer dunkel: die Farbtoken des Dashboards werden innerhalb der Seite überschrieben, damit alle Regeln unten mitziehen. */
+  #dash-root { --dash-gutter: 0; }
+  .mu {
+    --mu-bg: #0c1117; --mu-panel: #131a23; --mu-chip: #0f151d; --mu-line: #232e3c;
+    --mu-fg: #e4e9f0; --mu-muted: #8794a6; --mu-plus: #3fbf7f; --mu-minus: #f0605d;
+    --color-bg: var(--mu-chip); --color-panel: var(--mu-panel); --color-border-line: var(--mu-line);
+    --color-fg: var(--mu-fg); --color-fg-muted: var(--mu-muted); --color-ok: var(--mu-plus); --color-bad: var(--mu-minus);
+    --cds-surface-popover: #1b2430; --cds-border: #2f3c4d; --cds-text-secondary: var(--mu-muted);
+    color-scheme: dark; background: var(--mu-bg); color: var(--mu-fg);
+    display: grid; gap: var(--cds-gap-xl); font-family: var(--font-anthropic-sans);
+    padding-block: var(--cds-pad-xl); padding-inline: max(16px, 3vw); border-radius: var(--cds-radius); min-height: 100%;
+  }
+  .mu-kopf { display: grid; gap: var(--cds-gap-sm); }
+  .mu-titel { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
+  .mu-lage { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); max-width: 70ch; }
+  .mu-lage b { font-weight: var(--cds-font-weight-medium); color: var(--color-fg); }
+  .mu-nav { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); }
+  .mu-nav button { font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: 999px; background: var(--color-panel); color: var(--color-fg); cursor: pointer; }
+  .mu-nav button:hover { border-color: var(--color-fg-muted); }
+  .mu-nav button:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+
+  .mu-abschnitt { display: grid; gap: var(--cds-gap-md); scroll-margin-top: var(--cds-gap-lg); }
+  .mu-abschnitt h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+  .mu-abschnitt h3 { font-size: var(--cds-font-size-caption); font-weight: var(--cds-font-weight-medium); text-transform: uppercase; letter-spacing: .06em; color: var(--color-fg-muted); margin: 0; }
+  .mu-h2 { position: relative; display: flex; align-items: center; gap: var(--cds-gap-sm); }
+  .mu-info { display: inline-grid; place-items: center; width: 1.15rem; height: 1.15rem; border-radius: 50%; border: 1px solid var(--color-fg-muted); color: var(--color-fg-muted); font-size: .7rem; font-weight: var(--cds-font-weight-medium); font-style: italic; font-family: Georgia, serif; cursor: help; flex: none; }
+  .mu-info:hover, .mu-info:focus-visible { color: var(--color-fg); border-color: var(--color-fg); outline: none; }
+  .mu-info-text { display: none; position: absolute; left: 0; top: calc(100% + 6px); z-index: 5; width: min(26rem, 100%); background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-sm) var(--cds-pad-md); color: var(--color-fg); font-size: var(--cds-font-size-caption); font-style: normal; font-weight: 400; font-family: var(--font-anthropic-sans); line-height: 1.5; }
+  .mu-info:hover .mu-info-text, .mu-info:focus .mu-info-text { display: block; }
+  .mu-gruppe { display: grid; gap: var(--cds-gap-sm); }
+
+  .mu-kacheln { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fill, minmax(min(100%, 15.5rem), 1fr)); min-height: 9rem; }
+  .mu-kachel { position: relative; display: grid; gap: var(--cds-gap-sm); align-content: start; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); min-width: 0; }
+  .mu-pa { flex-basis: 100%; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .mu-pa b { font-weight: var(--cds-font-weight-medium); font-variant-numeric: tabular-nums; }
+  .mu-mehr { display: grid; gap: var(--cds-gap-md); }
+  .mu-mehr > summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: var(--cds-gap-xs); width: fit-content; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: 999px; background: var(--color-panel); }
+  .mu-mehr > summary::-webkit-details-marker { display: none; }
+  .mu-mehr > summary::before { content: "▸"; transition: transform var(--cds-dur-slow); }
+  .mu-mehr[open] > summary::before { transform: rotate(90deg); }
+  .mu-mehr > summary:hover { color: var(--color-fg); border-color: var(--color-fg-muted); }
+  .mu-mehr > summary:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+  .mu-mehr[open] > summary { margin-bottom: var(--cds-gap-sm); }
+  .mu-struktur { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); display: grid; gap: var(--cds-gap-sm); min-height: 5rem; }
+  .mu-balken { display: flex; height: 14px; border-radius: var(--cds-radius); overflow: hidden; gap: 2px; }
+  .mu-balken span { display: block; min-width: 2px; }
+  .mu-legende { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs) var(--cds-gap-lg); font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .mu-legende > span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .mu-legende i { width: .6rem; height: .6rem; border-radius: 2px; display: inline-block; }
+  .mu-legende b { font-weight: var(--cds-font-weight-medium); }
+  .mu-legende small { color: var(--color-fg-muted); font-size: inherit; }
+  .mu-kachel-summe { border-color: var(--color-fg-muted); background: linear-gradient(180deg, #18212c, var(--color-panel)); }
+  .mu-kachel-kopf { display: flex; justify-content: space-between; align-items: baseline; gap: var(--cds-gap-sm); }
+  .mu-kachel-name { font-weight: var(--cds-font-weight-medium); font-size: var(--cds-font-size-body); overflow-wrap: anywhere; }
+  .mu-kachel-region { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); white-space: nowrap; }
+  .mu-kurs { display: flex; align-items: baseline; gap: var(--cds-gap-xs); flex-wrap: wrap; }
+  .mu-kurs-wert { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .mu-einheit { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .mu-chips { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--cds-gap-xs); }
+  .mu-chip { display: grid; gap: 2px; padding: var(--cds-pad-xs); border-radius: var(--cds-radius); background: var(--color-bg); text-align: center; min-width: 0; }
+  .mu-chip-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .04em; }
+  .mu-chip-wert { font-size: var(--cds-font-size-caption); font-weight: var(--cds-font-weight-medium); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .mu-plus { color: var(--color-ok); }
+  .mu-minus { color: var(--color-bad); }
+  .mu-null { color: var(--color-fg-muted); }
+  .mu-spark { display: block; width: 100%; height: 44px; touch-action: none; }
+  .mu-tipp { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; font-variant-numeric: tabular-nums; z-index: 2; }
+  .mu-tipp span { color: var(--cds-text-secondary); margin-right: var(--cds-gap-xs); }
+
+  .mu-karten { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fill, minmax(min(100%, 25rem), 1fr)); min-height: 9rem; }
+  .mu-karte { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); display: grid; gap: var(--cds-gap-sm); align-content: start; min-width: 0; }
+  .mu-karte h3 { color: var(--color-fg); text-transform: none; letter-spacing: 0; font-size: var(--cds-font-size-body); }
+  .mu-rollen { overflow-x: auto; min-width: 0; }
+  .mu-tab { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .mu-tab th { text-align: right; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); padding: var(--cds-pad-xs); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  .mu-tab td { text-align: right; padding: var(--cds-pad-xs); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  .mu-tab th:first-child, .mu-tab td:first-child { text-align: left; }
+  .mu-ytd { font-size: var(--cds-font-size-body); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  /* Titeltabellen: Zahlenspalten haben feste Breite und Vorrang, der Name bekommt den Rest und wird gekürzt. */
+  .mu-titeltab { table-layout: fixed; min-width: 22rem; }
+  .mu-titeltab col.mu-col-wert { width: 4.8rem; }
+  .mu-titeltab col.mu-col-pz { width: 3.7rem; }
+  .mu-titeltab td.mu-name, .mu-titeltab th:first-child { overflow: hidden; text-overflow: ellipsis; }
+  .mu-tab td.mu-name { font-weight: var(--cds-font-weight-medium); color: var(--color-fg); cursor: help; }
+  .mu-karte-kopf { display: flex; justify-content: space-between; align-items: baseline; gap: var(--cds-gap-sm); }
+  .mu-karte-kopf span { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .mu-tab tr:last-child td { border-bottom: 0; }
+  .mu-tab tr.mu-landanfang td { border-top: 1px solid var(--color-fg-muted); }
+  .mu-tab .mu-klein { color: var(--color-fg-muted); }
+
+  .mu-zinsen { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); min-height: 12rem; }
+
+  .mu-news { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); min-height: 8rem; }
+  .mu-news li { display: grid; gap: 2px; padding: var(--cds-pad-sm) var(--cds-pad-md); border-bottom: 1px solid var(--color-border-line); }
+  .mu-news li:last-child { border-bottom: 0; }
+  .mu-news a { color: var(--color-fg); text-decoration: none; font-size: var(--cds-font-size-body); }
+  .mu-news a:hover { text-decoration: underline; }
+  .mu-news a:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+  .mu-news small { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+
+  .mu-fehler { display: flex; align-items: center; justify-content: center; gap: var(--cds-gap-xs); color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); min-height: inherit; grid-column: 1 / -1; }
+  .mu-fehler::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+  [data-dash-source-state=empty] { color: transparent; }
+  [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+</style>
+
+<div class="mu">
+  <header class="mu-kopf">
+    <h1 class="mu-titel">Marktübersicht</h1>
+    <p class="mu-lage" data-draw="lage" data-source="werte">—</p>
+    <nav class="mu-nav" aria-label="Abschnitte">
+      <button type="button" data-ziel="news">Nachrichten</button>
+      <button type="button" data-ziel="anlageklassen">Anlageklassen</button>
+      <button type="button" data-ziel="indizes">Aktienindizes</button>
+      <button type="button" data-ziel="titel">Grösste Titel</button>
+      <button type="button" data-ziel="rohstoffe">Rohstoffe</button>
+      <button type="button" data-ziel="zinsen">Zinsen</button>
+      <button type="button" data-ziel="krypto">Krypto</button>
+    </nav>
+  </header>
+
+  <section class="mu-abschnitt" id="news">
+    <div class="mu-h2">
+      <h2>Nachrichten</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Nachrichten">i<span class="mu-info-text" role="tooltip">Top News von CNBC in der Reihenfolge der Redaktion, wichtigste zuerst. Die fünf wichtigsten stehen oben, die übrigen 15 unter „Weitere Meldungen“. Ein Klick öffnet den Artikel in einem neuen Fenster.</span></span>
+    </div>
+    <ul class="mu-news" data-draw="news" data-von="0" data-bis="5" data-source="news"></ul>
+    <details class="mu-mehr">
+      <summary>Weitere Meldungen anzeigen</summary>
+      <ul class="mu-news" data-draw="news" data-von="5" data-bis="20" data-source="news"></ul>
+    </details>
+  </section>
+
+  <section class="mu-abschnitt" id="anlageklassen">
+    <div class="mu-h2">
+      <h2>Anlageklassen</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Anlageklassen">i<span class="mu-info-text" role="tooltip">Geschätzter weltweiter Marktwert je Anlageklasse in US-Dollar. Ausgangspunkt ist das Global Market Portfolio 2026 von State Street (Stand 31.3.2026): Aktien 99,3 Bio., Anleihen 88,4 Bio. (Staats-, Unternehmens-, Schwellenländer-, inflationsgeschützte, verbriefte und Wandelanleihen), Gold 13,5 Bio., Immobilien 7,05 Bio. (investierbarer, professionell gehaltener Bestand, nicht alle Immobilien der Welt). Seither mit einem Stellvertreter fortgeschrieben: Marktwert heute = Wert am 31.3.2026 × Kursveränderung seither. Krypto: tatsächliche Marktkapitalisierung von CoinMarketCap. Übrige Rohstoffe haben keinen Marktwert im Sinne eines Bestands; gezeigt wird nur die Entwicklung des S&P GSCI. Private Equity und Private Debt (zusammen rund 5,6 % des Portfolios) fehlen, weil es dafür keine täglichen Kurse gibt. Veränderungen beziehen sich auf den Stellvertreter (beim Drüberfahren über den Namen zu sehen).</span></span>
+    </div>
+    <div class="mu-struktur dash-skeleton" data-draw="struktur" data-klasse="Anlageklasse" data-feld="anteil" data-source="werte">—</div>
+    <div class="mu-kacheln dash-skeleton" data-draw="kacheln" data-klasse="Anlageklasse" data-source="werte verlauf">—</div>
+  </section>
+
+  <section class="mu-abschnitt" id="indizes">
+    <div class="mu-h2">
+      <h2>Aktienindizes</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Aktienindizes">i<span class="mu-info-text" role="tooltip">Stand in Punkten, in Klammern die Veränderung seit Jahresbeginn (YTD). Darunter die Veränderung zum Vortag (1T) sowie über 1, 5 und 10 Jahre, jeweils in Lokalwährung. Die erste Kachel ist der gleich gewichtete Durchschnitt aller Indizes: je Zeitraum das Mittel der einzelnen Veränderungen, die Linie zeigt die auf 100 gesetzten Indizes im Mittel. So siehst du, welcher Index besser oder schlechter als der Durchschnitt lief. Die annualisierte Rendite rechnet die mittlere 10-Jahres-Veränderung auf ein Jahr um (geometrisch). China: Shanghai Composite, da für den CSI 300 keine Kurshistorie verfügbar ist.</span></span>
+    </div>
+    <div class="mu-kacheln dash-skeleton" data-draw="kacheln" data-klasse="Aktien" data-source="werte verlauf">—</div>
+  </section>
+
+  <section class="mu-abschnitt" id="titel">
+    <div class="mu-h2">
+      <h2>Grösste Titel je Index</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Grösste Titel je Index">i<span class="mu-info-text" role="tooltip">Die fünf Titel mit dem höchsten Börsenwert, ausgewählt aus einer Kandidatenliste je Index. Börsenwert in US-Dollar umgerechnet (Yahoo-Wechselkurse), Veränderungen in Lokalwährung. Rechts oben der Anteil der fünf am gesamten Börsenwert des Index; berechnet aus vollständigen Mitgliederlisten für SMI, DAX, IBEX 35 und FTSE MIB (Stand 2025/26, Näherung ohne Streubesitz-Bereinigung). Für die anderen Indizes gibt es keine freie Mitgliederliste. Lange Namen sind gekürzt; der Mauszeiger zeigt Name und Kürzel.</span></span>
+    </div>
+    <details class="mu-mehr">
+      <summary>Indexschwergewichte anzeigen</summary>
+      <div class="mu-karten dash-skeleton" data-draw="titel" data-source="aktien">—</div>
+    </details>
+  </section>
+
+  <section class="mu-abschnitt" id="rohstoffe">
+    <div class="mu-h2">
+      <h2>Rohstoffe</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Rohstoffe">i<span class="mu-info-text" role="tooltip">Kurs mit Veränderung seit Jahresbeginn in Klammern, darunter 1T, 1J, 5J und 10J wie bei den Indizes. Für TTF (Daten ab 2017) und den Uran-Trust (ab 2021) fehlt der 10-Jahres-Wert. Vordere Terminkontrakte. Veränderungen beziehen sich auf den jeweils vordersten Kontrakt; beim Wechsel des Kontraktmonats kann das die Langfristwerte verzerren. Für Uran gibt es keinen frei abrufbaren Terminkurs; gezeigt wird der Sprott Physical Uranium Trust, der physisches Uran hält und dem Spotpreis eng folgt. Agrarpreise in US-Cent je Bushel (Weizen, Mais, Soja) bzw. je Pfund (Kaffee, Zucker), Kupfer in USD je Pfund, Aluminium in USD je Tonne. Struktur nach Sektoren: Gewichte des S&P GSCI 2026, die sich am weltweiten Produktionswert der Rohstoffe orientieren (Mittel über fünf Jahre), mit der Preisentwicklung seit Jahresbeginn fortgeschrieben. In Klammern das Ausgangsgewicht vom Januar 2026. Einen Marktwert im Sinne eines Bestands gibt es für Rohstoffe nicht; das ist die übliche Annäherung.</span></span>
+    </div>
+    <div class="mu-gruppe">
+      <h3>Struktur nach Sektoren</h3>
+      <div class="mu-struktur dash-skeleton" data-draw="struktur" data-klasse="Rohstoffstruktur" data-feld="gewicht" data-vergleich="gewicht_2026" data-source="werte">—</div>
+    </div>
+    <div class="mu-gruppe">
+      <h3>Energie</h3>
+      <div class="mu-kacheln dash-skeleton" data-draw="kacheln" data-klasse="Rohstoffe" data-gruppe="Energie" data-source="werte verlauf">—</div>
+    </div>
+    <div class="mu-gruppe">
+      <h3>Edelmetalle</h3>
+      <div class="mu-kacheln dash-skeleton" data-draw="kacheln" data-klasse="Rohstoffe" data-gruppe="Edelmetalle" data-source="werte verlauf">—</div>
+    </div>
+    <div class="mu-gruppe">
+      <h3>Industriemetalle</h3>
+      <div class="mu-kacheln dash-skeleton" data-draw="kacheln" data-klasse="Rohstoffe" data-gruppe="Industriemetalle" data-source="werte verlauf">—</div>
+    </div>
+    <div class="mu-gruppe">
+      <h3>Agrar</h3>
+      <div class="mu-kacheln dash-skeleton" data-draw="kacheln" data-klasse="Rohstoffe" data-gruppe="Agrar" data-source="werte verlauf">—</div>
+    </div>
+    <div class="mu-gruppe">
+      <h3>Uran</h3>
+      <div class="mu-kacheln dash-skeleton" data-draw="kacheln" data-klasse="Rohstoffe" data-gruppe="Uran" data-source="werte verlauf">—</div>
+    </div>
+  </section>
+
+  <section class="mu-abschnitt" id="zinsen">
+    <div class="mu-h2">
+      <h2>Zinsen: Staatsanleihen</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Zinsen: Staatsanleihen">i<span class="mu-info-text" role="tooltip">Rendite in Prozent, Veränderungen in Basispunkten (100 Bp = 1 Prozentpunkt). Kacheln: Rendite, in Klammern seit Jahresbeginn, darunter 1T, 1J, 5J und 10J. Quellen: US-Finanzministerium, Bundesbank, Bank of England, japanisches Finanzministerium, Bank of Canada, Reserve Bank of Australia, Schweizerische Nationalbank, CFETS/ChinaMoney (China). China gibt nur rund den letzten Monat heraus; dort fehlen YTD, 1J, 5J, 10J und die Jahreslinie. Nicht frei abrufbar und deshalb nicht enthalten: Frankreich, Italien, Grossbritannien 1 und 30 Jahre (dort 20 Jahre als längste Laufzeit) und Australien 1 und 30 Jahre. Kanada 30J ist die langfristige Referenzanleihe. Die SNB veröffentlicht ihre Tageswerte nur einmal im Monat; die Schweizer Werte hinken deshalb bis zu einem Monat hinterher (siehe Spalte Stand).</span></span>
+    </div>
+    <div class="mu-gruppe">
+      <h3>10 Jahre</h3>
+      <div class="mu-kacheln dash-skeleton" data-draw="zinskacheln" data-source="zinsen verlauf">—</div>
+    </div>
+    <details class="mu-mehr">
+      <summary>Alle Laufzeiten anzeigen</summary>
+    <div class="mu-zinsen mu-rollen">
+      <table class="mu-tab" data-source="zinsen" data-row-key="key">
+        <thead>
+          <tr>
+            <th data-field="land">Land</th>
+            <th data-field="laufzeit">Laufzeit</th>
+            <th data-field="rendite">Rendite</th>
+            <th data-field="t1">1T</th>
+            <th data-field="ytd">YTD</th>
+            <th data-field="j1">1J</th>
+            <th data-field="j5">5J</th>
+            <th data-field="j10">10J</th>
+            <th data-field="stand">Stand</th>
+          </tr>
+        </thead>
+        <tbody data-draw="zinsen"></tbody>
+      </table>
+    </div>
+    </details>
+  </section>
+
+  <section class="mu-abschnitt" id="krypto">
+    <div class="mu-h2">
+      <h2>Krypto</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Krypto">i<span class="mu-info-text" role="tooltip">Kurs in US-Dollar, in Klammern die Veränderung seit Jahresbeginn (YTD), darunter 1T, 1J, 5J und 10J. Kurse von Yahoo Finance; lange Zeiträume fehlen, wo es die Währung noch nicht so lange gibt. Die gesamte Marktkapitalisierung aller Kryptowährungen stammt von CoinMarketCap (Tageswerte), dazu der Anteil von Bitcoin daran (BTC-Dominanz).</span></span>
+    </div>
+    <div class="mu-kacheln dash-skeleton" data-draw="kacheln" data-klasse="Krypto" data-source="werte verlauf">—</div>
+  </section>
+
+</div>
+
+<script>
+  // Gemeinsame Formatierung für alle Zeichnungen.
+  const zahl = (stellen) => new Intl.NumberFormat('de-CH', {minimumFractionDigits: stellen, maximumFractionDigits: stellen});
+  const f0 = zahl(0), f1 = zahl(1), f2 = zahl(2), f3 = zahl(3);
+  const kompakt = new Intl.NumberFormat('de-CH', {notation: 'compact', maximumFractionDigits: 1});
+  const datum = new Intl.DateTimeFormat('de-CH', {day: 'numeric', month: 'short', year: 'numeric'});
+  const tag = new Intl.DateTimeFormat('de-CH', {day: 'numeric', month: 'short'});
+  const zeit = new Intl.DateTimeFormat('de-CH', {day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'});
+  window.MU = {
+    kurs: (v) => v == null ? '—' : (Math.abs(v) >= 10000 ? f0 : Math.abs(v) >= 100 ? f2 : Math.abs(v) >= 1 ? f2 : f3).format(v),
+    prozent: (v) => v == null ? '—' : (v > 0 ? '+' : v < 0 ? '−' : '±') + f1.format(Math.abs(v)) + ' %',
+    pz: (v) => v == null ? '—' : (v > 0 ? '+' : v < 0 ? '−' : '±') + (Math.abs(v) >= 100 ? f0 : f1).format(Math.abs(v)) + '%',
+    bp: (v) => v == null ? '—' : (v > 0 ? '+' : v < 0 ? '−' : '±') + f0.format(Math.abs(v)),
+    rendite: (v) => v == null ? '—' : f2.format(v) + ' %',
+    anteil: (v) => v == null ? '—' : f1.format(v) + ' %',
+    kompakt: (v) => v == null ? '—' : kompakt.format(v),
+    datum: (s) => s ? datum.format(new Date(s)) : '',
+    tag: (s) => s ? tag.format(new Date(s + 'T12:00:00Z')) : '—',
+    zeit: (s) => s ? zeit.format(new Date(s)) : '',
+    klasse: (v) => v == null ? 'mu-null' : v > 0 ? 'mu-plus' : v < 0 ? 'mu-minus' : 'mu-null',
+    perioden: [['t1', '1T'], ['ytd', 'YTD'], ['j1', '1J'], ['j5', '5J']],
+    kachelPerioden: [['t1', '1T'], ['j1', '1J'], ['j5', '5J'], ['j10', '10J']],
+    tabPerioden: [['t1', '1T'], ['ytd', 'YTD'], ['j1', '1J'], ['j5', '5J'], ['j10', '10J']],
+    neu: (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; },
+    fehler: (el, ...ids) => {
+      const fehlt = ids.some((id) => dash.data(id).status === 'error');
+      el.replaceChildren(fehlt ? MU.neu('div', 'mu-fehler', 'Konnte nicht geladen werden') : document.createTextNode('—'));
+      el.classList.toggle('dash-skeleton', !fehlt && ids.some((id) => dash.data(id).status === 'loading'));
+    },
+  };
+
+  document.querySelectorAll('.mu-nav button').forEach((b) => b.addEventListener('click', () => {
+    const ziel = document.getElementById(b.dataset.ziel);
+    if (ziel) { ziel.scrollIntoView({behavior: 'smooth', block: 'start'}); dash.setLink(ziel.id); }
+  }));
+</script>
+
+<script>
+  // Lagesatz unter dem Titel: Stand und drei Leitwerte des Tages.
+  dash.draw('lage', (el) => {
+    const w = dash.data('werte');
+    if (w.status !== 'ok') { el.textContent = '—'; return; }
+    const zeilen = w.data;
+    const stand = zeilen.map((r) => r.stand).filter(Boolean).sort().pop();
+    const teile = [];
+    teile.push(document.createTextNode('Stand ' + MU.zeit(stand) + '. Heute: '));
+    ['spx', 'dax', 'smi', 'gold', 'brent'].forEach((id, i, alle) => {
+      const r = zeilen.find((z) => z.id === id);
+      if (!r) return;
+      teile.push(document.createTextNode(r.name + ' '));
+      const b = MU.neu('b', MU.klasse(r.t1), MU.prozent(r.t1));
+      b.dataset.source = 'werte'; b.dataset.field = 't1'; b.dataset.where = 'id=' + id;
+      teile.push(b);
+      teile.push(document.createTextNode(i < alle.length - 1 ? ', ' : '.'));
+    });
+    el.replaceChildren(...teile);
+  });
+</script>
+
+<script>
+  // Kacheln für Indizes und Rohstoffe, mit Kleingrafik der letzten 12 Monate.
+  const NS = 'http://www.w3.org/2000/svg';
+
+  function spark(kachel, punkte, farbe, fmt = MU.kurs) {
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('class', 'mu-spark');
+    svg.setAttribute('width', '100%');
+    svg.setAttribute('viewBox', '0 0 200 44');
+    svg.setAttribute('preserveAspectRatio', 'none');
+    svg.setAttribute('role', 'img');
+    if (punkte.length < 2) return svg;
+    const x = d3.scaleLinear([0, punkte.length - 1], [1, 199]);
+    const [lo, hi] = d3.extent(punkte, (p) => p.wert);
+    const y = d3.scaleLinear([lo, hi === lo ? lo + 1 : hi], [41, 3]);
+    const gid = 'g' + Math.random().toString(36).slice(2);
+    const defs = document.createElementNS(NS, 'defs');
+    const grad = document.createElementNS(NS, 'linearGradient');
+    grad.setAttribute('id', gid); grad.setAttribute('x1', '0'); grad.setAttribute('x2', '0'); grad.setAttribute('y1', '0'); grad.setAttribute('y2', '1');
+    [[0, .26], [.25, .16], [.5, .08], [.75, .03], [1, 0]].forEach(([o, a]) => {
+      const s = document.createElementNS(NS, 'stop');
+      s.setAttribute('offset', o); s.setAttribute('style', `stop-color:${farbe};stop-opacity:${a}`);
+      grad.appendChild(s);
+    });
+    defs.appendChild(grad); svg.appendChild(defs);
+    const flaeche = document.createElementNS(NS, 'path');
+    flaeche.setAttribute('d', d3.area().x((p, i) => x(i)).y0(44).y1((p) => y(p.wert))(punkte));
+    flaeche.setAttribute('fill', `url(#${gid})`);
+    const linie = document.createElementNS(NS, 'path');
+    linie.setAttribute('d', d3.line().x((p, i) => x(i)).y((p) => y(p.wert))(punkte));
+    linie.setAttribute('fill', 'none'); linie.setAttribute('stroke', farbe); linie.setAttribute('stroke-width', '2');
+    linie.setAttribute('stroke-linejoin', 'round'); linie.setAttribute('stroke-linecap', 'round');
+    linie.setAttribute('vector-effect', 'non-scaling-stroke');
+    const ende = document.createElementNS(NS, 'line');
+    ende.setAttribute('x1', x(punkte.length - 1)); ende.setAttribute('x2', x(punkte.length - 1));
+    ende.setAttribute('y1', y(punkte[punkte.length - 1].wert)); ende.setAttribute('y2', y(punkte[punkte.length - 1].wert));
+    ende.setAttribute('stroke', farbe); ende.setAttribute('stroke-width', '6'); ende.setAttribute('stroke-linecap', 'round');
+    ende.setAttribute('vector-effect', 'non-scaling-stroke');
+    const marke = ende.cloneNode(); marke.setAttribute('visibility', 'hidden');
+    svg.append(flaeche, linie, ende, marke);
+
+    const tipp = MU.neu('div', 'mu-tipp'); tipp.hidden = true;
+    kachel.appendChild(tipp);
+    const zeige = (ev) => {
+      const r = svg.getBoundingClientRect();
+      const i = Math.max(0, Math.min(punkte.length - 1, Math.round(x.invert((ev.clientX - r.left) / r.width * 200))));
+      const p = punkte[i];
+      marke.setAttribute('x1', x(i)); marke.setAttribute('x2', x(i));
+      marke.setAttribute('y1', y(p.wert)); marke.setAttribute('y2', y(p.wert));
+      marke.setAttribute('visibility', 'visible');
+      tipp.replaceChildren(MU.neu('span', null, MU.datum(p.datum)), document.createTextNode(fmt(p.wert)));
+      tipp.hidden = false;
+      const k = kachel.getBoundingClientRect();
+      const links = r.left - k.left + x(i) / 200 * r.width;
+      const breite = tipp.offsetWidth;
+      tipp.style.left = Math.max(4, Math.min(k.width - breite - 4, links - breite / 2)) + 'px';
+      tipp.style.top = (r.top - k.top - tipp.offsetHeight - 4) + 'px';
+    };
+    svg.addEventListener('pointermove', zeige);
+    svg.addEventListener('pointerdown', zeige);
+    svg.addEventListener('pointerleave', () => { tipp.hidden = true; marke.setAttribute('visibility', 'hidden'); });
+    return svg;
+  }
+
+  MU.spark = spark;
+
+  dash.draw('kacheln', (el) => {
+    const w = dash.data('werte'), v = dash.data('verlauf');
+    if (w.status !== 'ok') { MU.fehler(el, 'werte', 'verlauf'); return; }
+    el.classList.remove('dash-skeleton');
+    const zeilen = w.data.filter((r) => r.klasse === el.dataset.klasse && (!el.dataset.gruppe || r.gruppe === el.dataset.gruppe));
+    const verlauf = v.status === 'ok' ? d3.group(v.data, (p) => p.id) : new Map();
+    const kacheln = zeilen.map((r) => {
+      const k = MU.neu('article', 'mu-kachel');
+      k.id = 'k-' + r.id;
+      const kopf = MU.neu('div', 'mu-kachel-kopf');
+      const nm = MU.neu('span', 'mu-kachel-name', r.name);
+      if (r.klasse === 'Anlageklasse') nm.title = 'Veränderungen: ' + r.symbol;
+      kopf.append(nm, MU.neu('span', 'mu-kachel-region', r.region || r.symbol));
+      const kurs = MU.neu('div', 'mu-kurs');
+      if (r.id === 'alle') k.classList.add('mu-kachel-summe');
+      const wert = MU.neu('span', 'mu-kurs-wert ' + (r.format === 'prozent' ? MU.klasse(r.kurs) : ''), r.format === 'kompakt' ? MU.kompakt(r.kurs) : r.format === 'prozent' ? MU.prozent(r.kurs) : MU.kurs(r.kurs));
+      wert.dataset.source = 'werte'; wert.dataset.field = 'kurs'; wert.dataset.where = 'id=' + r.id;
+      const ytd = MU.neu('span', 'mu-ytd ' + MU.klasse(r.ytd), '(YTD ' + MU.prozent(r.ytd) + ')');
+      ytd.dataset.source = 'werte'; ytd.dataset.field = 'ytd'; ytd.dataset.where = 'id=' + r.id;
+      ytd.hidden = r.ytd == null || r.format === 'prozent';
+      kurs.append(wert, ytd, MU.neu('span', 'mu-einheit', r.einheit === 'Punkte' ? (r.waehrung || '') : r.einheit));
+      if (r.pa10 != null) {
+        const pa = MU.neu('div', 'mu-pa');
+        const z = MU.neu('b', MU.klasse(r.pa10), MU.prozent(r.pa10));
+        z.dataset.source = 'werte'; z.dataset.field = 'pa10'; z.dataset.where = 'id=' + r.id;
+        pa.append(document.createTextNode('10 Jahre annualisiert '), z, document.createTextNode(' pro Jahr'));
+        kurs.appendChild(pa);
+      }
+      const chips = MU.neu('div', 'mu-chips');
+      MU.kachelPerioden.forEach(([feld, label]) => {
+        const c = MU.neu('div', 'mu-chip');
+        const z = MU.neu('span', 'mu-chip-wert ' + MU.klasse(r[feld]), MU.prozent(r[feld]));
+        z.dataset.source = 'werte'; z.dataset.field = feld; z.dataset.where = 'id=' + r.id;
+        c.append(MU.neu('span', 'mu-chip-label', label), z);
+        chips.appendChild(c);
+      });
+      k.append(kopf, kurs, chips);
+      const punkte = (verlauf.get(r.id) || []).slice().sort((a, b) => a.datum < b.datum ? -1 : 1);
+      if (punkte.length > 1) {
+        const farbe = punkte[punkte.length - 1].wert >= punkte[0].wert ? 'var(--color-ok)' : 'var(--color-bad)';
+        const box = MU.neu('div');
+        box.dataset.source = 'verlauf';
+        box.appendChild(spark(k, punkte, farbe));
+        k.appendChild(box);
+      }
+      return k;
+    });
+    el.replaceChildren(...kacheln);
+  });
+</script>
+
+<script>
+  // Anteilsbalken: eine Zeile je Anteil, optional mit Vergleichswert in Klammern.
+  dash.draw('struktur', (el) => {
+    const w = dash.data('werte');
+    if (w.status !== 'ok') { MU.fehler(el, 'werte'); return; }
+    el.classList.remove('dash-skeleton');
+    const feld = el.dataset.feld, vergleich = el.dataset.vergleich;
+    const zeilen = w.data.filter((r) => r.klasse === el.dataset.klasse && r[feld] != null).sort((a, b) => b[feld] - a[feld]);
+    const balken = MU.neu('div', 'mu-balken');
+    balken.setAttribute('role', 'img');
+    balken.setAttribute('aria-label', zeilen.map((r) => r.name + ' ' + MU.anteil(r[feld])).join(', '));
+    const legende = MU.neu('div', 'mu-legende');
+    zeilen.forEach((r, i) => {
+      const farbe = dash.colors[i % dash.colors.length];
+      const teil = MU.neu('span'); teil.style.flex = String(r[feld]); teil.style.background = farbe; teil.title = r.name + ': ' + MU.anteil(r[feld]);
+      balken.appendChild(teil);
+      const eintrag = MU.neu('span');
+      const punkt = MU.neu('i'); punkt.style.background = farbe;
+      const zahl = MU.neu('b', null, MU.anteil(r[feld]));
+      zahl.dataset.source = 'werte'; zahl.dataset.field = feld; zahl.dataset.where = 'id=' + r.id;
+      eintrag.append(punkt, document.createTextNode(r.name + ' '), zahl);
+      if (vergleich && r[vergleich] != null) eintrag.appendChild(MU.neu('small', null, '(Jan. 2026: ' + MU.anteil(r[vergleich]) + ')'));
+      legende.appendChild(eintrag);
+    });
+    el.replaceChildren(balken, legende);
+  });
+</script>
+
+<script>
+  // Grösste Titel: je Index eine kleine Tabelle.
+  const INDEXFOLGE = ['spx', 'rut', 'ixic', 'dax', 'ibex', 'mib', 'smi', 'n225', 'shcomp', 'kospi'];
+  dash.draw('titel', (el) => {
+    const a = dash.data('aktien');
+    if (a.status !== 'ok') { MU.fehler(el, 'aktien'); return; }
+    el.classList.remove('dash-skeleton');
+    const nachIndex = d3.group(a.data, (r) => r.index);
+    const karten = INDEXFOLGE.filter((id) => nachIndex.has(id)).map((id) => {
+      const zeilen = nachIndex.get(id).slice().sort((x, y) => x.rang - y.rang);
+      const karte = MU.neu('article', 'mu-karte');
+      const kk = MU.neu('div', 'mu-karte-kopf');
+      const anteil = zeilen[0].anteil_top5;
+      const info = MU.neu('span', null, anteil != null ? 'Top 5 = ' + MU.anteil(anteil) + ' des Index' : 'Top 5: Anteil nicht verfügbar');
+      if (anteil == null) info.title = 'Für diesen Index gibt es keine freie, vollständige Mitgliederliste; der Anteil lässt sich deshalb nicht berechnen.';
+      if (anteil != null) { info.dataset.source = 'aktien'; info.dataset.field = 'anteil_top5'; info.dataset.where = 'key=' + zeilen[0].key; info.title = 'Anteil der fünf grössten Titel am Börsenwert aller Indexmitglieder'; }
+      kk.append(MU.neu('h3', null, zeilen[0].indexname), info);
+      karte.appendChild(kk);
+      const rollen = MU.neu('div', 'mu-rollen');
+      const tab = MU.neu('table', 'mu-tab mu-titeltab');
+      tab.dataset.source = 'aktien'; tab.dataset.rowKey = 'key';
+      const spalten = MU.neu('colgroup');
+      ['mu-col-name', 'mu-col-wert', 'mu-col-pz', 'mu-col-pz', 'mu-col-pz', 'mu-col-pz'].forEach((c) => spalten.appendChild(MU.neu('col', c)));
+      const kopf = MU.neu('tr');
+      [['name', 'Titel'], ['boersenwert_usd', 'USD'], ['t1', '1T'], ['ytd', 'YTD'], ['j1', '1J'], ['j5', '5J']].forEach(([feld, text]) => {
+        const th = MU.neu('th', null, text); th.dataset.field = feld; kopf.appendChild(th);
+      });
+      const thead = MU.neu('thead'); thead.appendChild(kopf);
+      const tbody = MU.neu('tbody');
+      zeilen.forEach((r) => {
+        const tr = MU.neu('tr'); tr.dataset.key = r.key;
+        tr.append(
+          Object.assign(MU.neu('td', 'mu-name', r.name), {title: r.name + ' (' + r.symbol + ')'}),
+          MU.neu('td', null, r.boersenwert_usd ? MU.kompakt(r.boersenwert_usd) : '—'),
+          ...MU.perioden.map(([feld]) => MU.neu('td', MU.klasse(r[feld]), MU.pz(r[feld]))),
+        );
+        tbody.appendChild(tr);
+      });
+      tab.append(spalten, thead, tbody);
+      rollen.appendChild(tab);
+      karte.appendChild(rollen);
+      return karte;
+    });
+    el.replaceChildren(...karten);
+  });
+</script>
+
+<script>
+  // Kacheln der 10-jährigen Renditen mit Verlauf über 12 Monate; Veränderungen in Basispunkten.
+  const ZINS_LAENDER = ['US', 'DE', 'GB', 'JP', 'CA', 'AU', 'CH', 'CN'];
+  dash.draw('zinskacheln', (el) => {
+    const z = dash.data('zinsen'), v = dash.data('verlauf');
+    if (z.status !== 'ok') { MU.fehler(el, 'zinsen', 'verlauf'); return; }
+    el.classList.remove('dash-skeleton');
+    const verlauf = v.status === 'ok' ? d3.group(v.data, (p) => p.id) : new Map();
+    const zeilen = z.data.filter((r) => r.laufzeit === '10J')
+      .sort((a, b) => ZINS_LAENDER.indexOf(a.kuerzel) - ZINS_LAENDER.indexOf(b.kuerzel));
+    el.replaceChildren(...zeilen.map((r) => {
+      const k = MU.neu('article', 'mu-kachel');
+      const kopf = MU.neu('div', 'mu-kachel-kopf');
+      kopf.append(MU.neu('span', 'mu-kachel-name', r.land), MU.neu('span', 'mu-kachel-region', 'Stand ' + MU.tag(r.stand)));
+      const kurs = MU.neu('div', 'mu-kurs');
+      const wert = MU.neu('span', 'mu-kurs-wert', MU.rendite(r.rendite));
+      wert.dataset.source = 'zinsen'; wert.dataset.field = 'rendite'; wert.dataset.where = 'key=' + r.key;
+      const ytd = MU.neu('span', 'mu-ytd ' + MU.klasse(r.ytd), '(YTD ' + MU.bp(r.ytd) + ' Bp)');
+      ytd.dataset.source = 'zinsen'; ytd.dataset.field = 'ytd'; ytd.dataset.where = 'key=' + r.key;
+      ytd.hidden = r.ytd == null;
+      kurs.append(wert, ytd);
+      const chips = MU.neu('div', 'mu-chips');
+      MU.kachelPerioden.forEach(([feld, label]) => {
+        const c = MU.neu('div', 'mu-chip');
+        const zahl = MU.neu('span', 'mu-chip-wert ' + MU.klasse(r[feld]), r[feld] == null ? '—' : MU.bp(r[feld]) + ' Bp');
+        zahl.dataset.source = 'zinsen'; zahl.dataset.field = feld; zahl.dataset.where = 'key=' + r.key;
+        c.append(MU.neu('span', 'mu-chip-label', label), zahl);
+        chips.appendChild(c);
+      });
+      k.append(kopf, kurs, chips);
+      const punkte = (verlauf.get('zins-' + r.kuerzel) || []).slice().sort((a, b) => a.datum < b.datum ? -1 : 1);
+      if (punkte.length > 1) {
+        const farbe = punkte[punkte.length - 1].wert >= punkte[0].wert ? 'var(--color-ok)' : 'var(--color-bad)';
+        const box = MU.neu('div');
+        box.dataset.source = 'verlauf';
+        box.appendChild(MU.spark(k, punkte, farbe, MU.rendite));
+        k.appendChild(box);
+      }
+      return k;
+    }));
+  });
+</script>
+
+<script>
+  // Zinstabelle: Länder untereinander, Laufzeiten aufsteigend.
+  const LAND_FOLGE = ['US', 'DE', 'GB', 'JP', 'CA', 'AU', 'CH', 'CN'];
+  const LZ_FOLGE = ['1J', '5J', '10J', '20J', '30J'];
+  dash.draw('zinsen', (tbody) => {
+    const z = dash.data('zinsen');
+    if (z.status !== 'ok') {
+      const tr = MU.neu('tr'), td = MU.neu('td', z.status === 'error' ? 'mu-null' : null, z.status === 'error' ? 'Konnte nicht geladen werden' : '—');
+      td.colSpan = 9; tr.appendChild(td); tbody.replaceChildren(tr); return;
+    }
+    const zeilen = z.data.slice().sort((a, b) =>
+      LAND_FOLGE.indexOf(a.kuerzel) - LAND_FOLGE.indexOf(b.kuerzel) || LZ_FOLGE.indexOf(a.laufzeit) - LZ_FOLGE.indexOf(b.laufzeit));
+    let vorher = null;
+    tbody.replaceChildren(...zeilen.map((r) => {
+      const tr = MU.neu('tr'); tr.dataset.key = r.key;
+      if (vorher && vorher !== r.kuerzel) tr.className = 'mu-landanfang';
+      tr.append(
+        MU.neu('td', vorher === r.kuerzel ? 'mu-klein' : null, r.land),
+        MU.neu('td', null, r.laufzeit),
+        MU.neu('td', null, MU.rendite(r.rendite)),
+        ...MU.tabPerioden.map(([feld]) => MU.neu('td', MU.klasse(r[feld]), MU.bp(r[feld]))),
+        MU.neu('td', 'mu-klein', MU.tag(r.stand)),
+      );
+      vorher = r.kuerzel;
+      return tr;
+    }));
+  });
+</script>
+
+<script>
+  // Nachrichten als Liste mit Quelle und Uhrzeit.
+  dash.draw('news', (ul) => {
+    const n = dash.data('news');
+    if (n.status !== 'ok') {
+      ul.replaceChildren(MU.neu('li', 'mu-null', n.status === 'error' ? 'Konnte nicht geladen werden' : '—')); return;
+    }
+    ul.replaceChildren(...n.data.slice(Number(ul.dataset.von || 0), Number(ul.dataset.bis || 20)).map((r) => {
+      const li = MU.neu('li');
+      const a = MU.neu('a', null, r.titel);
+      if (/^https:\/\//.test(r.link)) a.href = r.link;
+      a.target = '_blank'; a.rel = 'noopener noreferrer';
+      li.append(a, MU.neu('small', null, [r.quelle, MU.zeit(r.zeit)].filter(Boolean).join(' · ')));
+      return li;
+    }));
+  });
+</script>

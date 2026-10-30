@@ -1,0 +1,63 @@
+# Holt jeden Werktag morgens (nach Börsenschluss in Asien) und abends (nach Börsenschluss in den USA)
+# die Daten neu, baut die Seite und veröffentlicht sie über GitHub Pages.
+name: Daten aktualisieren
+
+on:
+  schedule:
+    - cron: "47 6 * * 1-5"   # 07:47 MEZ / 08:47 MESZ
+    - cron: "47 21 * * 1-5"  # 22:47 MEZ / 23:47 MESZ
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: aktualisieren
+  cancel-in-progress: false
+
+jobs:
+  aktualisieren:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.pages.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Daten abrufen
+        run: |
+          mkdir -p neu
+          python abruf.py neu daten/aktien.json | tee bericht.json
+          # Nur Dateien mit genug Zeilen übernehmen, sonst bleibt der letzte Stand
+          python - <<'PY'
+          import json, shutil, pathlib
+          mindest = {"werte.json": 25, "aktien.json": 30, "zinsen.json": 10, "verlauf.json": 100, "news.json": 5}
+          for name, n in mindest.items():
+              p = pathlib.Path("neu") / name
+              if p.exists() and len(json.loads(p.read_text())["rows"]) >= n:
+                  shutil.copy(p, pathlib.Path("daten") / name)
+              else:
+                  print("Behalte alten Stand:", name)
+          PY
+      - name: Daten sichern
+        run: |
+          git config user.name "marktuebersicht-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add daten
+          git diff --cached --quiet || git commit -m "Daten aktualisiert" && git push || true
+      - name: Seite bauen
+        run: |
+          python baue_seite.py site
+          cp -r daten site/daten
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: pages
+        uses: actions/deploy-pages@v4
