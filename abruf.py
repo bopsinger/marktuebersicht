@@ -162,10 +162,11 @@ LAENDER = [
 
 # Top News zuerst, in der Reihenfolge der Redaktion; die Märkte-Meldungen füllen nur auf, wenn der erste Feed zu wenig liefert.
 NEWS_FEEDS = [
-    # Quelle, Adresse. CNBC deckt die USA und die Weltmärkte ab, die NZZ ergänzt Europa und die Schweiz.
-    # Beide Listen stehen in der Reihenfolge ihrer Redaktion und werden abwechselnd gemischt.
-    ("CNBC", "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114"),
-    ("NZZ", "https://www.nzz.ch/wirtschaft.rss"),
+    # Quelle, Adressen. CNBC: Top News (USA und Weltmärkte, Reihenfolge der Redaktion).
+    # Investing.com: Wirtschaft und Konjunkturdaten (globale Makro-Meldungen, viele von Reuters), frei lesbar,
+    # beide Feeds zusammengeführt und nach Zeit sortiert. Die zwei Quellen werden abwechselnd gemischt.
+    ("CNBC", ["https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114"]),
+    ("Investing.com", ["https://www.investing.com/rss/news_14.rss", "https://www.investing.com/rss/news_95.rss"]),
 ]
 NEWS_ANZAHL = 20
 
@@ -549,29 +550,41 @@ def krypto_gesamt():
 # ---------------------------------------------------------------- Nachrichten
 
 
+def _rss_zeit(text):
+    """RSS-Zeit (RFC 822 oder „JJJJ-MM-TT hh:mm:ss“ in UTC) als ISO-Zeit."""
+    if not text:
+        return None
+    try:
+        return email.utils.parsedate_to_datetime(text).astimezone(dt.timezone.utc).isoformat()
+    except (TypeError, ValueError):
+        pass
+    try:
+        return dt.datetime.strptime(text.strip(), "%Y-%m-%d %H:%M:%S").replace(tzinfo=dt.timezone.utc).isoformat()
+    except ValueError:
+        return None
+
+
 def nachrichten():
     listen, gesehen = [], set()
-    for quelle, url in NEWS_FEEDS:
-        try:
-            wurzel = ET.fromstring(hole(url, text=True))
-        except Exception as e:  # noqa: BLE001
-            FEHLER.append(f"News {quelle}: {e}")
-            continue
+    for quelle, urls in NEWS_FEEDS:
         liste = []
-        for item in wurzel.iter("item"):
-            titel = " ".join((item.findtext("title") or "").split())
-            link = (item.findtext("link") or "").strip()
-            if not titel or not link.startswith("https://") or titel.lower() in gesehen:
-                continue
-            gesehen.add(titel.lower())
-            zeit = None
+        for url in urls:
             try:
-                zeit = email.utils.parsedate_to_datetime(item.findtext("pubDate")).astimezone(dt.timezone.utc).isoformat()
-            except Exception:  # noqa: BLE001
-                pass
-            liste.append({"titel": titel, "quelle": quelle, "link": link, "zeit": zeit})
+                wurzel = ET.fromstring(hole(url, text=True))
+            except Exception as e:  # noqa: BLE001
+                FEHLER.append(f"News {quelle}: {e}")
+                continue
+            for item in wurzel.iter("item"):
+                titel = " ".join((item.findtext("title") or "").split())
+                link = (item.findtext("link") or "").strip()
+                if not titel or not link.startswith("https://") or titel.lower() in gesehen:
+                    continue
+                gesehen.add(titel.lower())
+                liste.append({"titel": titel, "quelle": quelle, "link": link, "zeit": _rss_zeit(item.findtext("pubDate"))})
+        if len(urls) > 1:  # mehrere Feeds einer Quelle: neueste zuerst
+            liste.sort(key=lambda n: n["zeit"] or "", reverse=True)
         listen.append(liste)
-    # abwechselnd mischen: 1. CNBC, 1. NZZ, 2. CNBC, ...
+    # abwechselnd mischen: 1. CNBC, 1. Investing.com, 2. CNBC, ...
     aus = []
     for i in range(max((len(l) for l in listen), default=0)):
         for liste in listen:
