@@ -108,6 +108,19 @@
     .mu-info-text { width: calc(100vw - 32px); }
   }
   .mu-quellen { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .mu-quellen { order: 999; }
+  .mu-kopfknoepfe { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); }
+  .mu-schieben { display: none; gap: 4px; margin-left: auto; }
+  .mu-anordnen .mu-schieben { display: inline-flex; }
+  .mu-schieben button { font: inherit; font-size: 12px; width: 2rem; height: 1.7rem; border: 1px solid var(--color-fg-muted); border-radius: 6px; background: var(--color-panel); color: var(--color-fg); cursor: pointer; }
+  .mu-schieben button:hover { border-color: var(--color-fg); }
+  .mu-schieben button:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+  .mu-anordnen .mu-abschnitt { outline: 1px dashed var(--color-border-line); outline-offset: 8px; border-radius: 4px; }
+  .mu-umsatztab { table-layout: fixed; min-width: 30rem; }
+  .mu-umsatztab col.mu-col-rang { width: 1.8rem; }
+  .mu-umsatztab col.mu-col-k { width: 5.4rem; }
+  .mu-umsatztab td.mu-name { overflow: hidden; text-overflow: ellipsis; }
+  .mu-umsatztab th:nth-child(2), .mu-umsatztab td:nth-child(2) { text-align: left; padding-left: var(--cds-pad-sm); }
   .mu-titeltab col.mu-col-wert { width: 4.8rem; }
   .mu-titeltab col.mu-col-pz { width: 3.7rem; }
   .mu-titeltab td.mu-name, .mu-titeltab th:first-child { overflow: hidden; text-overflow: ellipsis; }
@@ -139,13 +152,19 @@
     <h1 class="mu-titel">Marktübersicht</h1>
     <div class="mu-kopfzeile">
       <p class="mu-lage" data-draw="lage" data-source="werte">—</p>
-      <button type="button" class="mu-neu" id="mu-neu" title="Lädt den neuesten gespeicherten Datenstand">↻ Daten neu laden</button>
+      <div class="mu-kopfknoepfe">
+        <button type="button" class="mu-neu" id="mu-anordnen" title="Abschnitte nach oben oder unten verschieben">⇅ Anordnen</button>
+        <button type="button" class="mu-neu" id="mu-fertig" hidden>✓ Fertig</button>
+        <button type="button" class="mu-neu" id="mu-standard" hidden title="Ursprüngliche Reihenfolge wiederherstellen">Standard</button>
+        <button type="button" class="mu-neu" id="mu-neu" title="Lädt den neuesten gespeicherten Datenstand">↻ Daten neu laden</button>
+      </div>
     </div>
     <nav class="mu-nav" aria-label="Abschnitte">
       <button type="button" data-ziel="news">Nachrichten</button>
       <button type="button" data-ziel="anlageklassen">Anlageklassen</button>
       <button type="button" data-ziel="indizes">Aktienindizes</button>
       <button type="button" data-ziel="titel">Grösste Titel</button>
+      <button type="button" data-ziel="umsatz">Meistgehandelt</button>
       <button type="button" data-ziel="rohstoffe">Rohstoffe</button>
       <button type="button" data-ziel="zinsen">Zinsen</button>
       <button type="button" data-ziel="krypto">Krypto</button>
@@ -156,6 +175,7 @@
     <div class="mu-h2">
       <h2>Nachrichten</h2>
       <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Nachrichten">i<span class="mu-info-text" role="tooltip">Top News von CNBC (USA und Weltmärkte, Reihenfolge der Redaktion) und globale Makro-Meldungen von Investing.com (Wirtschaft und Konjunkturdaten, neueste zuerst, viele von Reuters), abwechselnd gemischt; beide ohne Bezahlschranke. Die fünf obersten stehen sichtbar, die übrigen 15 unter „Weitere Meldungen“. Auf der öffentlichen Seite werden die Nachrichten alle 5 Minuten neu geladen.</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
     <ul class="mu-news" data-draw="news" data-von="0" data-bis="5" data-source="news"></ul>
     <details class="mu-mehr">
@@ -168,6 +188,7 @@
     <div class="mu-h2">
       <h2>Anlageklassen</h2>
       <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Anlageklassen">i<span class="mu-info-text" role="tooltip">Geschätzter weltweiter Wert je Anlageklasse in US-Dollar, aus den breitesten frei verfügbaren Schätzungen. Immobilien: 393,3 Bio. (Savills, alle Wohn-, Gewerbe- und Agrarimmobilien der Welt, Stand Ende 2024). Savills schätzt nur einmal im Jahr; die Linie zeigt die Jahreswerte 2020 bis 2024 (2023 aus dem Rückgang 2024 zurückgerechnet), 1J ist die Veränderung 2024 (−0,5 %), 5J die gegenüber 2019 (+21,3 %). Der Sprung von 2020 auf 2021 geht teils auf Methodenänderungen zwischen den Berichten zurück. Anleihen: 160,7 Bio. und Aktien: 157,8 Bio. (SIFMA Capital Markets Fact Book 2026, Stand Ende 2025), seither fortgeschrieben mit dem Mittel aus AGG und BNDX bzw. mit dem MSCI ACWI; bei Anleihen nur die Kursänderung, neu ausgegebene Anleihen sind nicht erfasst. Gold: oberirdischer Bestand von 220 700 Tonnen (World Gold Council, Ende 2025) zum aktuellen Goldpreis. Silber: rund 1,6 Mio. Tonnen (CPM Group, Stand 2018; andere Schätzungen reichen von 0,6 bis 2,5 Mio. Tonnen) zum aktuellen Silberpreis. Krypto: Marktkapitalisierung von CoinMarketCap. Übrige Rohstoffe fehlen, weil sie verbraucht und nicht als Bestand gehalten werden; Private Equity und Private Debt fehlen, weil es dafür keine täglichen Werte gibt.</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
     <div class="mu-kuchen dash-skeleton" data-draw="kuchen" data-klasse="Anlageklasse" data-source="werte">—</div>
     <div class="mu-kacheln dash-skeleton" data-draw="kacheln" data-klasse="Anlageklasse" data-source="werte verlauf">—</div>
@@ -177,6 +198,7 @@
     <div class="mu-h2">
       <h2>Aktienindizes</h2>
       <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Aktienindizes">i<span class="mu-info-text" role="tooltip">Stand in Punkten, in Klammern die Veränderung seit Jahresbeginn (YTD). Darunter die Veränderung zum Vortag (1T) sowie über 1, 5 und 10 Jahre, jeweils in Lokalwährung. Die erste Kachel ist der gleich gewichtete Durchschnitt aller Indizes: je Zeitraum das Mittel der einzelnen Veränderungen, die Linie zeigt die auf 100 gesetzten Indizes im Mittel. So siehst du, welcher Index besser oder schlechter als der Durchschnitt lief. Jede Kachel zeigt zusätzlich die annualisierte Rendite über 10 Jahre (geometrisch, ohne Dividenden; der DAX enthält sie als Performanceindex bereits). China: Shanghai Composite, da für den CSI 300 keine Kurshistorie verfügbar ist.</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
     <div class="mu-kacheln dash-skeleton" data-draw="kacheln" data-klasse="Aktien" data-source="werte verlauf">—</div>
   </section>
@@ -185,6 +207,7 @@
     <div class="mu-h2">
       <h2>Grösste Titel je Index</h2>
       <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Grösste Titel je Index">i<span class="mu-info-text" role="tooltip">Die fünf Titel mit dem höchsten Börsenwert, ausgewählt aus einer Kandidatenliste je Index. Börsenwert in US-Dollar umgerechnet (Yahoo-Wechselkurse), Veränderungen in Lokalwährung. Rechts oben der Anteil der fünf am gesamten Börsenwert des Index; berechnet aus vollständigen Mitgliederlisten für SMI, DAX, IBEX 35 und FTSE MIB (Stand 2025/26, Näherung ohne Streubesitz-Bereinigung). Für die anderen Indizes gibt es keine freie Mitgliederliste. Lange Namen sind gekürzt; der Mauszeiger zeigt Name und Kürzel.</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
     <details class="mu-mehr">
       <summary>Indexschwergewichte anzeigen</summary>
@@ -192,10 +215,36 @@
     </details>
   </section>
 
+  <section class="mu-abschnitt" id="umsatz">
+    <div class="mu-h2">
+      <h2>Meistgehandelte US-Aktien</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Meistgehandelte US-Aktien">i<span class="mu-info-text" role="tooltip">Die zehn US-Aktien mit dem höchsten gehandelten Wert (Kurs × Volumen) am letzten bzw. laufenden Handelstag. Kandidaten sind die 100 umsatzstärksten Titel nach Stückzahl laut Yahoo Finance plus die grössten US-Werte. „vs. Ø 30 T“ vergleicht das Volumen mit dem Durchschnitt der letzten 30 abgeschlossenen Handelstage; während der Börsenzeit ist der Tag noch nicht abgeschlossen, das Volumen also noch unvollständig.</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
+    </div>
+    <div class="mu-zinsen mu-rollen">
+      <table class="mu-tab mu-umsatztab" data-source="umsatz" data-row-key="key">
+        <colgroup><col class="mu-col-rang"><col><col class="mu-col-k"><col class="mu-col-k"><col class="mu-col-k"><col class="mu-col-k"><col class="mu-col-k"></colgroup>
+        <thead>
+          <tr>
+            <th data-field="rang">#</th>
+            <th data-field="name">Titel</th>
+            <th data-field="kurs">Kurs</th>
+            <th data-field="t1">1T</th>
+            <th data-field="umsatz">Umsatz USD</th>
+            <th data-field="volumen">Volumen</th>
+            <th data-field="vol_rel">vs. Ø 30 T</th>
+          </tr>
+        </thead>
+        <tbody data-draw="umsatz"></tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="mu-abschnitt" id="rohstoffe">
     <div class="mu-h2">
       <h2>Rohstoffe</h2>
       <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Rohstoffe">i<span class="mu-info-text" role="tooltip">Kurs mit Veränderung seit Jahresbeginn in Klammern, darunter 1T, 1J, 5J und 10J wie bei den Indizes. Für TTF (Daten ab 2017) und den Uran-Trust (ab 2021) fehlt der 10-Jahres-Wert. Uran ist als Kernbrennstoff ein Energierohstoff und steht deshalb bei Energie. Vordere Terminkontrakte. Veränderungen beziehen sich auf den jeweils vordersten Kontrakt; beim Wechsel des Kontraktmonats kann das die Langfristwerte verzerren. Für Uran gibt es keinen frei abrufbaren Terminkurs; gezeigt wird der Sprott Physical Uranium Trust, der physisches Uran hält und dem Spotpreis eng folgt. Agrarpreise in US-Cent je Bushel (Weizen, Mais, Soja) bzw. je Pfund (Kaffee, Zucker), Kupfer in USD je Pfund, Aluminium in USD je Tonne. Struktur nach Sektoren: Gewichte des S&P GSCI 2026, die sich am weltweiten Produktionswert der Rohstoffe orientieren (Mittel über fünf Jahre), mit der Preisentwicklung seit Jahresbeginn fortgeschrieben. In Klammern das Ausgangsgewicht vom Januar 2026. Einen Marktwert im Sinne eines Bestands gibt es für Rohstoffe nicht; das ist die übliche Annäherung.</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
     <div class="mu-gruppe">
       <h3>Struktur nach Sektoren</h3>
@@ -223,6 +272,7 @@
     <div class="mu-h2">
       <h2>Zinsen: Staatsanleihen</h2>
       <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Zinsen: Staatsanleihen">i<span class="mu-info-text" role="tooltip">Rendite in Prozent, Veränderungen in Basispunkten (100 Bp = 1 Prozentpunkt). Kacheln: Rendite, in Klammern seit Jahresbeginn, darunter 1T, 1J, 5J und 10J. Quellen: US-Finanzministerium, Bundesbank, Bank of England, japanisches Finanzministerium, Bank of Canada, Reserve Bank of Australia, Schweizerische Nationalbank, CFETS/ChinaMoney (China). China gibt nur rund den letzten Monat heraus; dort fehlen YTD, 1J, 5J, 10J und die Jahreslinie. Nicht frei abrufbar und deshalb nicht enthalten: Frankreich, Italien, Grossbritannien 1 und 30 Jahre (dort 20 Jahre als längste Laufzeit) und Australien 1 und 30 Jahre. Kanada 30J ist die langfristige Referenzanleihe. Die SNB veröffentlicht ihre Tageswerte nur einmal im Monat; die Schweizer Werte hinken deshalb bis zu einem Monat hinterher (siehe Spalte Stand).</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
     <div class="mu-gruppe">
       <h3>10 Jahre</h3>
@@ -255,6 +305,7 @@
     <div class="mu-h2">
       <h2>Krypto</h2>
       <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Krypto">i<span class="mu-info-text" role="tooltip">Kurs in US-Dollar, in Klammern die Veränderung seit Jahresbeginn (YTD), darunter 1T, 1J, 5J und 10J. Annualisierte Rendite über 10 Jahre, bei jüngeren Währungen über 5 Jahre. Kurse von Yahoo Finance; lange Zeiträume fehlen, wo es die Währung noch nicht so lange gibt. Die gesamte Marktkapitalisierung aller Kryptowährungen stammt von CoinMarketCap (Tageswerte), dazu der Anteil von Bitcoin daran (BTC-Dominanz).</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
     <div class="mu-kacheln dash-skeleton" data-draw="kacheln" data-klasse="Krypto" data-source="werte verlauf">—</div>
   </section>
@@ -298,8 +349,42 @@
 
   document.querySelectorAll('.mu-neu').forEach((b) => b.addEventListener('click', () => {
     b.disabled = true;
-    ['werte', 'aktien', 'zinsen', 'verlauf', 'news'].forEach((id) => dash.refresh(id));
+    ['werte', 'aktien', 'zinsen', 'verlauf', 'news', 'umsatz'].forEach((id) => dash.refresh(id));
     setTimeout(() => { b.disabled = false; }, 2500);
+  }));
+
+  // Reihenfolge der Abschnitte: per ▲/▼ im Anordnen-Modus, gespeichert im Browser (nur für diesen Browser).
+  const SPEICHER = 'mu-reihenfolge';
+  const wurzel = document.querySelector('.mu');
+  const abschnitte = () => [...document.querySelectorAll('.mu > section.mu-abschnitt')];
+  const lesen = () => { try { return JSON.parse(localStorage.getItem(SPEICHER)) || []; } catch (e) { return []; } };
+  const schreiben = (ids) => { try { localStorage.setItem(SPEICHER, JSON.stringify(ids)); } catch (e) {} };
+  const aktuell = () => {
+    const gespeichert = lesen().filter((id) => document.getElementById(id));
+    return [...gespeichert, ...abschnitte().map((s) => s.id).filter((id) => !gespeichert.includes(id))];
+  };
+  const anwenden = (ids) => {
+    abschnitte().forEach((s) => { s.style.order = String(10 + ids.indexOf(s.id)); });
+    document.querySelectorAll('.mu-nav button').forEach((b) => { const i = ids.indexOf(b.dataset.ziel); b.style.order = String(i < 0 ? 99 : i); });
+  };
+  anwenden(aktuell());
+  const modus = (an) => {
+    if (wurzel) wurzel.classList.toggle('mu-anordnen', an);
+    document.querySelectorAll('#mu-anordnen').forEach((b) => { b.hidden = an; });
+    document.querySelectorAll('#mu-fertig, #mu-standard').forEach((b) => { b.hidden = !an; });
+  };
+  document.querySelectorAll('#mu-anordnen').forEach((b) => b.addEventListener('click', () => modus(true)));
+  document.querySelectorAll('#mu-fertig').forEach((b) => b.addEventListener('click', () => modus(false)));
+  document.querySelectorAll('#mu-standard').forEach((b) => b.addEventListener('click', () => {
+    try { localStorage.removeItem(SPEICHER); } catch (e) {}
+    anwenden(abschnitte().map((s) => s.id));
+  }));
+  document.querySelectorAll('.mu-schieben button').forEach((b) => b.addEventListener('click', () => {
+    const id = b.closest('section').id, ids = aktuell(), i = ids.indexOf(id), j = i + Number(b.dataset.schritt);
+    if (j < 0 || j >= ids.length) return;
+    [ids[i], ids[j]] = [ids[j], ids[i]];
+    schreiben(ids); anwenden(ids);
+    b.closest('section').scrollIntoView({block: 'nearest', behavior: 'smooth'});
   }));
 
   document.querySelectorAll('.mu-nav button').forEach((b) => b.addEventListener('click', () => {
@@ -589,6 +674,30 @@
       return karte;
     });
     el.replaceChildren(...karten);
+  });
+</script>
+
+<script>
+  // Meistgehandelte US-Aktien: Rang, Name (gekürzt), Kurs, Tagesveränderung, Umsatz, Volumen, Volumen gegenüber 30-Tage-Schnitt.
+  dash.draw('umsatz', (tbody) => {
+    const u = dash.data('umsatz');
+    if (u.status !== 'ok') {
+      const tr = MU.neu('tr'), td = MU.neu('td', 'mu-null', u.status === 'error' ? 'Konnte nicht geladen werden' : '—');
+      td.colSpan = 7; tr.appendChild(td); tbody.replaceChildren(tr); return;
+    }
+    tbody.replaceChildren(...u.data.slice().sort((a, b) => a.rang - b.rang).map((r) => {
+      const tr = MU.neu('tr'); tr.dataset.key = r.key;
+      tr.append(
+        MU.neu('td', 'mu-klein', String(r.rang)),
+        Object.assign(MU.neu('td', 'mu-name', r.name), {title: r.name + ' (' + r.symbol + ')'}),
+        MU.neu('td', null, MU.kurs(r.kurs)),
+        MU.neu('td', MU.klasse(r.t1), MU.pz(r.t1)),
+        MU.neu('td', null, MU.kompakt(r.umsatz)),
+        MU.neu('td', 'mu-klein', MU.kompakt(r.volumen)),
+        MU.neu('td', MU.klasse(r.vol_rel), r.vol_rel == null ? '—' : MU.pz(r.vol_rel)),
+      );
+      return tr;
+    }));
   });
 </script>
 

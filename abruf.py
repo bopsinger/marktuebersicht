@@ -596,6 +596,63 @@ def nachrichten():
     return aus
 
 
+def meistgehandelt(n=10):
+    """Meistgehandelte US-Aktien nach gehandeltem Wert (Kurs × Volumen) des letzten bzw. laufenden Handelstags.
+
+    Kandidaten: Yahoos Liste der 100 umsatzstärksten Titel nach Stückzahl plus die grössten US-Werte,
+    weil teure Aktien mit wenig Stücken viel Wert umsetzen können. Für die Spitzengruppe wird der
+    Durchschnitt der letzten 30 abgeschlossenen Handelstage aus der Kurshistorie berechnet.
+    """
+    j = hole("https://query1.finance.yahoo.com/v1/finance/screener/predefined/saved?scrIds=most_actives&count=100")
+    kandidaten = {}
+    for q in j["finance"]["result"][0]["quotes"]:
+        if q.get("quoteType") not in (None, "EQUITY") or not q.get("regularMarketPrice") or not q.get("regularMarketVolume"):
+            continue
+        kandidaten[q["symbol"]] = {"name": q.get("longName") or q.get("shortName") or q["symbol"],
+                                   "kurs": q["regularMarketPrice"], "volumen": q["regularMarketVolume"],
+                                   "t1": q.get("regularMarketChangePercent")}
+
+    def verlauf_volumen(symbol):
+        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{urllib.parse.quote(symbol)}?range=3mo&interval=1d"
+        r = hole(url)["chart"]["result"][0]
+        meta = r["meta"]
+        ind = r["indicators"]["quote"][0]
+        tage = [(t, c, v) for t, c, v in zip(r.get("timestamp") or [], ind.get("close") or [], ind.get("volume") or [])
+                if c is not None and v]
+        return meta, tage
+
+    # grösste US-Werte ergänzen, falls sie nicht schon in der Liste stehen
+    for s in US_GROSS:
+        if s in kandidaten:
+            continue
+        try:
+            meta, tage = verlauf_volumen(s)
+            if tage:
+                vortag = tage[-2][1] if len(tage) > 1 else None
+                kandidaten[s] = {"name": meta.get("longName") or meta.get("shortName") or s,
+                                 "kurs": meta.get("regularMarketPrice") or tage[-1][1], "volumen": tage[-1][2],
+                                 "t1": (tage[-1][1] / vortag - 1) * 100 if vortag else None}
+        except Exception as e:  # noqa: BLE001
+            FEHLER.append(f"Meistgehandelt {s}: {e}")
+    spitze = sorted(kandidaten.items(), key=lambda kv: -kv[1]["kurs"] * kv[1]["volumen"])[:n]
+    aus = []
+    for rang, (s, k) in enumerate(spitze, 1):
+        schnitt = None
+        try:
+            _, tage = verlauf_volumen(s)
+            abgeschlossen = tage[:-1]  # der letzte Tag kann noch laufen
+            letzte = [v for _, _, v in abgeschlossen[-30:]]
+            schnitt = sum(letzte) / len(letzte) if letzte else None
+        except Exception as e:  # noqa: BLE001
+            FEHLER.append(f"Meistgehandelt {s} Durchschnitt: {e}")
+        aus.append({"key": s, "rang": rang, "symbol": s, "name": " ".join(k["name"].split()),
+                    "kurs": round(k["kurs"], 2), "t1": round(k["t1"], 2) if k["t1"] is not None else None,
+                    "volumen": int(k["volumen"]), "umsatz": round(k["kurs"] * k["volumen"]),
+                    "schnitt30": round(schnitt) if schnitt else None,
+                    "vol_rel": round((k["volumen"] / schnitt - 1) * 100, 1) if schnitt else None})
+    return aus
+
+
 # ---------------------------------------------------------------- Hauptteil
 
 
@@ -829,8 +886,9 @@ def main(ziel, vorher=None):
     news = nachrichten()
 
     stempel = {"at": jetzt, "by": "Geplante Aktualisierung (abruf.py)"}
+    umsatz = sicher(meistgehandelt) or []
     dateien = {"werte.json": werte, "aktien.json": aktien, "zinsen.json": zinsen,
-               "verlauf.json": verlauf, "news.json": news}
+               "verlauf.json": verlauf, "news.json": news, "umsatz.json": umsatz}
     for name, zeilen in dateien.items():
         with open(f"{ziel}/{name}", "w", encoding="utf-8") as f:
             json.dump({"rows": zeilen}, f, ensure_ascii=False, separators=(",", ":"))
