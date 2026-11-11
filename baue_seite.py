@@ -64,10 +64,10 @@ KOPF = """<!doctype html>
       refresh: (id) => laden(id), params: () => ({}), setParams: () => {}, resetParams: () => {},
       calc: () => {}, loader: () => {},
     };
-    // Nachrichten kommen aus einem eigenen Zweig, den ein Ablauf alle 5 Minuten neu schreibt.
-    const NEWS_LIVE = "https://raw.githubusercontent.com/bopsinger/marktuebersicht/nachrichten/news.json";
+    // Laufende Daten kommen aus dem Zweig "live", den der Dauerlauf schreibt; sonst der Stand der Seite.
+    const LIVE = "https://raw.githubusercontent.com/bopsinger/marktuebersicht/live/";
     function laden(id) {
-      const url = id === "news" ? NEWS_LIVE + "?t=" + Date.now() : "daten/" + id + ".json?t=" + Date.now();
+      const url = LIVE + id + ".json?t=" + Date.now();
       return fetch(url, {cache: "no-store"})
         .then((r) => { if (!r.ok) throw new Error(r.status); return r; })
         .catch(() => fetch("daten/" + id + ".json?t=" + Date.now(), {cache: "no-store"}))
@@ -79,8 +79,8 @@ KOPF = """<!doctype html>
     window.addEventListener("DOMContentLoaded", () => {
       allesZeichnen();
       QUELLEN.forEach(laden);
-      setInterval(() => laden("news"), 5 * 60 * 1000);  // Nachrichten alle 5 Minuten
-      setInterval(() => QUELLEN.forEach(laden), 30 * 60 * 1000);  // übrige Daten alle 30 Minuten
+      setInterval(() => laden("news"), 5 * 60 * 1000);  // Nachrichten alle 5 Minuten nachsehen
+      setInterval(() => QUELLEN.forEach(laden), 15 * 60 * 1000);  // übrige Daten alle 15 Minuten nachsehen
       let breite = window.innerWidth;
       window.addEventListener("resize", () => { if (Math.abs(window.innerWidth - breite) > 40) { breite = window.innerWidth; allesZeichnen(); } });
       const ziel = document.getElementById(location.hash.slice(1));

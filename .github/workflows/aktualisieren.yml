@@ -1,10 +1,9 @@
-# Holt an Werktagen stündlich von 07:17 bis 22:17 Uhr (UTC 06:17 bis 21:17) die Daten neu,
-# baut die Seite und veröffentlicht sie über GitHub Pages. Für öffentliche Repositorys kostenlos.
+# Holt alle Daten neu, baut die Seite und veröffentlicht sie über GitHub Pages.
+# Läuft bei jeder Änderung am Code und auf Knopfdruck ("Run workflow"); die laufende
+# Aktualisierung während der Börsenzeit übernimmt dauerlauf.yml.
 name: Daten aktualisieren
 
 on:
-  schedule:
-    - cron: "17 6-21 * * 1-5"
   workflow_dispatch:
   push:
     branches: [main]
@@ -33,34 +32,15 @@ jobs:
         run: |
           mkdir -p neu
           python abruf.py neu daten/aktien.json | tee bericht.json
-          # Nur Dateien mit genug Zeilen übernehmen, sonst bleibt der letzte Stand
-          python - <<'PY'
-          import json, shutil, pathlib
-          mindest = {"werte.json": 25, "aktien.json": 30, "zinsen.json": 10, "verlauf.json": 100, "news.json": 5, "umsatz.json": 5, "kryptogewinner.json": 5}
-          for name, n in mindest.items():
-              p = pathlib.Path("neu") / name
-              if p.exists() and len(json.loads(p.read_text())["rows"]) >= n:
-                  shutil.copy(p, pathlib.Path("daten") / name)
-              else:
-                  print("Behalte alten Stand:", name)
-          PY
+          python uebernehmen.py
       - name: Daten sichern
         run: |
           git config user.name "marktuebersicht-bot"
           git config user.email "actions@users.noreply.github.com"
           git add daten
           git diff --cached --quiet || git commit -m "Daten aktualisiert" && git push || true
-      - name: Nachrichten in den Zweig "nachrichten" schreiben
-        run: |
-          n=$(python -c "import json; print(len(json.load(open('daten/news.json'))['rows']))")
-          if [ "$n" -ge 5 ]; then
-            mkdir -p nzweig && cp daten/news.json nzweig/ && cd nzweig
-            git init -q -b nachrichten
-            git config user.name "marktuebersicht-bot"
-            git config user.email "actions@users.noreply.github.com"
-            git add news.json && git commit -q -m "Nachrichten"
-            git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" nachrichten || true
-          fi
+      - name: In den Zweig "live" schreiben
+        run: bash zweig_schreiben.sh "${{ github.token }}" "${{ github.repository }}"
       - name: Seite bauen
         run: |
           python baue_seite.py site
