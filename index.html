@@ -126,6 +126,11 @@
   .mu-gewinnertab td.mu-name { overflow: hidden; text-overflow: ellipsis; }
   .mu-gewinnertab th:nth-child(2), .mu-gewinnertab td:nth-child(2) { text-align: left; padding-left: var(--cds-pad-sm); }
   .mu-sym { color: var(--color-fg-muted); font-weight: 400; margin-left: 6px; }
+  .mu-link { color: inherit; text-decoration: none; }
+  .mu-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .mu-link:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; border-radius: 2px; }
+  .mu-github { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); text-decoration: none; border: 1px solid var(--color-border-line); border-radius: 999px; padding: var(--cds-pad-xs) var(--cds-pad-md); white-space: nowrap; }
+  .mu-github:hover { color: var(--color-fg); border-color: var(--color-fg-muted); }
   .mu-umsatztab td.mu-name { overflow: hidden; text-overflow: ellipsis; }
   .mu-umsatztab th:nth-child(2), .mu-umsatztab td:nth-child(2) { text-align: left; padding-left: var(--cds-pad-sm); }
   .mu-titeltab col.mu-col-wert { width: 4.8rem; }
@@ -164,6 +169,7 @@
         <button type="button" class="mu-neu" id="mu-fertig" hidden>✓ Fertig</button>
         <button type="button" class="mu-neu" id="mu-standard" hidden title="Ursprüngliche Reihenfolge wiederherstellen">Standard</button>
         <button type="button" class="mu-neu" id="mu-neu" title="Lädt den neuesten gespeicherten Datenstand">↻ Daten neu laden</button>
+        <a class="mu-github" href="https://github.com/bopsinger/marktuebersicht/actions/workflows/aktualisieren.yml" target="_blank" rel="noopener noreferrer" title="Öffnet GitHub; dort „Run workflow“ klicken. Nach 3 bis 5 Minuten sind alle Daten frisch, dann „Daten neu laden“.">⟳ Frisch abrufen (GitHub)</a>
       </div>
     </div>
     <nav class="mu-nav" aria-label="Abschnitte">
@@ -213,7 +219,7 @@
   <section class="mu-abschnitt" id="titel">
     <div class="mu-h2">
       <h2>Grösste Titel je Index</h2>
-      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Grösste Titel je Index">i<span class="mu-info-text" role="tooltip">Die fünf Titel mit dem höchsten Börsenwert, ausgewählt aus einer Kandidatenliste je Index. Börsenwert in US-Dollar umgerechnet (Yahoo-Wechselkurse), Veränderungen in Lokalwährung. Rechts oben der Anteil der fünf am gesamten Börsenwert des Index; berechnet aus vollständigen Mitgliederlisten für SMI, DAX, IBEX 35 und FTSE MIB (Stand 2025/26, Näherung ohne Streubesitz-Bereinigung). Für die anderen Indizes gibt es keine freie Mitgliederliste. Lange Namen sind gekürzt; der Mauszeiger zeigt Name und Kürzel.</span></span>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Grösste Titel je Index">i<span class="mu-info-text" role="tooltip">Die fünf Titel mit dem höchsten Börsenwert, ausgewählt aus einer Kandidatenliste je Index. Börsenwert in US-Dollar umgerechnet (Yahoo-Wechselkurse), Veränderungen in Lokalwährung. Rechts oben der Anteil der fünf am gesamten Börsenwert des Index; berechnet aus vollständigen Mitgliederlisten für SMI, DAX, IBEX 35 und FTSE MIB (Stand 2025/26, Näherung ohne Streubesitz-Bereinigung). Für die anderen Indizes gibt es keine freie Mitgliederliste. Lange Namen sind gekürzt; der Mauszeiger zeigt Name und Kürzel, ein Klick öffnet die Seite bei Yahoo Finance.</span></span>
       <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
     <details class="mu-mehr">
@@ -225,7 +231,7 @@
   <section class="mu-abschnitt" id="umsatz">
     <div class="mu-h2">
       <h2>Meistgehandelte US-Aktien</h2>
-      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Meistgehandelte US-Aktien">i<span class="mu-info-text" role="tooltip">Die zehn US-Aktien mit dem höchsten gehandelten Wert (Kurs × Volumen) am letzten bzw. laufenden Handelstag. Kandidaten sind die 100 umsatzstärksten Titel nach Stückzahl laut Yahoo Finance plus die grössten US-Werte. „vs. Ø 30 T“ vergleicht das Volumen mit dem Durchschnitt der letzten 30 abgeschlossenen Handelstage; während der Börsenzeit ist der Tag noch nicht abgeschlossen, das Volumen also noch unvollständig. Renditen 1W bis 1J beziehen sich auf den letzten Schlusskurs (Kursrendite ohne Dividenden).</span></span>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Meistgehandelte US-Aktien">i<span class="mu-info-text" role="tooltip">Die zehn US-Aktien mit dem höchsten gehandelten Wert (Kurs × Volumen) am letzten bzw. laufenden Handelstag. Kandidaten sind die 100 umsatzstärksten Titel nach Stückzahl laut Yahoo Finance plus die grössten US-Werte. Ein Klick auf den Namen öffnet die Seite bei Yahoo Finance. „vs. Ø 30 T“ vergleicht das Volumen mit dem Durchschnitt der letzten 30 abgeschlossenen Handelstage; während der Börsenzeit ist der Tag noch nicht abgeschlossen, das Volumen also noch unvollständig. Renditen 1W bis 1J beziehen sich auf den letzten Schlusskurs (Kursrendite ohne Dividenden).</span></span>
       <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
     <div class="mu-zinsen mu-rollen">
@@ -316,12 +322,12 @@
   <section class="mu-abschnitt" id="krypto">
     <div class="mu-h2">
       <h2>Krypto</h2>
-      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Krypto">i<span class="mu-info-text" role="tooltip">Kurs in US-Dollar, in Klammern die Veränderung seit Jahresbeginn (YTD), darunter 1T, 1J, 5J und 10J. Annualisierte Rendite über 10 Jahre, bei jüngeren Währungen über 5 Jahre. Gewinner-Tabelle: die zehn Kryptowährungen mit der besten 12-Monats-Entwicklung unter den 100 grössten nach Marktkapitalisierung (CoinMarketCap); nur Coins, die seit mindestens einem Jahr gelistet sind. „Rang“ ist der Platz nach Marktkapitalisierung. Kurse von Yahoo Finance; lange Zeiträume fehlen, wo es die Währung noch nicht so lange gibt. Die gesamte Marktkapitalisierung aller Kryptowährungen stammt von CoinMarketCap (Tageswerte), dazu der Anteil von Bitcoin daran (BTC-Dominanz).</span></span>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Krypto">i<span class="mu-info-text" role="tooltip">Kurs in US-Dollar, in Klammern die Veränderung seit Jahresbeginn (YTD), darunter 1T, 1J, 5J und 10J. Annualisierte Rendite über 10 Jahre, bei jüngeren Währungen über 5 Jahre. Gewinner-Tabelle: die zehn Kryptowährungen mit der besten 12-Monats-Entwicklung unter den 50 grössten nach Marktkapitalisierung (CoinMarketCap); nur Coins, die seit mindestens einem Jahr gelistet sind; Stablecoins, tokenisiertes Gold und verpackte Coins sind ausgenommen. Sind weniger als zehn gestiegen, folgen die mit den geringsten Verlusten. „Rang“ ist der Platz nach Marktkapitalisierung. Ein Klick auf den Namen öffnet die Seite des Tokens bei CoinMarketCap. Kurse von Yahoo Finance; lange Zeiträume fehlen, wo es die Währung noch nicht so lange gibt. Die gesamte Marktkapitalisierung aller Kryptowährungen stammt von CoinMarketCap (Tageswerte), dazu der Anteil von Bitcoin daran (BTC-Dominanz).</span></span>
       <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
     <div class="mu-kacheln dash-skeleton" data-draw="kacheln" data-klasse="Krypto" data-source="werte verlauf">—</div>
     <div class="mu-gruppe">
-      <h3>Gewinner der letzten 12 Monate (aus den Top 100)</h3>
+      <h3>Gewinner der letzten 12 Monate (aus den Top 50)</h3>
       <div class="mu-zinsen mu-rollen">
         <table class="mu-tab mu-gewinnertab" data-source="kryptogewinner" data-row-key="key">
           <colgroup><col class="mu-col-rang"><col class="mu-col-name"><col class="mu-col-p"><col class="mu-col-k"><col class="mu-col-p"><col class="mu-col-p"><col class="mu-col-p"><col class="mu-col-p"><col class="mu-col-k"></colgroup>
@@ -365,6 +371,12 @@
     bp: (v) => v == null ? '—' : (v > 0 ? '+' : v < 0 ? '−' : '±') + f0.format(Math.abs(v)),
     rendite: (v) => v == null ? '—' : f2.format(v) + ' %',
     anteil: (v) => v == null ? '—' : f1.format(v) + ' %',
+    yahoo: (s) => 'https://finance.yahoo.com/quote/' + encodeURIComponent(s),
+    link: (text, href) => {
+      if (!href || !/^https:\/\//.test(href)) return document.createTextNode(text);
+      const a = document.createElement('a'); a.className = 'mu-link'; a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = text; return a;
+    },
+    mitLink: (td, text, href, titel) => { td.title = titel; td.appendChild(MU.link(text, href)); return td; },
     kompakt: (v) => v == null ? '—' : kompakt.format(v),
     datum: (s) => s ? datum.format(new Date(s)) : '',
     tag: (s) => s ? tag.format(new Date(s + 'T12:00:00Z')) : '—',
@@ -696,7 +708,7 @@
       zeilen.forEach((r) => {
         const tr = MU.neu('tr'); tr.dataset.key = r.key;
         tr.append(
-          Object.assign(MU.neu('td', 'mu-name', r.name), {title: r.name + ' (' + r.symbol + ')'}),
+          MU.mitLink(MU.neu('td', 'mu-name'), r.name, MU.yahoo(r.symbol), r.name + ' (' + r.symbol + ') bei Yahoo Finance öffnen'),
           MU.neu('td', null, r.boersenwert_usd ? MU.kompakt(r.boersenwert_usd) : '—'),
           ...MU.perioden.map(([feld]) => MU.neu('td', MU.klasse(r[feld]), MU.pz(r[feld]))),
         );
@@ -723,7 +735,7 @@
       const tr = MU.neu('tr'); tr.dataset.key = r.key;
       tr.append(
         MU.neu('td', 'mu-klein', String(r.rang)),
-        Object.assign(MU.neu('td', 'mu-name', r.name), {title: r.name + ' (' + r.symbol + ')'}),
+        MU.mitLink(MU.neu('td', 'mu-name'), r.name, MU.yahoo(r.symbol), r.name + ' (' + r.symbol + ') bei Yahoo Finance öffnen'),
         MU.neu('td', null, MU.kurs(r.kurs)),
         ...['t1', 'w1', 'm1', 'm3', 'm6', 'j1'].map((f) => MU.neu('td', MU.klasse(r[f]), MU.pz(r[f]))),
         MU.neu('td', null, MU.kompakt(r.umsatz)),
@@ -745,8 +757,8 @@
     }
     tbody.replaceChildren(...g.data.slice().sort((a, b) => a.rang - b.rang).map((r) => {
       const tr = MU.neu('tr'); tr.dataset.key = r.key;
-      const name = MU.neu('td', 'mu-name', r.name); name.title = r.name + ' (' + r.symbol + ')';
-      name.appendChild(MU.neu('span', 'mu-sym', r.symbol));
+      const name = MU.neu('td', 'mu-name'); name.title = r.name + ' (' + r.symbol + ') bei CoinMarketCap öffnen';
+      name.append(MU.link(r.name, r.link), MU.neu('span', 'mu-sym', r.symbol));
       tr.append(
         MU.neu('td', 'mu-klein', String(r.rang)), name, MU.neu('td', 'mu-klein', String(r.rang_mc)),
         MU.neu('td', null, MU.kurs(r.kurs)),

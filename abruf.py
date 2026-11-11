@@ -659,11 +659,12 @@ def meistgehandelt(n=10):
     return aus
 
 
-def krypto_gewinner(n=10, aus_top=100):
+def krypto_gewinner(n=10, aus_top=50):
     """Die n Kryptowährungen mit der besten 12-Monats-Entwicklung unter den grössten nach Marktkapitalisierung.
 
     Quelle: CoinMarketCap-Rangliste. Berücksichtigt werden nur Coins, die seit mindestens einem Jahr
-    gelistet sind; jüngere haben keine echte 12-Monats-Rendite.
+    gelistet sind (jüngere haben keine echte 12-Monats-Rendite); Stablecoins, tokenisiertes Gold und
+    verpackte Coins sind ausgenommen.
     """
     url = ("https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing?start=1"
            f"&limit={aus_top}&sortBy=market_cap&sortType=desc&convert=USD&cryptoType=all&tagType=all")
@@ -673,7 +674,12 @@ def krypto_gewinner(n=10, aus_top=100):
         q = next((x for x in c.get("quotes", []) if x.get("name") == "USD"), (c.get("quotes") or [{}])[0])
         if q.get("percentChange1y") is None or (c.get("dateAdded") or "9999") > grenze:
             continue
+        # Stablecoins, tokenisiertes Gold und verpackte Coins bilden nur einen anderen Wert nach
+        tags = c.get("tags") or []
+        if any(t == "stablecoin" or t.startswith("tokenized-") or "wrapped" in t for t in tags):
+            continue
         liste.append({"key": c["symbol"] + "-" + str(c["id"]), "rang_mc": c.get("cmcRank"), "symbol": c["symbol"],
+                      "link": f"https://coinmarketcap.com/currencies/{c['slug']}/" if c.get("slug") else None,
                       "name": c["name"], "kurs": q.get("price"), "marktkap": q.get("marketCap"),
                       "j1": round(q["percentChange1y"], 2),
                       "ytd": round(q["ytdPriceChangePercentage"], 2) if q.get("ytdPriceChangePercentage") is not None else None,
