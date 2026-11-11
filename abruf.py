@@ -613,7 +613,7 @@ def meistgehandelt(n=10):
                                    "t1": q.get("regularMarketChangePercent")}
 
     def verlauf_volumen(symbol):
-        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{urllib.parse.quote(symbol)}?range=3mo&interval=1d"
+        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{urllib.parse.quote(symbol)}?range=2y&interval=1d"
         r = hole(url)["chart"]["result"][0]
         meta = r["meta"]
         ind = r["indicators"]["quote"][0]
@@ -637,20 +637,53 @@ def meistgehandelt(n=10):
     spitze = sorted(kandidaten.items(), key=lambda kv: -kv[1]["kurs"] * kv[1]["volumen"])[:n]
     aus = []
     for rang, (s, k) in enumerate(spitze, 1):
-        schnitt = None
+        schnitt, perioden = None, {}
         try:
             _, tage = verlauf_volumen(s)
             abgeschlossen = tage[:-1]  # der letzte Tag kann noch laufen
             letzte = [v for _, _, v in abgeschlossen[-30:]]
             schnitt = sum(letzte) / len(letzte) if letzte else None
+            # Renditen über 1 Woche bis 1 Jahr, gemessen am letzten Schlusskurs
+            reihe = [(dt.datetime.fromtimestamp(t, dt.timezone.utc).date(), c) for t, c, _ in tage]
+            heute, letzt = reihe[-1]
+            for feld, tage_zurueck in (("w1", 7), ("m1", 30), ("m3", 91), ("m6", 182), ("j1", 365)):
+                alt = schluss_vor(reihe, heute - dt.timedelta(days=tage_zurueck))
+                perioden[feld] = round((letzt / alt - 1) * 100, 2) if alt and reihe[0][0] <= heute - dt.timedelta(days=tage_zurueck - 4) else None
         except Exception as e:  # noqa: BLE001
-            FEHLER.append(f"Meistgehandelt {s} Durchschnitt: {e}")
+            FEHLER.append(f"Meistgehandelt {s} Verlauf: {e}")
         aus.append({"key": s, "rang": rang, "symbol": s, "name": " ".join(k["name"].split()),
                     "kurs": round(k["kurs"], 2), "t1": round(k["t1"], 2) if k["t1"] is not None else None,
                     "volumen": int(k["volumen"]), "umsatz": round(k["kurs"] * k["volumen"]),
                     "schnitt30": round(schnitt) if schnitt else None,
-                    "vol_rel": round((k["volumen"] / schnitt - 1) * 100, 1) if schnitt else None})
+                    "vol_rel": round((k["volumen"] / schnitt - 1) * 100, 1) if schnitt else None, **perioden})
     return aus
+
+
+def krypto_gewinner(n=10, aus_top=100):
+    """Die n Kryptowährungen mit der besten 12-Monats-Entwicklung unter den grössten nach Marktkapitalisierung.
+
+    Quelle: CoinMarketCap-Rangliste. Berücksichtigt werden nur Coins, die seit mindestens einem Jahr
+    gelistet sind; jüngere haben keine echte 12-Monats-Rendite.
+    """
+    url = ("https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing?start=1"
+           f"&limit={aus_top}&sortBy=market_cap&sortType=desc&convert=USD&cryptoType=all&tagType=all")
+    grenze = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=365)).isoformat()
+    liste = []
+    for c in hole(url)["data"]["cryptoCurrencyList"]:
+        q = next((x for x in c.get("quotes", []) if x.get("name") == "USD"), (c.get("quotes") or [{}])[0])
+        if q.get("percentChange1y") is None or (c.get("dateAdded") or "9999") > grenze:
+            continue
+        liste.append({"key": c["symbol"] + "-" + str(c["id"]), "rang_mc": c.get("cmcRank"), "symbol": c["symbol"],
+                      "name": c["name"], "kurs": q.get("price"), "marktkap": q.get("marketCap"),
+                      "j1": round(q["percentChange1y"], 2),
+                      "ytd": round(q["ytdPriceChangePercentage"], 2) if q.get("ytdPriceChangePercentage") is not None else None,
+                      "m1": round(q["percentChange30d"], 2) if q.get("percentChange30d") is not None else None,
+                      "w1": round(q["percentChange7d"], 2) if q.get("percentChange7d") is not None else None,
+                      "t1": round(q["percentChange24h"], 2) if q.get("percentChange24h") is not None else None})
+    liste.sort(key=lambda r: -r["j1"])
+    for i, r in enumerate(liste[:n], 1):
+        r["rang"] = i
+    return liste[:n]
 
 
 # ---------------------------------------------------------------- Hauptteil
@@ -887,8 +920,10 @@ def main(ziel, vorher=None):
 
     stempel = {"at": jetzt, "by": "Geplante Aktualisierung (abruf.py)"}
     umsatz = sicher(meistgehandelt) or []
+    gewinner = sicher(krypto_gewinner) or []
     dateien = {"werte.json": werte, "aktien.json": aktien, "zinsen.json": zinsen,
-               "verlauf.json": verlauf, "news.json": news, "umsatz.json": umsatz}
+               "verlauf.json": verlauf, "news.json": news, "umsatz.json": umsatz,
+               "kryptogewinner.json": gewinner}
     for name, zeilen in dateien.items():
         with open(f"{ziel}/{name}", "w", encoding="utf-8") as f:
             json.dump({"rows": zeilen}, f, ensure_ascii=False, separators=(",", ":"))
