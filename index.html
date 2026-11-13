@@ -126,7 +126,7 @@
   .mu-gewinnertab td.mu-name { overflow: hidden; text-overflow: ellipsis; }
   .mu-gewinnertab th:nth-child(2), .mu-gewinnertab td:nth-child(2) { text-align: left; padding-left: var(--cds-pad-sm); }
   .mu-sym { color: var(--color-fg-muted); font-weight: 400; margin-left: 6px; }
-  .mu-makrotab { table-layout: fixed; min-width: 50rem; font-size: var(--cds-font-size-body); }
+  .mu-makrotab { table-layout: fixed; min-width: 56rem; font-size: var(--cds-font-size-body); }
   .mu-makrotab td { padding-block: 7px; }
   .mu-makrotab col.mu-col-name { width: 11rem; }
   .mu-makrotab col.mu-col-k { width: 7rem; }
@@ -135,6 +135,7 @@
   .mu-makrotab col.mu-col-q { width: 11rem; }
   .mu-makrotab tr.mu-region td { padding-top: var(--cds-pad-md); color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--color-border-line); text-align: left; }
   .mu-makrotab td:first-child { font-weight: var(--cds-font-weight-medium); }
+  .mu-makrotab tr.mu-welt td { font-weight: var(--cds-font-weight-medium); background: rgba(255, 255, 255, .03); }
   .mu-chartkarte { position: relative; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); display: grid; gap: var(--cds-gap-md); }
   .mu-reiter { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); }
   .mu-reiter button, .mu-laender button { font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: 999px; background: var(--color-bg); color: var(--color-fg-muted); cursor: pointer; }
@@ -349,16 +350,17 @@
   <section class="mu-abschnitt" id="makro">
     <div class="mu-h2">
       <h2>Makro</h2>
-      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Makro">i<span class="mu-info-text" role="tooltip">Die wichtigsten Volkswirtschaften nach Region, Werte für das laufende Jahr laut World Economic Outlook des Internationalen Währungsfonds (IWF), also Schätzungen. BIP und BIP pro Kopf in US-Dollar zu aktuellen Preisen, Wachstum real. Inflation: Durchschnitt der Verbraucherpreise im Jahr, in Klammern das Vorjahr. Staatsschulden: Bruttoschulden des Gesamtstaats; in US-Dollar aus der Schuldenquote und dem BIP berechnet. „Δ 5J“: Veränderung der Schuldenquote gegenüber vor fünf Jahren in Prozentpunkten. Der IWF aktualisiert diese Daten zweimal im Jahr (April und Oktober). Der Chart zeigt die Zeitreihen ab 2000; Prognosejahre sind hinterlegt und gestrichelt. Länder lassen sich per Klick ein- und ausblenden, das Fahren über den Chart zeigt die Werte eines Jahres.</span></span>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Makro">i<span class="mu-info-text" role="tooltip">Zuoberst die Welt, darunter die wichtigsten Volkswirtschaften nach Region mit ihrem Anteil am Welt-BIP (in der Regionszeile die Summe der aufgeführten Länder). Werte für das laufende Jahr laut World Economic Outlook des Internationalen Währungsfonds (IWF), also Schätzungen. BIP und BIP pro Kopf in US-Dollar zu aktuellen Preisen, Wachstum real. Inflation: Durchschnitt der Verbraucherpreise im Jahr, in Klammern das Vorjahr. Staatsschulden: Bruttoschulden des Gesamtstaats; in US-Dollar aus der Schuldenquote und dem BIP berechnet. „Δ 5J“: Veränderung der Schuldenquote gegenüber vor fünf Jahren in Prozentpunkten. Die Schuldenquote der Welt weist der IWF hier nicht aus; sie ist aus Industrie- und Schwellenländern nach BIP gewichtet berechnet. Der IWF aktualisiert diese Daten zweimal im Jahr (April und Oktober). Der Chart zeigt die Zeitreihen ab 2000; Prognosejahre sind hinterlegt und gestrichelt. Länder lassen sich per Klick ein- und ausblenden, das Fahren über den Chart zeigt die Werte eines Jahres.</span></span>
       <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
     <div class="mu-zinsen mu-rollen">
       <table class="mu-tab mu-makrotab" data-source="makro" data-row-key="key">
-        <colgroup><col class="mu-col-name"><col class="mu-col-k"><col class="mu-col-p"><col class="mu-col-i"><col class="mu-col-k"><col class="mu-col-q"><col class="mu-col-p"><col class="mu-col-k"></colgroup>
+        <colgroup><col class="mu-col-name"><col class="mu-col-k"><col class="mu-col-p"><col class="mu-col-p"><col class="mu-col-i"><col class="mu-col-k"><col class="mu-col-q"><col class="mu-col-p"><col class="mu-col-k"></colgroup>
         <thead>
           <tr>
             <th data-field="land">Land</th>
             <th data-field="bip">BIP USD</th>
+            <th data-field="anteil_welt">Anteil Welt</th>
             <th data-field="wachstum">Wachstum</th>
             <th data-field="inflation">Inflation (Vorjahr)</th>
             <th data-field="schulden">Staatsschulden USD</th>
@@ -842,18 +844,20 @@
     const m = dash.data('makro');
     if (m.status !== 'ok') {
       const tr = MU.neu('tr'), td = MU.neu('td', 'mu-null', m.status === 'error' ? 'Konnte nicht geladen werden' : '—');
-      td.colSpan = 8; tr.appendChild(td); tbody.replaceChildren(tr); return;
+      td.colSpan = 9; tr.appendChild(td); tbody.replaceChildren(tr); return;
     }
     const zeilen = [];
     const farbe = (q) => q >= 100 ? 'var(--color-bad)' : q >= 60 ? '#e8a33d' : 'var(--color-ok)';
     let region = null;
+    const regionAnteil = d3.rollup(m.data.filter((r) => r.region !== 'Welt'), (rs) => d3.sum(rs, (r) => r.anteil_welt || 0), (r) => r.region);
+    const kopfzeile = (text) => { const kopf = MU.neu('tr', 'mu-region'), td = MU.neu('td', null, text); td.colSpan = 9; kopf.appendChild(td); return kopf; };
     m.data.forEach((r) => {
       if (r.region !== region) {
         region = r.region;
-        const kopf = MU.neu('tr', 'mu-region'), td = MU.neu('td', null, region + ' · ' + r.jahr + ' (IWF-Schätzung)');
-        td.colSpan = 8; kopf.appendChild(td); zeilen.push(kopf);
+        zeilen.push(kopfzeile(region === 'Welt' ? 'Welt · ' + r.jahr + ' (IWF-Schätzung)'
+          : region + ' · ' + MU.anteil(regionAnteil.get(region)) + ' des Welt-BIP'));
       }
-      const tr = MU.neu('tr'); tr.dataset.key = r.key;
+      const tr = MU.neu('tr', r.key === 'WELT' ? 'mu-welt' : null); tr.dataset.key = r.key;
       const inflation = MU.neu('td', null, r.inflation == null ? '—' : MU.anteil(r.inflation));
       if (r.inflation_vj != null) inflation.appendChild(MU.neu('span', 'mu-sym', '(' + MU.anteil(r.inflation_vj) + ')'));
       const quote = MU.neu('td');
@@ -866,6 +870,7 @@
       tr.append(
         MU.neu('td', null, r.land),
         MU.neu('td', null, MU.kompakt(r.bip)),
+        MU.neu('td', 'mu-klein', MU.anteil(r.anteil_welt)),
         MU.neu('td', MU.klasse(r.wachstum), r.wachstum == null ? '—' : MU.prozent(r.wachstum)),
         inflation,
         MU.neu('td', null, MU.kompakt(r.schulden)),
@@ -875,6 +880,11 @@
       );
       zeilen.push(tr);
     });
+    const summe = d3.sum(m.data.filter((r) => r.region !== 'Welt'), (r) => r.anteil_welt || 0);
+    if (summe) {
+      const fuss = MU.neu('tr', 'mu-region'), td = MU.neu('td', null, 'Aufgeführte Länder zusammen: ' + MU.anteil(summe) + ' des Welt-BIP');
+      td.colSpan = 9; fuss.appendChild(td); zeilen.push(fuss);
+    }
     tbody.replaceChildren(...zeilen);
   });
 </script>
