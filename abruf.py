@@ -744,6 +744,26 @@ def makro():
         return sum(b * q for b, q in teile) / sum(b for b, _ in teile)
 
     welt_bip = daten.get(("G001", "NGDPD"), {}).get(jahr)
+
+    def weltbevoelkerung():
+        """Summe der Bevölkerung (LP, in Personen) aller Länder im laufenden Jahr; der IWF weist sie für die Welt nicht aus."""
+        u = ("https://api.imf.org/external/sdmx/3.0/data/dataflow/IMF.RES/WEO/+/*.LP.A"
+             "?dimensionAtObservation=TIME_PERIOD")
+        rq = urllib.request.Request(u, headers={"User-Agent": UA, "Accept": "application/json"})
+        with urllib.request.build_opener().open(rq, timeout=90) as antwort:
+            dd = json.load(antwort)
+        dm = dd["data"]["structures"][0]["dimensions"]
+        laender = [v.get("id") for v in [x for x in dm["series"] if x["id"] == "COUNTRY"][0]["values"]]
+        js = [v["value"] for v in [x for x in dm["observation"] if x["id"] == "TIME_PERIOD"][0]["values"]]
+        summe = 0.0
+        for k, serie in dd["data"]["dataSets"][0]["series"].items():
+            land = laender[int(k.split(":")[0])]
+            if land.startswith("G") and land[1:].isdigit() or land.startswith("GX"):
+                continue  # Ländergruppen nicht doppelt zählen
+            for t, o in serie.get("observations", {}).items():
+                if js[int(t)] == jahr and o and o[0] not in (None, ""):
+                    summe += float(o[0])
+        return summe or None
     aus = []
     if welt_bip:
         wq, wq5 = weltquote(jahr), weltquote(vor5)
@@ -756,8 +776,11 @@ def makro():
                     "schuldenquote": round(wq, 1) if wq else None,
                     "schulden": round(welt_bip * wq / 100) if wq else None,
                     "schuldenquote_d5": round(wq - wq5, 1) if wq and wq5 else None,
-                    # BIP pro Kopf der Welt aus BIP und Bevölkerung (LP, in Millionen)
-                    "bip_kopf": round(g("NGDPDPC")) if g("NGDPDPC") else (round(welt_bip / (g("LP") * 1e6)) if g("LP") else None)})
+                    "bip_kopf": None})
+        bevoelkerung = sicher(weltbevoelkerung)
+        if bevoelkerung:  # BIP pro Kopf der Welt = Welt-BIP / Summe der Bevölkerung aller Länder
+            aus[-1]["bip_kopf"] = round(welt_bip / bevoelkerung)
+            aus[-1]["bevoelkerung"] = round(bevoelkerung)
     zeilen = []
     for region, code, name in MAKRO_LAENDER:
         if code == "DEU":  # Eurozone vor den europäischen Ländern
