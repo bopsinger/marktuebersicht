@@ -136,6 +136,13 @@
   .mu-makrotab tr.mu-region td { padding-top: var(--cds-pad-md); color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--color-border-line); text-align: left; }
   .mu-makrotab td:first-child { font-weight: var(--cds-font-weight-medium); }
   .mu-makrotab tr.mu-welt td { font-weight: var(--cds-font-weight-medium); background: rgba(255, 255, 255, .03); }
+  .mu-sortierbar { cursor: pointer; user-select: none; white-space: nowrap; }
+  .mu-sortierbar:hover { color: var(--color-fg); }
+  .mu-sortierbar:focus-visible { outline: 2px solid var(--color-fg); outline-offset: -2px; }
+  .mu-sortierbar::after { content: " ↕"; opacity: .35; font-size: 10px; }
+  .mu-sortierbar[aria-sort="descending"]::after { content: " ▼"; opacity: 1; }
+  .mu-sortierbar[aria-sort="ascending"]::after { content: " ▲"; opacity: 1; }
+  .mu-sortierbar[aria-sort="descending"], .mu-sortierbar[aria-sort="ascending"] { color: var(--color-fg); }
   .mu-makrotab tr.mu-gruppenzeile td { background: rgba(255, 255, 255, .02); font-style: italic; }
   .mu-chartkarte { position: relative; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); display: grid; gap: var(--cds-gap-md); }
   .mu-reiter { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); }
@@ -351,7 +358,7 @@
   <section class="mu-abschnitt" id="makro">
     <div class="mu-h2">
       <h2>Makro</h2>
-      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Makro">i<span class="mu-info-text" role="tooltip">Zuoberst die Welt, darunter die wichtigsten Volkswirtschaften nach Region mit ihrem Anteil am Welt-BIP (in der Regionszeile die Summe der aufgeführten Länder). Im Europa-Block steht zuoberst der IWF-Gesamtwert der Eurozone (kursiv); er zählt nicht zur Regionssumme. „Weitere G20“ ergänzt die übrigen G20-Staaten, sodass alle G20-Länder enthalten sind. Werte für das laufende Jahr laut World Economic Outlook des Internationalen Währungsfonds (IWF), also Schätzungen. BIP und BIP pro Kopf in US-Dollar zu aktuellen Preisen, Wachstum real. Inflation: Durchschnitt der Verbraucherpreise im Jahr, in Klammern das Vorjahr. Staatsschulden: Bruttoschulden des Gesamtstaats; in US-Dollar aus der Schuldenquote und dem BIP berechnet. „Δ 5J“: Veränderung der Schuldenquote gegenüber vor fünf Jahren in Prozentpunkten. Die Schuldenquote der Welt weist der IWF hier nicht aus; sie ist aus Industrie- und Schwellenländern nach BIP gewichtet berechnet. Ebenso das BIP pro Kopf der Welt: Welt-BIP geteilt durch die Summe der Bevölkerung aller Länder laut IWF. Der IWF aktualisiert diese Daten zweimal im Jahr (April und Oktober). Der Chart zeigt die Zeitreihen ab 2000; Prognosejahre sind hinterlegt und gestrichelt. Länder lassen sich per Klick ein- und ausblenden, das Fahren über den Chart zeigt die Werte eines Jahres.</span></span>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Makro">i<span class="mu-info-text" role="tooltip">Zuoberst die Welt, darunter die wichtigsten Volkswirtschaften nach Region mit ihrem Anteil am Welt-BIP (in der Regionszeile die Summe der aufgeführten Länder). Im Europa-Block steht zuoberst der IWF-Gesamtwert der Eurozone (kursiv); er zählt nicht zur Regionssumme. „Weitere G20“ ergänzt die übrigen G20-Staaten, sodass alle G20-Länder enthalten sind. Werte für das laufende Jahr laut World Economic Outlook des Internationalen Währungsfonds (IWF), also Schätzungen. BIP und BIP pro Kopf in US-Dollar zu aktuellen Preisen, Wachstum real. Inflation: Durchschnitt der Verbraucherpreise im Jahr, in Klammern das Vorjahr. Staatsschulden: Bruttoschulden des Gesamtstaats; in US-Dollar aus der Schuldenquote und dem BIP berechnet. „Δ 5J“: Veränderung der Schuldenquote gegenüber vor fünf Jahren in Prozentpunkten. Die Schuldenquote der Welt weist der IWF hier nicht aus; sie ist aus Industrie- und Schwellenländern nach BIP gewichtet berechnet. Ebenso das BIP pro Kopf der Welt: Welt-BIP geteilt durch die Summe der Bevölkerung aller Länder laut IWF. Der IWF aktualisiert diese Daten zweimal im Jahr (April und Oktober). Ein Klick auf eine Spaltenüberschrift sortiert die Länder (erst absteigend, dann aufsteigend, dann wieder nach Regionen); Welt und Eurozone bleiben oben. Der Chart zeigt die Zeitreihen ab 2000; Prognosejahre sind hinterlegt und gestrichelt. Länder lassen sich per Klick ein- und ausblenden, das Fahren über den Chart zeigt die Werte eines Jahres.</span></span>
       <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
     <div class="mu-zinsen mu-rollen">
@@ -841,7 +848,9 @@
 
 <script>
   // Makro-Tabelle: Länder nach Region, Schuldenquote mit Balken (Skala bis 200 %).
-  dash.draw('makro', (tbody) => {
+  // Klick auf eine Spaltenüberschrift: absteigend, aufsteigend, zurück zur Gruppierung nach Regionen.
+  const makroSort = {feld: null, richtung: -1};
+  const makroZeichnen = (tbody) => {
     const m = dash.data('makro');
     if (m.status !== 'ok') {
       const tr = MU.neu('tr'), td = MU.neu('td', 'mu-null', m.status === 'error' ? 'Konnte nicht geladen werden' : '—');
@@ -853,8 +862,23 @@
     const laenderZeilen = m.data.filter((r) => r.region !== 'Welt' && !r.gruppe);
     const regionAnteil = d3.rollup(laenderZeilen, (rs) => d3.sum(rs, (r) => r.anteil_welt || 0), (r) => r.region);
     const kopfzeile = (text) => { const kopf = MU.neu('tr', 'mu-region'), td = MU.neu('td', null, text); td.colSpan = 9; kopf.appendChild(td); return kopf; };
-    m.data.forEach((r) => {
-      if (r.region !== region) {
+    let reihe = m.data;
+    if (makroSort.feld) {
+      const fest = m.data.filter((r) => r.region === 'Welt' || r.gruppe);
+      const wert = (r) => r[makroSort.feld];
+      const sortiert = laenderZeilen.slice().sort((a, b) => {
+        const x = wert(a), y = wert(b);
+        if (x == null) return 1; if (y == null) return -1;
+        // Ländernamen beim ersten Klick von A nach Z, Zahlen beim ersten Klick vom größten zum kleinsten Wert
+        return typeof x === 'string' ? -makroSort.richtung * x.localeCompare(y, 'de') : makroSort.richtung * (x - y);
+      });
+      reihe = [...fest, ...sortiert];
+    }
+    reihe.forEach((r) => {
+      if (makroSort.feld && r.region !== 'Welt' && !r.gruppe && region !== 'sortiert') {
+        region = 'sortiert';
+        zeilen.push(kopfzeile('Alle Länder sortiert'));
+      } else if (!makroSort.feld && r.region !== region) {
         region = r.region;
         zeilen.push(kopfzeile(region === 'Welt' ? 'Welt · ' + r.jahr + ' (IWF-Schätzung)'
           : region + ' · aufgeführte Länder ' + MU.anteil(regionAnteil.get(region)) + ' des Welt-BIP'));
@@ -888,6 +912,22 @@
       td.colSpan = 9; fuss.appendChild(td); zeilen.push(fuss);
     }
     tbody.replaceChildren(...zeilen);
+  };
+  dash.draw('makro', makroZeichnen);
+  document.querySelectorAll('.mu-makrotab th[data-field]').forEach((th) => {
+    th.classList.add('mu-sortierbar');
+    th.tabIndex = 0;
+    th.setAttribute('aria-sort', 'none');
+    const umschalten = () => {
+      if (makroSort.feld !== th.dataset.field) { makroSort.feld = th.dataset.field; makroSort.richtung = -1; }
+      else if (makroSort.richtung === -1) makroSort.richtung = 1;
+      else makroSort.feld = null;
+      document.querySelectorAll('.mu-makrotab th[data-field]').forEach((x) => x.setAttribute('aria-sort',
+        x.dataset.field !== makroSort.feld ? 'none' : makroSort.richtung === -1 ? 'descending' : 'ascending'));
+      document.querySelectorAll('tbody[data-draw="makro"]').forEach(makroZeichnen);
+    };
+    th.addEventListener('click', umschalten);
+    th.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); umschalten(); } });
   });
 </script>
 
