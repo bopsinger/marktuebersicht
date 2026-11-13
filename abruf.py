@@ -843,7 +843,7 @@ def usa_mit_vorstand(teile, pfad="daten/usa.json"):
     except (OSError, ValueError, KeyError):
         return teile
     neu = {t["teil"] for t in teile}
-    return teile + [t for t in alt if t.get("teil") not in neu]
+    return teile + [t for t in alt if t.get("teil") in land_usa.TEILE and t.get("teil") not in neu]
 
 
 def main(ziel, vorher=None):

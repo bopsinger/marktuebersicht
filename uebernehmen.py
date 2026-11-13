@@ -6,7 +6,7 @@ import shutil
 
 MINDEST = {"werte.json": 25, "aktien.json": 30, "zinsen.json": 10, "verlauf.json": 100, "news.json": 5,
            "umsatz.json": 5, "kryptogewinner.json": 5, "makro.json": 10, "makroverlauf.json": 500,
-           "usa.json": 7}
+           "usa.json": 6}
 
 for name in sorted(p.name for p in pathlib.Path("neu").glob("*.json")):
     p = pathlib.Path("neu") / name
