@@ -253,10 +253,18 @@ def schulden(z1):
 
 def staatsschuld_tag():
     j = json.loads(_hole(SCHULD_TAG.format(ab=AB)))
-    rs = sorted(((r["record_date"], float(r["tot_pub_debt_out_amt"]) / 1e9,
-                  float(r["debt_held_public_amt"]) / 1e9, float(r["intragov_hold_amt"]) / 1e9) for r in j["data"]))
+    def zahl(s):
+        try:
+            return float(s) / 1e9
+        except (TypeError, ValueError):
+            return None
+
+    rs = sorted((r["record_date"], zahl(r["tot_pub_debt_out_amt"]), zahl(r["debt_held_public_amt"]),
+                 zahl(r["intragov_hold_amt"])) for r in j["data"])
+    rs = [r for r in rs if r[1] is not None]
     reihe = [(d, g) for d, g, _, _ in rs]
     d, g, p, i = rs[-1]
+    p, i = p or 0.0, i or 0.0
     # Monatswerte (letzter Tag je Monat) für die Linie
     monat = {}
     for x in reihe:
