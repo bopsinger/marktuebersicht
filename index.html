@@ -135,6 +135,20 @@
   .mu-makrotab col.mu-col-q { width: 11rem; }
   .mu-makrotab tr.mu-region td { padding-top: var(--cds-pad-md); color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--color-border-line); text-align: left; }
   .mu-makrotab td:first-child { font-weight: var(--cds-font-weight-medium); }
+  .mu-chartkarte { position: relative; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); display: grid; gap: var(--cds-gap-md); }
+  .mu-reiter { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); }
+  .mu-reiter button, .mu-laender button { font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: 999px; background: var(--color-bg); color: var(--color-fg-muted); cursor: pointer; }
+  .mu-reiter button[aria-selected="true"] { color: var(--color-fg); border-color: var(--color-fg-muted); background: var(--color-panel); font-weight: var(--cds-font-weight-medium); }
+  .mu-reiter button:focus-visible, .mu-laender button:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+  .mu-laender { display: flex; flex-wrap: wrap; gap: 6px; }
+  .mu-laender button { display: inline-flex; align-items: center; gap: 6px; }
+  .mu-laender button i { width: .6rem; height: .6rem; border-radius: 50%; display: inline-block; }
+  .mu-laender button[aria-pressed="true"] { color: var(--color-fg); border-color: var(--color-fg-muted); }
+  .mu-laender button[aria-pressed="false"] i { background: transparent !important; outline: 1px solid var(--color-fg-muted); }
+  .mu-makrochart { position: relative; min-height: 22rem; display: grid; gap: var(--cds-gap-sm); }
+  .mu-makrochart svg { display: block; width: 100%; height: auto; touch-action: pan-y; }
+  .mu-makrochart .mu-tipp div { display: flex; justify-content: space-between; gap: 12px; }
+  .mu-makrochart .mu-tipp i { width: .55rem; height: .55rem; border-radius: 50%; display: inline-block; margin-right: 6px; }
   .mu-quote { display: grid; grid-template-columns: 1fr 3.4rem; align-items: center; gap: 8px; }
   .mu-quote i { display: block; height: 8px; border-radius: 4px; background: var(--color-border-line); overflow: hidden; }
   .mu-quote i b { display: block; height: 100%; border-radius: 4px; }
@@ -335,7 +349,7 @@
   <section class="mu-abschnitt" id="makro">
     <div class="mu-h2">
       <h2>Makro</h2>
-      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Makro">i<span class="mu-info-text" role="tooltip">Die wichtigsten Volkswirtschaften nach Region, Werte für das laufende Jahr laut World Economic Outlook des Internationalen Währungsfonds (IWF), also Schätzungen. BIP und BIP pro Kopf in US-Dollar zu aktuellen Preisen, Wachstum real. Inflation: Durchschnitt der Verbraucherpreise im Jahr, in Klammern das Vorjahr. Staatsschulden: Bruttoschulden des Gesamtstaats; in US-Dollar aus der Schuldenquote und dem BIP berechnet. „Δ 5J“: Veränderung der Schuldenquote gegenüber vor fünf Jahren in Prozentpunkten. Der IWF aktualisiert diese Daten zweimal im Jahr (April und Oktober).</span></span>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Makro">i<span class="mu-info-text" role="tooltip">Die wichtigsten Volkswirtschaften nach Region, Werte für das laufende Jahr laut World Economic Outlook des Internationalen Währungsfonds (IWF), also Schätzungen. BIP und BIP pro Kopf in US-Dollar zu aktuellen Preisen, Wachstum real. Inflation: Durchschnitt der Verbraucherpreise im Jahr, in Klammern das Vorjahr. Staatsschulden: Bruttoschulden des Gesamtstaats; in US-Dollar aus der Schuldenquote und dem BIP berechnet. „Δ 5J“: Veränderung der Schuldenquote gegenüber vor fünf Jahren in Prozentpunkten. Der IWF aktualisiert diese Daten zweimal im Jahr (April und Oktober). Der Chart zeigt die Zeitreihen ab 2000; Prognosejahre sind hinterlegt und gestrichelt. Länder lassen sich per Klick ein- und ausblenden, das Fahren über den Chart zeigt die Werte eines Jahres.</span></span>
       <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
     <div class="mu-zinsen mu-rollen">
@@ -355,6 +369,18 @@
         </thead>
         <tbody data-draw="makro"></tbody>
       </table>
+    </div>
+    <div class="mu-gruppe">
+      <h3>Verlauf 2000 bis 2031</h3>
+      <div class="mu-chartkarte">
+        <div class="mu-reiter" role="tablist" aria-label="Kennzahl">
+          <button type="button" role="tab" data-kennzahl="GGXWDG_NGDP" aria-selected="true">Schulden / BIP</button>
+          <button type="button" role="tab" data-kennzahl="PCPIPCH" aria-selected="false">Inflation</button>
+          <button type="button" role="tab" data-kennzahl="NGDP_RPCH" aria-selected="false">Reales Wachstum</button>
+          <button type="button" role="tab" data-kennzahl="LUR" aria-selected="false">Arbeitslosigkeit</button>
+        </div>
+        <div class="mu-makrochart dash-skeleton" data-draw="makrochart" data-source="makroverlauf">—</div>
+      </div>
     </div>
   </section>
 
@@ -435,7 +461,7 @@
 
   document.querySelectorAll('.mu-neu').forEach((b) => b.addEventListener('click', () => {
     b.disabled = true;
-    ['werte', 'aktien', 'zinsen', 'verlauf', 'news', 'umsatz', 'kryptogewinner', 'makro'].forEach((id) => dash.refresh(id));
+    ['werte', 'aktien', 'zinsen', 'verlauf', 'news', 'umsatz', 'kryptogewinner', 'makro', 'makroverlauf'].forEach((id) => dash.refresh(id));
     setTimeout(() => { b.disabled = false; }, 2500);
   }));
 
@@ -850,6 +876,107 @@
       zeilen.push(tr);
     });
     tbody.replaceChildren(...zeilen);
+  });
+</script>
+
+<script>
+  // Makro-Chart: eine Kennzahl über die Jahre, Länder ein- und ausblendbar, Prognosejahre hinterlegt.
+  const LANDFARBEN = ['#e06c9f', '#a0a8ff', '#d19a66', '#98c379', '#8ecae6', '#b8b8b8', '#c3e88d', '#e8a33d'];
+  const MAKRO_START = ['USA', 'DEU', 'GBR', 'FRA', 'ITA', 'CHE', 'CHN', 'JPN'];
+  const makroZustand = {kennzahl: 'GGXWDG_NGDP', sichtbar: new Set(MAKRO_START)};
+  const EINHEIT = {GGXWDG_NGDP: '% des BIP', PCPIPCH: '% Inflation', NGDP_RPCH: '% Wachstum', LUR: '% Arbeitslose'};
+  dash.draw('makrochart', (el) => {
+    const v = dash.data('makroverlauf');
+    if (v.status !== 'ok') { MU.fehler(el, 'makroverlauf'); return; }
+    el.classList.remove('dash-skeleton');
+    const NS = 'http://www.w3.org/2000/svg';
+    const laender = [...new Map(v.data.map((r) => [r.code, r.land])).entries()];
+    // feste, gut unterscheidbare Farben für die Standardländer, die übrigen aus der Palette
+    const FEST = {USA: '#5b9cf6', DEU: '#ffd166', GBR: '#c678dd', FRA: '#56b6c2', ITA: '#f0605d', CHE: '#e4e9f0', CHN: '#ff8a5b', JPN: '#3fbf7f'};
+    const rest = LANDFARBEN.filter((f) => !Object.values(FEST).includes(f));
+    let n = 0;
+    const farbe = new Map(laender.map(([c]) => [c, FEST[c] || rest[n++ % rest.length]]));
+    const zeichnen = () => {
+      const kz = makroZustand.kennzahl;
+      const zeilen = v.data.filter((r) => r.kennzahl === kz);
+      const reihen = d3.group(zeilen.filter((r) => makroZustand.sichtbar.has(r.code)), (r) => r.code);
+      // Länder-Knöpfe
+      const knoepfe = MU.neu('div', 'mu-laender');
+      laender.forEach(([code, name]) => {
+        const b = MU.neu('button'); b.type = 'button';
+        const an = makroZustand.sichtbar.has(code);
+        b.setAttribute('aria-pressed', String(an));
+        const punkt = MU.neu('i'); punkt.style.background = farbe.get(code);
+        b.append(punkt, document.createTextNode(name));
+        b.addEventListener('click', () => { an ? makroZustand.sichtbar.delete(code) : makroZustand.sichtbar.add(code); zeichnen(); });
+        knoepfe.appendChild(b);
+      });
+      // Achsen und Skalen
+      const breite = Math.max(320, el.clientWidth || 800), hoehe = breite < 560 ? 260 : 340;
+      const rand = {o: 14, r: 16, u: 26, l: 44};
+      const jahre = d3.extent(zeilen, (r) => r.jahr);
+      const sichtbareWerte = [...reihen.values()].flat().map((r) => r.wert);
+      let [lo, hi] = d3.extent(sichtbareWerte.length ? sichtbareWerte : [0, 1]);
+      if (lo > 0 && kz !== 'NGDP_RPCH') lo = 0;
+      const y = d3.scaleLinear([lo, hi], [hoehe - rand.u, rand.o]).nice();
+      const x = d3.scaleLinear(jahre, [rand.l, breite - rand.r]);
+      const prognoseAb = d3.min(zeilen.filter((r) => r.prognose), (r) => r.jahr);
+      const svg = document.createElementNS(NS, 'svg');
+      svg.setAttribute('viewBox', `0 0 ${breite} ${hoehe}`);
+      svg.setAttribute('width', '100%');
+      svg.setAttribute('role', 'img');
+      svg.setAttribute('aria-label', 'Verlauf ' + (EINHEIT[kz] || ''));
+      const g = d3.select(svg);
+      if (prognoseAb) {
+        g.append('rect').attr('x', x(prognoseAb - 0.5)).attr('y', rand.o).attr('width', x(jahre[1]) - x(prognoseAb - 0.5)).attr('height', hoehe - rand.o - rand.u)
+          .attr('fill', 'var(--color-fg)').attr('fill-opacity', 0.05);
+        g.append('text').attr('x', x(jahre[1]) - 4).attr('y', rand.o + 12).attr('text-anchor', 'end').attr('fill', 'var(--color-fg-muted)').attr('font-size', 11).text('Prognose IWF');
+      }
+      y.ticks(5).forEach((t) => {
+        g.append('line').attr('x1', rand.l).attr('x2', breite - rand.r).attr('y1', y(t)).attr('y2', y(t)).attr('stroke', 'var(--color-border-line)').attr('stroke-width', t === 0 ? 1.5 : 1);
+        g.append('text').attr('x', rand.l - 6).attr('y', y(t) + 4).attr('text-anchor', 'end').attr('fill', 'var(--color-fg-muted)').attr('font-size', 11).text(t + ' %');
+      });
+      const schritt = breite < 560 ? 10 : 5;
+      for (let j = Math.ceil(jahre[0] / schritt) * schritt; j <= jahre[1]; j += schritt) {
+        g.append('text').attr('x', x(j)).attr('y', hoehe - 8).attr('text-anchor', 'middle').attr('fill', 'var(--color-fg-muted)').attr('font-size', 11).text(j);
+      }
+      const linie = d3.line().x((r) => x(r.jahr)).y((r) => y(r.wert)).defined((r) => r.wert != null);
+      for (const [code, rs] of reihen) {
+        const sortiert = rs.slice().sort((a, b) => a.jahr - b.jahr);
+        const ist = sortiert.filter((r) => !r.prognose), prog = sortiert.filter((r) => r.prognose || r.jahr === prognoseAb - 1);
+        g.append('path').attr('d', linie(ist)).attr('fill', 'none').attr('stroke', farbe.get(code)).attr('stroke-width', 2).attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round');
+        if (prog.length > 1) g.append('path').attr('d', linie(prog)).attr('fill', 'none').attr('stroke', farbe.get(code)).attr('stroke-width', 2).attr('stroke-dasharray', '4 4');
+      }
+      // Tooltip mit allen sichtbaren Ländern im gewählten Jahr
+      const regel = g.append('line').attr('y1', rand.o).attr('y2', hoehe - rand.u).attr('stroke', 'var(--color-fg-muted)').attr('visibility', 'hidden');
+      const tipp = MU.neu('div', 'mu-tipp'); tipp.hidden = true;
+      const zeige = (ev) => {
+        const r = svg.getBoundingClientRect();
+        const jahr = Math.round(x.invert((ev.clientX - r.left) / r.width * breite));
+        if (jahr < jahre[0] || jahr > jahre[1]) return;
+        regel.attr('x1', x(jahr)).attr('x2', x(jahr)).attr('visibility', 'visible');
+        const werte = [...reihen.entries()].map(([c, rs]) => [c, rs.find((q) => q.jahr === jahr)]).filter(([, q]) => q).sort((a, b) => b[1].wert - a[1].wert);
+        tipp.replaceChildren(MU.neu('span', null, jahr + (prognoseAb && jahr >= prognoseAb ? ' (Prognose)' : '')),
+          ...werte.map(([c, q]) => { const z = MU.neu('div'), n = MU.neu('span'), p = MU.neu('i'); p.style.background = farbe.get(c); n.append(p, document.createTextNode(q.land)); z.append(n, MU.neu('b', null, MU.anteil(q.wert))); return z; }));
+        tipp.hidden = false;
+        const k = el.getBoundingClientRect();
+        const links = r.left - k.left + x(jahr) / breite * r.width;
+        tipp.style.left = Math.max(4, Math.min(k.width - tipp.offsetWidth - 4, links + 12 + tipp.offsetWidth > k.width ? links - tipp.offsetWidth - 12 : links + 12)) + 'px';
+        tipp.style.top = (r.top - k.top + 8) + 'px';
+      };
+      svg.addEventListener('pointermove', zeige);
+      svg.addEventListener('pointerdown', zeige);
+      svg.addEventListener('pointerleave', () => { tipp.hidden = true; regel.attr('visibility', 'hidden'); });
+      el.replaceChildren(knoepfe, svg, tipp);
+    };
+    zeichnen();
+    document.querySelectorAll('.mu-reiter button').forEach((b) => {
+      b.onclick = () => {
+        makroZustand.kennzahl = b.dataset.kennzahl;
+        document.querySelectorAll('.mu-reiter button').forEach((x) => x.setAttribute('aria-selected', String(x === b)));
+        zeichnen();
+      };
+    });
   });
 </script>
 

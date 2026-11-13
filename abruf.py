@@ -702,11 +702,16 @@ MAKRO_LAENDER = [
     ("Asien", "CHN", "China"), ("Asien", "JPN", "Japan"), ("Asien", "IND", "Indien"), ("Asien", "KOR", "Südkorea"),
     ("Asien", "IDN", "Indonesien"), ("Asien", "TWN", "Taiwan"),
 ]
-MAKRO_INDIKATOREN = ["NGDPD", "NGDP_RPCH", "PCPIPCH", "GGXWDG_NGDP", "NGDPDPC"]
+MAKRO_INDIKATOREN = ["NGDPD", "NGDP_RPCH", "PCPIPCH", "GGXWDG_NGDP", "NGDPDPC", "LUR"]
+# Zeitreihen für den Chart: Kennzahl -> Bezeichnung; ab dem Jahr MAKRO_VERLAUF_AB bis zum letzten Prognosejahr
+MAKRO_VERLAUF = {"GGXWDG_NGDP": "Schulden / BIP", "PCPIPCH": "Inflation", "NGDP_RPCH": "Reales Wachstum", "LUR": "Arbeitslosigkeit"}
+MAKRO_VERLAUF_AB = 2000
 
 
 def makro():
-    """BIP, Wachstum, Inflation und Staatsschulden der grössten Volkswirtschaften (IWF WEO, laufendes Jahr = Schätzung)."""
+    """BIP, Wachstum, Inflation und Staatsschulden der grössten Volkswirtschaften (IWF WEO, laufendes Jahr = Schätzung).
+
+    Gibt (Tabelle, Zeitreihen) zurück; die Zeitreihen speisen den Makro-Chart."""
     laender = "+".join(c for _, c, _ in MAKRO_LAENDER)
     url = (f"https://api.imf.org/external/sdmx/3.0/data/dataflow/IMF.RES/WEO/+/{laender}."
            f"{'+'.join(MAKRO_INDIKATOREN)}.A?dimensionAtObservation=TIME_PERIOD")
@@ -738,7 +743,14 @@ def makro():
                     "schuldenquote_d5": round(quote - w("GGXWDG_NGDP", vor5), 1)
                     if quote is not None and w("GGXWDG_NGDP", vor5) is not None else None,
                     "bip_kopf": round(w("NGDPDPC")) if w("NGDPDPC") else None})
-    return aus
+    verlauf = []
+    for _, code, name in MAKRO_LAENDER:
+        for ind in MAKRO_VERLAUF:
+            for j, wert in sorted(daten.get((code, ind), {}).items()):
+                if int(j) >= MAKRO_VERLAUF_AB:
+                    verlauf.append({"key": f"{code}-{ind}-{j}", "code": code, "land": name, "kennzahl": ind,
+                                    "jahr": int(j), "wert": round(wert, 2), "prognose": int(j) >= int(jahr)})
+    return aus, verlauf
 
 
 # ---------------------------------------------------------------- Hauptteil
@@ -976,10 +988,11 @@ def main(ziel, vorher=None):
     stempel = {"at": jetzt, "by": "Geplante Aktualisierung (abruf.py)"}
     umsatz = sicher(meistgehandelt) or []
     gewinner = sicher(krypto_gewinner) or []
-    makrodaten = sicher(makro) or []
+    makrodaten, makroverlauf = sicher(makro) or ([], [])
     dateien = {"werte.json": werte, "aktien.json": aktien, "zinsen.json": zinsen,
                "verlauf.json": verlauf, "news.json": news, "umsatz.json": umsatz,
-               "kryptogewinner.json": gewinner, "makro.json": makrodaten}
+               "kryptogewinner.json": gewinner, "makro.json": makrodaten,
+               "makroverlauf.json": makroverlauf}
     for name, zeilen in dateien.items():
         with open(f"{ziel}/{name}", "w", encoding="utf-8") as f:
             json.dump({"rows": zeilen}, f, ensure_ascii=False, separators=(",", ":"))
