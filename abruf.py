@@ -698,12 +698,16 @@ MAKRO_LAENDER = [
     ("Nordamerika", "USA", "USA"), ("Nordamerika", "CAN", "Kanada"), ("Nordamerika", "MEX", "Mexiko"),
     ("Europa", "DEU", "Deutschland"), ("Europa", "GBR", "Grossbritannien"), ("Europa", "FRA", "Frankreich"),
     ("Europa", "ITA", "Italien"), ("Europa", "ESP", "Spanien"), ("Europa", "NLD", "Niederlande"),
-    ("Europa", "CHE", "Schweiz"),
+    ("Europa", "CHE", "Schweiz"), ("Europa", "POL", "Polen"),
     ("Asien", "CHN", "China"), ("Asien", "JPN", "Japan"), ("Asien", "IND", "Indien"), ("Asien", "KOR", "Südkorea"),
     ("Asien", "IDN", "Indonesien"), ("Asien", "TWN", "Taiwan"),
+    # übrige G20-Staaten, damit alle G20-Länder vertreten sind
+    ("Weitere G20", "RUS", "Russland"), ("Weitere G20", "BRA", "Brasilien"), ("Weitere G20", "AUS", "Australien"),
+    ("Weitere G20", "TUR", "Türkei"), ("Weitere G20", "SAU", "Saudi-Arabien"), ("Weitere G20", "ARG", "Argentinien"),
+    ("Weitere G20", "ZAF", "Südafrika"),
 ]
-# IWF-Gesamtwerte, die in der Region Europa zuoberst stehen (G001 Welt, G110/G200 nur für die Weltschuldenquote)
-MAKRO_GRUPPEN = [("G163", "Eurozone"), ("G998", "Europäische Union")]
+# IWF-Gesamtwert, der in der Region Europa zuoberst steht (G001 Welt, G110/G200 nur für die Weltschuldenquote)
+MAKRO_GRUPPEN = [("G163", "Eurozone")]
 MAKRO_INDIKATOREN = ["NGDPD", "NGDP_RPCH", "PCPIPCH", "GGXWDG_NGDP", "NGDPDPC", "LUR", "LP"]
 # Zeitreihen für den Chart: Kennzahl -> Bezeichnung; ab dem Jahr MAKRO_VERLAUF_AB bis zum letzten Prognosejahr
 MAKRO_VERLAUF = {"GGXWDG_NGDP": "Schulden / BIP", "PCPIPCH": "Inflation", "NGDP_RPCH": "Reales Wachstum", "LUR": "Arbeitslosigkeit"}
@@ -756,7 +760,7 @@ def makro():
                     "bip_kopf": round(g("NGDPDPC")) if g("NGDPDPC") else (round(welt_bip / (g("LP") * 1e6)) if g("LP") else None)})
     zeilen = []
     for region, code, name in MAKRO_LAENDER:
-        if code == "DEU":  # Eurozone und EU vor den europäischen Ländern
+        if code == "DEU":  # Eurozone vor den europäischen Ländern
             zeilen += [("Europa", c, n, True) for c, n in MAKRO_GRUPPEN]
         zeilen.append((region, code, name, False))
     for region, code, name, gruppe in zeilen:
