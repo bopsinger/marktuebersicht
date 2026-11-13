@@ -702,6 +702,8 @@ MAKRO_LAENDER = [
     ("Asien", "CHN", "China"), ("Asien", "JPN", "Japan"), ("Asien", "IND", "Indien"), ("Asien", "KOR", "Südkorea"),
     ("Asien", "IDN", "Indonesien"), ("Asien", "TWN", "Taiwan"),
 ]
+# IWF-Gesamtwerte, die in der Region Europa zuoberst stehen (G001 Welt, G110/G200 nur für die Weltschuldenquote)
+MAKRO_GRUPPEN = [("G163", "Eurozone"), ("G998", "Europäische Union")]
 MAKRO_INDIKATOREN = ["NGDPD", "NGDP_RPCH", "PCPIPCH", "GGXWDG_NGDP", "NGDPDPC", "LUR", "LP"]
 # Zeitreihen für den Chart: Kennzahl -> Bezeichnung; ab dem Jahr MAKRO_VERLAUF_AB bis zum letzten Prognosejahr
 MAKRO_VERLAUF = {"GGXWDG_NGDP": "Schulden / BIP", "PCPIPCH": "Inflation", "NGDP_RPCH": "Reales Wachstum", "LUR": "Arbeitslosigkeit"}
@@ -712,7 +714,7 @@ def makro():
     """BIP, Wachstum, Inflation und Staatsschulden der grössten Volkswirtschaften (IWF WEO, laufendes Jahr = Schätzung).
 
     Gibt (Tabelle, Zeitreihen) zurück; die Zeitreihen speisen den Makro-Chart."""
-    laender = "+".join([c for _, c, _ in MAKRO_LAENDER] + ["G001", "G110", "G200"])  # Welt, Industrie-, Schwellenländer
+    laender = "+".join([c for _, c, _ in MAKRO_LAENDER] + ["G001", "G110", "G200"] + [c for c, _ in MAKRO_GRUPPEN])
     url = (f"https://api.imf.org/external/sdmx/3.0/data/dataflow/IMF.RES/WEO/+/{laender}."
            f"{'+'.join(MAKRO_INDIKATOREN)}.A?dimensionAtObservation=TIME_PERIOD")
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json"})
@@ -752,10 +754,15 @@ def makro():
                     "schuldenquote_d5": round(wq - wq5, 1) if wq and wq5 else None,
                     # BIP pro Kopf der Welt aus BIP und Bevölkerung (LP, in Millionen)
                     "bip_kopf": round(g("NGDPDPC")) if g("NGDPDPC") else (round(welt_bip / (g("LP") * 1e6)) if g("LP") else None)})
+    zeilen = []
     for region, code, name in MAKRO_LAENDER:
+        if code == "DEU":  # Eurozone und EU vor den europäischen Ländern
+            zeilen += [("Europa", c, n, True) for c, n in MAKRO_GRUPPEN]
+        zeilen.append((region, code, name, False))
+    for region, code, name, gruppe in zeilen:
         w = lambda ind, j=jahr: daten.get((code, ind), {}).get(j)  # noqa: E731
         bip, quote = w("NGDPD"), w("GGXWDG_NGDP")
-        aus.append({"key": code, "region": region, "land": name, "jahr": jahr,
+        aus.append({"key": code, "region": region, "land": name, "jahr": jahr, "gruppe": gruppe,
                     "bip": round(bip) if bip else None,
                     "anteil_welt": round(bip / welt_bip * 100, 2) if bip and welt_bip else None,
                     "wachstum": round(w("NGDP_RPCH"), 2) if w("NGDP_RPCH") is not None else None,
@@ -767,7 +774,7 @@ def makro():
                     if quote is not None and w("GGXWDG_NGDP", vor5) is not None else None,
                     "bip_kopf": round(w("NGDPDPC")) if w("NGDPDPC") else None})
     verlauf = []
-    for _, code, name in MAKRO_LAENDER:
+    for code, name in [(c, n) for _, c, n in MAKRO_LAENDER] + MAKRO_GRUPPEN:
         for ind in MAKRO_VERLAUF:
             for j, wert in sorted(daten.get((code, ind), {}).items()):
                 if int(j) >= MAKRO_VERLAUF_AB:

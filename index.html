@@ -136,6 +136,7 @@
   .mu-makrotab tr.mu-region td { padding-top: var(--cds-pad-md); color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--color-border-line); text-align: left; }
   .mu-makrotab td:first-child { font-weight: var(--cds-font-weight-medium); }
   .mu-makrotab tr.mu-welt td { font-weight: var(--cds-font-weight-medium); background: rgba(255, 255, 255, .03); }
+  .mu-makrotab tr.mu-gruppenzeile td { background: rgba(255, 255, 255, .02); font-style: italic; }
   .mu-chartkarte { position: relative; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); display: grid; gap: var(--cds-gap-md); }
   .mu-reiter { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); }
   .mu-reiter button, .mu-laender button { font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: 999px; background: var(--color-bg); color: var(--color-fg-muted); cursor: pointer; }
@@ -350,7 +351,7 @@
   <section class="mu-abschnitt" id="makro">
     <div class="mu-h2">
       <h2>Makro</h2>
-      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Makro">i<span class="mu-info-text" role="tooltip">Zuoberst die Welt, darunter die wichtigsten Volkswirtschaften nach Region mit ihrem Anteil am Welt-BIP (in der Regionszeile die Summe der aufgeführten Länder). Werte für das laufende Jahr laut World Economic Outlook des Internationalen Währungsfonds (IWF), also Schätzungen. BIP und BIP pro Kopf in US-Dollar zu aktuellen Preisen, Wachstum real. Inflation: Durchschnitt der Verbraucherpreise im Jahr, in Klammern das Vorjahr. Staatsschulden: Bruttoschulden des Gesamtstaats; in US-Dollar aus der Schuldenquote und dem BIP berechnet. „Δ 5J“: Veränderung der Schuldenquote gegenüber vor fünf Jahren in Prozentpunkten. Die Schuldenquote der Welt weist der IWF hier nicht aus; sie ist aus Industrie- und Schwellenländern nach BIP gewichtet berechnet. Der IWF aktualisiert diese Daten zweimal im Jahr (April und Oktober). Der Chart zeigt die Zeitreihen ab 2000; Prognosejahre sind hinterlegt und gestrichelt. Länder lassen sich per Klick ein- und ausblenden, das Fahren über den Chart zeigt die Werte eines Jahres.</span></span>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Makro">i<span class="mu-info-text" role="tooltip">Zuoberst die Welt, darunter die wichtigsten Volkswirtschaften nach Region mit ihrem Anteil am Welt-BIP (in der Regionszeile die Summe der aufgeführten Länder). Im Europa-Block stehen zuoberst die IWF-Gesamtwerte für Eurozone und Europäische Union (kursiv); sie zählen nicht zur Regionssumme. Werte für das laufende Jahr laut World Economic Outlook des Internationalen Währungsfonds (IWF), also Schätzungen. BIP und BIP pro Kopf in US-Dollar zu aktuellen Preisen, Wachstum real. Inflation: Durchschnitt der Verbraucherpreise im Jahr, in Klammern das Vorjahr. Staatsschulden: Bruttoschulden des Gesamtstaats; in US-Dollar aus der Schuldenquote und dem BIP berechnet. „Δ 5J“: Veränderung der Schuldenquote gegenüber vor fünf Jahren in Prozentpunkten. Die Schuldenquote der Welt weist der IWF hier nicht aus; sie ist aus Industrie- und Schwellenländern nach BIP gewichtet berechnet. Der IWF aktualisiert diese Daten zweimal im Jahr (April und Oktober). Der Chart zeigt die Zeitreihen ab 2000; Prognosejahre sind hinterlegt und gestrichelt. Länder lassen sich per Klick ein- und ausblenden, das Fahren über den Chart zeigt die Werte eines Jahres.</span></span>
       <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
     <div class="mu-zinsen mu-rollen">
@@ -849,15 +850,16 @@
     const zeilen = [];
     const farbe = (q) => q >= 100 ? 'var(--color-bad)' : q >= 60 ? '#e8a33d' : 'var(--color-ok)';
     let region = null;
-    const regionAnteil = d3.rollup(m.data.filter((r) => r.region !== 'Welt'), (rs) => d3.sum(rs, (r) => r.anteil_welt || 0), (r) => r.region);
+    const laenderZeilen = m.data.filter((r) => r.region !== 'Welt' && !r.gruppe);
+    const regionAnteil = d3.rollup(laenderZeilen, (rs) => d3.sum(rs, (r) => r.anteil_welt || 0), (r) => r.region);
     const kopfzeile = (text) => { const kopf = MU.neu('tr', 'mu-region'), td = MU.neu('td', null, text); td.colSpan = 9; kopf.appendChild(td); return kopf; };
     m.data.forEach((r) => {
       if (r.region !== region) {
         region = r.region;
         zeilen.push(kopfzeile(region === 'Welt' ? 'Welt · ' + r.jahr + ' (IWF-Schätzung)'
-          : region + ' · ' + MU.anteil(regionAnteil.get(region)) + ' des Welt-BIP'));
+          : region + ' · aufgeführte Länder ' + MU.anteil(regionAnteil.get(region)) + ' des Welt-BIP'));
       }
-      const tr = MU.neu('tr', r.key === 'WELT' ? 'mu-welt' : null); tr.dataset.key = r.key;
+      const tr = MU.neu('tr', r.key === 'WELT' ? 'mu-welt' : r.gruppe ? 'mu-gruppenzeile' : null); tr.dataset.key = r.key;
       const inflation = MU.neu('td', null, r.inflation == null ? '—' : MU.anteil(r.inflation));
       if (r.inflation_vj != null) inflation.appendChild(MU.neu('span', 'mu-sym', '(' + MU.anteil(r.inflation_vj) + ')'));
       const quote = MU.neu('td');
@@ -880,7 +882,7 @@
       );
       zeilen.push(tr);
     });
-    const summe = d3.sum(m.data.filter((r) => r.region !== 'Welt'), (r) => r.anteil_welt || 0);
+    const summe = d3.sum(laenderZeilen, (r) => r.anteil_welt || 0);
     if (summe) {
       const fuss = MU.neu('tr', 'mu-region'), td = MU.neu('td', null, 'Aufgeführte Länder zusammen: ' + MU.anteil(summe) + ' des Welt-BIP');
       td.colSpan = 9; fuss.appendChild(td); zeilen.push(fuss);
