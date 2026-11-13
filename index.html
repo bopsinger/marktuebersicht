@@ -126,6 +126,18 @@
   .mu-gewinnertab td.mu-name { overflow: hidden; text-overflow: ellipsis; }
   .mu-gewinnertab th:nth-child(2), .mu-gewinnertab td:nth-child(2) { text-align: left; padding-left: var(--cds-pad-sm); }
   .mu-sym { color: var(--color-fg-muted); font-weight: 400; margin-left: 6px; }
+  .mu-makrotab { table-layout: fixed; min-width: 50rem; font-size: var(--cds-font-size-body); }
+  .mu-makrotab td { padding-block: 7px; }
+  .mu-makrotab col.mu-col-name { width: 11rem; }
+  .mu-makrotab col.mu-col-k { width: 7rem; }
+  .mu-makrotab col.mu-col-p { width: 5.5rem; }
+  .mu-makrotab col.mu-col-i { width: 8.5rem; }
+  .mu-makrotab col.mu-col-q { width: 11rem; }
+  .mu-makrotab tr.mu-region td { padding-top: var(--cds-pad-md); color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--color-border-line); text-align: left; }
+  .mu-makrotab td:first-child { font-weight: var(--cds-font-weight-medium); }
+  .mu-quote { display: grid; grid-template-columns: 1fr 3.4rem; align-items: center; gap: 8px; }
+  .mu-quote i { display: block; height: 8px; border-radius: 4px; background: var(--color-border-line); overflow: hidden; }
+  .mu-quote i b { display: block; height: 100%; border-radius: 4px; }
   .mu-link { color: inherit; text-decoration: none; }
   .mu-link:hover { text-decoration: underline; text-underline-offset: 3px; }
   .mu-link:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; border-radius: 2px; }
@@ -180,6 +192,7 @@
       <button type="button" data-ziel="umsatz">Meistgehandelt</button>
       <button type="button" data-ziel="rohstoffe">Rohstoffe</button>
       <button type="button" data-ziel="zinsen">Zinsen</button>
+      <button type="button" data-ziel="makro">Makro</button>
       <button type="button" data-ziel="krypto">Krypto</button>
     </nav>
   </header>
@@ -319,6 +332,32 @@
     </details>
   </section>
 
+  <section class="mu-abschnitt" id="makro">
+    <div class="mu-h2">
+      <h2>Makro</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Makro">i<span class="mu-info-text" role="tooltip">Die wichtigsten Volkswirtschaften nach Region, Werte für das laufende Jahr laut World Economic Outlook des Internationalen Währungsfonds (IWF), also Schätzungen. BIP und BIP pro Kopf in US-Dollar zu aktuellen Preisen, Wachstum real. Inflation: Durchschnitt der Verbraucherpreise im Jahr, in Klammern das Vorjahr. Staatsschulden: Bruttoschulden des Gesamtstaats; in US-Dollar aus der Schuldenquote und dem BIP berechnet. „Δ 5J“: Veränderung der Schuldenquote gegenüber vor fünf Jahren in Prozentpunkten. Der IWF aktualisiert diese Daten zweimal im Jahr (April und Oktober).</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
+    </div>
+    <div class="mu-zinsen mu-rollen">
+      <table class="mu-tab mu-makrotab" data-source="makro" data-row-key="key">
+        <colgroup><col class="mu-col-name"><col class="mu-col-k"><col class="mu-col-p"><col class="mu-col-i"><col class="mu-col-k"><col class="mu-col-q"><col class="mu-col-p"><col class="mu-col-k"></colgroup>
+        <thead>
+          <tr>
+            <th data-field="land">Land</th>
+            <th data-field="bip">BIP USD</th>
+            <th data-field="wachstum">Wachstum</th>
+            <th data-field="inflation">Inflation (Vorjahr)</th>
+            <th data-field="schulden">Staatsschulden USD</th>
+            <th data-field="schuldenquote">Schulden / BIP</th>
+            <th data-field="schuldenquote_d5">Δ 5J</th>
+            <th data-field="bip_kopf">BIP pro Kopf</th>
+          </tr>
+        </thead>
+        <tbody data-draw="makro"></tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="mu-abschnitt" id="krypto">
     <div class="mu-h2">
       <h2>Krypto</h2>
@@ -352,7 +391,7 @@
 
   <div class="mu-h2 mu-quellen">
     <span>Datenquellen</span>
-    <span class="mu-info" tabindex="0" role="button" aria-label="Datenquellen">i<span class="mu-info-text" role="tooltip">Yahoo Finance (Kurse, Wechselkurse), CNBC und Investing.com (Nachrichten), CoinMarketCap (Krypto gesamt), US-Finanzministerium, Bundesbank, Bank of England, japanisches Finanzministerium, Bank of Canada, Reserve Bank of Australia, Schweizerische Nationalbank und CFETS (Renditen), SIFMA, Savills, World Gold Council und CPM Group (Marktwerte der Anlageklassen), S&amp;P GSCI (Rohstoffgewichte). An Werktagen von 7 bis 23 Uhr (Winterzeit) werden Kurse und Renditen stündlich aktualisiert, Nachrichten alle 10 Minuten.</span></span>
+    <span class="mu-info" tabindex="0" role="button" aria-label="Datenquellen">i<span class="mu-info-text" role="tooltip">Yahoo Finance (Kurse, Wechselkurse), CNBC und Investing.com (Nachrichten), CoinMarketCap (Krypto gesamt), US-Finanzministerium, Bundesbank, Bank of England, japanisches Finanzministerium, Bank of Canada, Reserve Bank of Australia, Schweizerische Nationalbank und CFETS (Renditen), SIFMA, Savills, World Gold Council und CPM Group (Marktwerte der Anlageklassen), Internationaler Währungsfonds (Makro), S&amp;P GSCI (Rohstoffgewichte). An Werktagen von 7 bis 23 Uhr (Winterzeit) werden Kurse und Renditen stündlich aktualisiert, Nachrichten alle 10 Minuten.</span></span>
   </div>
 </div>
 
@@ -371,6 +410,7 @@
     bp: (v) => v == null ? '—' : (v > 0 ? '+' : v < 0 ? '−' : '±') + f0.format(Math.abs(v)),
     rendite: (v) => v == null ? '—' : f2.format(v) + ' %',
     anteil: (v) => v == null ? '—' : f1.format(v) + ' %',
+    ganz: (v) => v == null ? '—' : f0.format(v),
     yahoo: (s) => 'https://finance.yahoo.com/quote/' + encodeURIComponent(s),
     link: (text, href) => {
       if (!href || !/^https:\/\//.test(href)) return document.createTextNode(text);
@@ -395,7 +435,7 @@
 
   document.querySelectorAll('.mu-neu').forEach((b) => b.addEventListener('click', () => {
     b.disabled = true;
-    ['werte', 'aktien', 'zinsen', 'verlauf', 'news', 'umsatz', 'kryptogewinner'].forEach((id) => dash.refresh(id));
+    ['werte', 'aktien', 'zinsen', 'verlauf', 'news', 'umsatz', 'kryptogewinner', 'makro'].forEach((id) => dash.refresh(id));
     setTimeout(() => { b.disabled = false; }, 2500);
   }));
 
@@ -767,6 +807,49 @@
       );
       return tr;
     }));
+  });
+</script>
+
+<script>
+  // Makro-Tabelle: Länder nach Region, Schuldenquote mit Balken (Skala bis 200 %).
+  dash.draw('makro', (tbody) => {
+    const m = dash.data('makro');
+    if (m.status !== 'ok') {
+      const tr = MU.neu('tr'), td = MU.neu('td', 'mu-null', m.status === 'error' ? 'Konnte nicht geladen werden' : '—');
+      td.colSpan = 8; tr.appendChild(td); tbody.replaceChildren(tr); return;
+    }
+    const zeilen = [];
+    const farbe = (q) => q >= 100 ? 'var(--color-bad)' : q >= 60 ? '#e8a33d' : 'var(--color-ok)';
+    let region = null;
+    m.data.forEach((r) => {
+      if (r.region !== region) {
+        region = r.region;
+        const kopf = MU.neu('tr', 'mu-region'), td = MU.neu('td', null, region + ' · ' + r.jahr + ' (IWF-Schätzung)');
+        td.colSpan = 8; kopf.appendChild(td); zeilen.push(kopf);
+      }
+      const tr = MU.neu('tr'); tr.dataset.key = r.key;
+      const inflation = MU.neu('td', null, r.inflation == null ? '—' : MU.anteil(r.inflation));
+      if (r.inflation_vj != null) inflation.appendChild(MU.neu('span', 'mu-sym', '(' + MU.anteil(r.inflation_vj) + ')'));
+      const quote = MU.neu('td');
+      if (r.schuldenquote != null) {
+        const box = MU.neu('div', 'mu-quote'), spur = MU.neu('i'), balken = MU.neu('b');
+        balken.style.width = Math.min(100, r.schuldenquote / 2) + '%'; balken.style.background = farbe(r.schuldenquote);
+        spur.appendChild(balken); box.append(spur, MU.neu('span', null, MU.anteil(r.schuldenquote))); quote.appendChild(box);
+      } else quote.textContent = '—';
+      const d5 = r.schuldenquote_d5;
+      tr.append(
+        MU.neu('td', null, r.land),
+        MU.neu('td', null, MU.kompakt(r.bip)),
+        MU.neu('td', MU.klasse(r.wachstum), r.wachstum == null ? '—' : MU.prozent(r.wachstum)),
+        inflation,
+        MU.neu('td', null, MU.kompakt(r.schulden)),
+        quote,
+        MU.neu('td', d5 == null ? 'mu-null' : d5 > 0 ? 'mu-minus' : 'mu-plus', d5 == null ? '—' : (d5 > 0 ? '+' : d5 < 0 ? '−' : '±') + Math.abs(d5).toFixed(1).replace('.', '.') + ' Pp'),
+        MU.neu('td', 'mu-klein', MU.ganz(r.bip_kopf)),
+      );
+      zeilen.push(tr);
+    });
+    tbody.replaceChildren(...zeilen);
   });
 </script>
 

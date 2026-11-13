@@ -692,6 +692,55 @@ def krypto_gewinner(n=10, aus_top=50):
     return liste[:n]
 
 
+# Makro: IWF World Economic Outlook (neue SDMX-Schnittstelle; die alte DataMapper-Adresse sperrt Rechenzentren).
+MAKRO_LAENDER = [
+    # Region, IWF-Code, Name
+    ("Nordamerika", "USA", "USA"), ("Nordamerika", "CAN", "Kanada"), ("Nordamerika", "MEX", "Mexiko"),
+    ("Europa", "DEU", "Deutschland"), ("Europa", "GBR", "Grossbritannien"), ("Europa", "FRA", "Frankreich"),
+    ("Europa", "ITA", "Italien"), ("Europa", "ESP", "Spanien"), ("Europa", "NLD", "Niederlande"),
+    ("Europa", "CHE", "Schweiz"),
+    ("Asien", "CHN", "China"), ("Asien", "JPN", "Japan"), ("Asien", "IND", "Indien"), ("Asien", "KOR", "Südkorea"),
+    ("Asien", "IDN", "Indonesien"), ("Asien", "TWN", "Taiwan"),
+]
+MAKRO_INDIKATOREN = ["NGDPD", "NGDP_RPCH", "PCPIPCH", "GGXWDG_NGDP", "NGDPDPC"]
+
+
+def makro():
+    """BIP, Wachstum, Inflation und Staatsschulden der grössten Volkswirtschaften (IWF WEO, laufendes Jahr = Schätzung)."""
+    laender = "+".join(c for _, c, _ in MAKRO_LAENDER)
+    url = (f"https://api.imf.org/external/sdmx/3.0/data/dataflow/IMF.RES/WEO/+/{laender}."
+           f"{'+'.join(MAKRO_INDIKATOREN)}.A?dimensionAtObservation=TIME_PERIOD")
+    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json"})
+    with urllib.request.build_opener().open(req, timeout=60) as r:
+        d = json.load(r)
+    dims = d["data"]["structures"][0]["dimensions"]
+    werte_dim = {x["id"]: [v.get("id") or v.get("value") for v in x["values"]] for x in dims["series"]}
+    jahre = [v["value"] for v in [x for x in dims["observation"] if x["id"] == "TIME_PERIOD"][0]["values"]]
+    daten = {}  # (land, indikator) -> {jahr: wert}
+    for schluessel, serie in d["data"]["dataSets"][0]["series"].items():
+        i_land, i_ind, _ = (int(x) for x in schluessel.split(":"))
+        land, ind = werte_dim["COUNTRY"][i_land], werte_dim["INDICATOR"][i_ind]
+        daten[(land, ind)] = {jahre[int(t)]: float(o[0]) for t, o in serie.get("observations", {}).items()
+                              if o and o[0] not in (None, "")}
+    jahr = str(dt.date.today().year)
+    vor5 = str(dt.date.today().year - 5)
+    aus = []
+    for region, code, name in MAKRO_LAENDER:
+        w = lambda ind, j=jahr: daten.get((code, ind), {}).get(j)  # noqa: E731
+        bip, quote = w("NGDPD"), w("GGXWDG_NGDP")
+        aus.append({"key": code, "region": region, "land": name, "jahr": jahr,
+                    "bip": round(bip) if bip else None,
+                    "wachstum": round(w("NGDP_RPCH"), 2) if w("NGDP_RPCH") is not None else None,
+                    "inflation": round(w("PCPIPCH"), 2) if w("PCPIPCH") is not None else None,
+                    "inflation_vj": round(w("PCPIPCH", str(int(jahr) - 1)), 2) if w("PCPIPCH", str(int(jahr) - 1)) is not None else None,
+                    "schuldenquote": round(quote, 1) if quote is not None else None,
+                    "schulden": round(bip * quote / 100) if bip and quote is not None else None,
+                    "schuldenquote_d5": round(quote - w("GGXWDG_NGDP", vor5), 1)
+                    if quote is not None and w("GGXWDG_NGDP", vor5) is not None else None,
+                    "bip_kopf": round(w("NGDPDPC")) if w("NGDPDPC") else None})
+    return aus
+
+
 # ---------------------------------------------------------------- Hauptteil
 
 
@@ -927,9 +976,10 @@ def main(ziel, vorher=None):
     stempel = {"at": jetzt, "by": "Geplante Aktualisierung (abruf.py)"}
     umsatz = sicher(meistgehandelt) or []
     gewinner = sicher(krypto_gewinner) or []
+    makrodaten = sicher(makro) or []
     dateien = {"werte.json": werte, "aktien.json": aktien, "zinsen.json": zinsen,
                "verlauf.json": verlauf, "news.json": news, "umsatz.json": umsatz,
-               "kryptogewinner.json": gewinner}
+               "kryptogewinner.json": gewinner, "makro.json": makrodaten}
     for name, zeilen in dateien.items():
         with open(f"{ziel}/{name}", "w", encoding="utf-8") as f:
             json.dump({"rows": zeilen}, f, ensure_ascii=False, separators=(",", ":"))
