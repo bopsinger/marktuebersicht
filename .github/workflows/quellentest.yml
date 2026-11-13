@@ -1,0 +1,26 @@
+name: Quellentest
+on: push
+jobs:
+  t:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          A='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36'
+          for u in \
+           "https://www.federalreserve.gov/datadownload/Choose.aspx?rel=Z1" \
+           "https://www.federalreserve.gov/releases/z1/current/default.htm" \
+           "https://www.federalreserve.gov/releases/z1/20250911/z1.pdf" \
+           "https://www.federalreserve.gov/releases/h6/current/default.htm" \
+           "https://www.federalreserve.gov/datadownload/Output.aspx?rel=H6&filetype=csv&label=include&layout=seriescolumn&lastobs=3" \
+           "https://www.federalreserve.gov/releases/z1/dataviz/dfa/distribute/table/" \
+           "https://www.federalreserve.gov/releases/z1/dataviz/download/dfa-income-levels.csv" \
+           "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny?sort=-record_date&page%5Bsize%5D=1" \
+           "https://www.newyorkfed.org/microeconomics/hhdc" \
+           "https://www.newyorkfed.org/medialibrary/interactives/householdcredit/data/xls/HHD_C_Report_2025Q2.xlsx" \
+           "https://fred.stlouisfed.org/graph/fredgraph.csv?id=M2SL" \
+           "https://api.stlouisfed.org/" \
+           "https://apps.bea.gov/api/data" \
+           "https://www.bis.org/" "https://stats.bis.org/api/v2/data/dataflow/BIS/WS_TC/2.0/Q.US.H.A.M.770.A?lastNObservations=2&format=csv" \
+          ; do echo "$(curl -s -L -o /tmp/x -w '%{http_code} %{size_download}' -m 30 -A "$A" "$u") $u"; done
+          curl -s -L -m 30 -A "$A" "https://www.federalreserve.gov/datadownload/Output.aspx?rel=Z1&series=0b0a9b6ac2b9e8d14b2b09f8c2fd8b5c&lastobs=2&filetype=csv&label=include&layout=seriescolumn" | head -c 400; echo
+          curl -s -L -m 30 -A "$A" "https://stats.bis.org/api/v2/data/dataflow/BIS/WS_TC/2.0/Q.US.H.A.M.770.A?lastNObservations=2&format=csv" | head -c 600
