@@ -43,7 +43,7 @@ KOPF = """<!doctype html>
 <script>
   // Ersatz für das dash-Objekt der claude.ai-Dashboards: liest daten/<id>.json und zeichnet bei Daten- oder Breitenänderung neu.
   (function () {
-    const QUELLEN = ["werte", "aktien", "zinsen", "verlauf", "news", "umsatz", "kryptogewinner", "makro", "makroverlauf"];
+    const QUELLEN = ["werte", "aktien", "zinsen", "verlauf", "news", "umsatz", "kryptogewinner", "makro", "makroverlauf", "usa"];
     const daten = {};
     QUELLEN.forEach((id) => { daten[id] = {status: "loading", data: []}; });
     const zeichner = [];

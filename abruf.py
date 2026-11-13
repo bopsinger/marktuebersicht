@@ -23,6 +23,8 @@ import urllib.request
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
 
+import land_usa
+
 UA = "Mozilla/5.0"
 JAR = http.cookiejar.CookieJar()
 OPENER = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(JAR))
@@ -833,6 +835,17 @@ def vorherige_aktienzahl(pfad):
         return {}, {}
 
 
+def usa_mit_vorstand(teile, pfad="daten/usa.json"):
+    """Ergänzt Bausteine, die diesmal nicht abrufbar waren, aus dem letzten gespeicherten Stand."""
+    try:
+        with open(pfad, encoding="utf-8") as f:
+            alt = json.load(f)["rows"]
+    except (OSError, ValueError, KeyError):
+        return teile
+    neu = {t["teil"] for t in teile}
+    return teile + [t for t in alt if t.get("teil") not in neu]
+
+
 def main(ziel, vorher=None):
     jetzt = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
     werte, verlauf, aktien, zinsen = [], [], [], []
@@ -1046,10 +1059,11 @@ def main(ziel, vorher=None):
     umsatz = sicher(meistgehandelt) or []
     gewinner = sicher(krypto_gewinner) or []
     makrodaten, makroverlauf = sicher(makro) or ([], [])
+    usa = usa_mit_vorstand(land_usa.usa(sicher))
     dateien = {"werte.json": werte, "aktien.json": aktien, "zinsen.json": zinsen,
                "verlauf.json": verlauf, "news.json": news, "umsatz.json": umsatz,
                "kryptogewinner.json": gewinner, "makro.json": makrodaten,
-               "makroverlauf.json": makroverlauf}
+               "makroverlauf.json": makroverlauf, "usa.json": usa}
     for name, zeilen in dateien.items():
         with open(f"{ziel}/{name}", "w", encoding="utf-8") as f:
             json.dump({"rows": zeilen}, f, ensure_ascii=False, separators=(",", ":"))
