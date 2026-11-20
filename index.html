@@ -240,6 +240,23 @@
   .mu-seitentitel p b { color: var(--color-fg); font-weight: var(--cds-font-weight-medium); }
   .mu-seitenkopf .mu-chips { max-width: 26rem; }
   .mu-platzhalter { background: var(--color-panel); border: 1px dashed var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); color: var(--color-fg-muted); font-size: var(--cds-font-size-body); }
+  /* Aktienseite */
+  .mu-regiontab, .mu-sektortab { min-width: 40rem; font-size: var(--cds-font-size-body); }
+  .mu-bewertab { min-width: 36rem; font-size: var(--cds-font-size-body); }
+  .mu-regiontab td, .mu-sektortab td, .mu-bewertab td { padding-block: 7px; }
+  .mu-regiontab td:first-child, .mu-sektortab td:first-child, .mu-bewertab td:first-child { font-weight: var(--cds-font-weight-medium); }
+  .mu-regiontab tr.mu-klickbar:hover td, .mu-regiontab tr.mu-klickbar:focus-visible td { background: rgba(255, 255, 255, .04); }
+  .mu-regiontab tr.mu-klickbar:focus-visible { outline: 2px solid var(--color-fg); outline-offset: -2px; }
+  .mu-regiontab tr.mu-klickbar td:first-child::after { content: " ›"; color: var(--color-fg-muted); }
+  .mu-regiontab tr.mu-aktuell td { background: rgba(255, 255, 255, .05); }
+  .mu-sektortab td.mu-heat { border-radius: 3px; }
+  .mu-sektortab th[data-feld] { cursor: pointer; user-select: none; }
+  .mu-sektortab th[data-feld]:hover { color: var(--color-fg); }
+  .mu-sektortab th[aria-sort="descending"]::after { content: " ▼"; }
+  .mu-sektortab th[aria-sort="ascending"]::after { content: " ▲"; }
+  .mu-ampel { display: inline-block; width: .55rem; height: .55rem; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+  #breite .mu-kacheln, #stress .mu-kacheln { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15.5rem), 1fr)); min-height: 0; }
+  .mu-unterwahl { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
   [data-dash-source-state=empty] { color: transparent; }
   [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
 </style>
@@ -269,7 +286,7 @@
       <button type="button" data-ziel="laender">Länder</button>
       <button type="button" data-ziel="krypto">Krypto</button>
     </nav>
-    <div class="mu-seitenkopf" data-draw="seitenkopf" data-source="werte" hidden></div>
+    <div class="mu-seitenkopf" data-draw="seitenkopf" data-source="werte aktienmarkt" hidden></div>
   </header>
 
   <section class="mu-abschnitt" id="news">
@@ -293,6 +310,55 @@
     </div>
     <div class="mu-kuchen dash-skeleton" data-draw="kuchen" data-klasse="Anlageklasse" data-source="werte">—</div>
     <div class="mu-kacheln dash-skeleton" data-draw="kacheln" data-klasse="Anlageklasse" data-source="werte verlauf">—</div>
+  </section>
+
+  <section class="mu-abschnitt" id="regionen" data-unterseite>
+    <div class="mu-h2">
+      <h2>Regionen im Vergleich</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Regionen im Vergleich">i<span class="mu-info-text" role="tooltip">Aktienmärkte der grossen Regionen, gemessen an breiten Index-ETF und in US-Dollar gerechnet, damit sie direkt vergleichbar sind: Welt iShares MSCI ACWI, USA SPDR S&amp;P 500, Europa Vanguard FTSE Europe, Japan iShares MSCI Japan, Schwellenländer iShares MSCI Emerging Markets. Renditen einschliesslich wieder angelegter Dividenden (Gesamtrendite), deshalb höher als bei den Indizes weiter unten, die nur den Kurs zeigen. Für Anleger ausserhalb der USA kommt die Wechselkursveränderung zum Dollar hinzu. „p.a. 10J“: durchschnittliche jährliche Rendite über zehn Jahre. Die Linien zeigen die Entwicklung über fünf Jahre, Start bei 100. Ein Klick auf eine Region öffnet ihre eigene Seite.</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
+    </div>
+    <div class="mu-zinsen mu-rollen"><table class="mu-tab mu-regiontab"><thead><tr><th>Region</th><th>1T</th><th>1W</th><th>1M</th><th>YTD</th><th>1J</th><th>5J</th><th>10J</th><th>p.a. 10J</th></tr></thead><tbody data-draw="regionen" data-source="aktienmarkt"></tbody></table></div>
+    <div class="mu-karte"><h3>Entwicklung über fünf Jahre (Start = 100, in USD)</h3><div class="mu-linienchart" data-draw="regionenchart" data-source="aktienmarkt">—</div></div>
+  </section>
+
+  <section class="mu-abschnitt" id="sektoren" data-unterseite>
+    <div class="mu-h2">
+      <h2>Sektoren</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Sektoren">i<span class="mu-info-text" role="tooltip">Wertentwicklung der Branchen über 1 Tag, 1 Woche, 1 Monat, seit Jahresbeginn, 1 und 5 Jahre, einschliesslich Dividenden. Je kräftiger die Farbe, desto stärker die Bewegung im Vergleich zu den anderen Sektoren derselben Spalte. Welt: iShares-Global-Sektor-ETF (in USD). USA: Select-Sector-SPDR-ETF des S&amp;P 500 (Kommunikation erst ab Juni 2018, deshalb ohne 10 Jahre). Europa: iShares-STOXX-Europe-600-Sektor-ETF (in EUR); STOXX teilt die Branchen etwas anders ein, etwa Banken und Versicherungen getrennt. Ein Klick auf eine Spaltenüberschrift sortiert.</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
+    </div>
+    <div class="mu-reiter" role="tablist" aria-label="Region der Sektoren" data-draw="sektorreiter" data-source="aktienmarkt"></div>
+    <div class="mu-zinsen mu-rollen"><table class="mu-tab mu-sektortab"><thead><tr><th data-feld="name">Sektor</th><th data-feld="t1">1T</th><th data-feld="w1">1W</th><th data-feld="m1">1M</th><th data-feld="ytd">YTD</th><th data-feld="j1">1J</th><th data-feld="j5">5J</th></tr></thead><tbody data-draw="sektoren" data-source="aktienmarkt"></tbody></table></div>
+  </section>
+
+  <section class="mu-abschnitt" id="breite" data-unterseite>
+    <div class="mu-h2">
+      <h2>Marktbreite (USA)</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Marktbreite (USA)">i<span class="mu-info-text" role="tooltip">Drei Verhältnisse, die zeigen, wie breit ein Anstieg getragen ist. Jede Linie teilt einen Index durch einen anderen und startet vor fünf Jahren bei 100: Steigt sie, läuft der erste besser. Gleich gewichtet gegen Börsenwert: S&amp;P 500 Equal Weight geteilt durch den normalen S&amp;P 500; fällt die Linie, ziehen wenige Grosskonzerne den Index, der Markt ist eng. Klein gegen gross: Russell 2000 geteilt durch S&amp;P 500. Wachstum gegen Substanz: iShares Russell 1000 Growth geteilt durch Russell 1000 Value. Indizes ohne, ETF mit Dividenden.</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
+    </div>
+    <div class="mu-kacheln" data-draw="breitekacheln" data-source="aktienmarkt">—</div>
+    <div class="mu-karte"><h3>Verhältnisse über fünf Jahre (Start = 100)</h3><div class="mu-linienchart" data-draw="breitechart" data-source="aktienmarkt">—</div></div>
+  </section>
+
+  <section class="mu-abschnitt" id="stress" data-unterseite>
+    <div class="mu-h2">
+      <h2>Risiko und Stimmung</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Risiko und Stimmung">i<span class="mu-info-text" role="tooltip">VIX: die vom Optionsmarkt erwartete Schwankung des S&amp;P 500 über die nächsten 30 Tage, in Prozent pro Jahr; oft „Angstbarometer“ genannt. Unter 15 gilt als ruhig, über 30 als angespannt; im März 2020 erreichte er 82,7. VIX3M: dieselbe Erwartung über drei Monate. Normalerweise liegt die kurze Frist unter der langen. Steigt der VIX über den VIX3M (Verhältnis über 1), erwartet der Markt den Stress jetzt und nicht später; das kommt meist in Ausverkäufen vor. Für Europa gibt es den VSTOXX bei Yahoo nicht frei, deshalb nur USA. Der VIX3M wird teils erst nach Börsenschluss aktualisiert.</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
+    </div>
+    <div class="mu-kacheln" data-draw="stresskacheln" data-source="aktienmarkt">—</div>
+    <div class="mu-karte"><h3>VIX und VIX3M über zwei Jahre</h3><div class="mu-linienchart" data-draw="stresschart" data-source="aktienmarkt">—</div></div>
+  </section>
+
+  <section class="mu-abschnitt" id="bewertung" data-unterseite>
+    <div class="mu-h2">
+      <h2>Bewertung</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Bewertung">i<span class="mu-info-text" role="tooltip">KGV: Kurs-Gewinn-Verhältnis der letzten zwölf Monate laut Yahoo Finance, gemessen am jeweiligen ETF; andere Anbieter rechnen teils mit bereinigten oder erwarteten Gewinnen und kommen auf andere Werte. Gewinnrendite: Kehrwert des KGV, also der Gewinn je 100 Dollar Kurs. Risikoprämie: Gewinnrendite minus Rendite der 10-jährigen Staatsanleihe im selben Währungsraum (USA und Welt: US-Treasury, Europa: Bundesanleihe, Japan: japanische Staatsanleihe; für Schwellenländer gibt es keinen passenden Vergleich). Je kleiner die Prämie, desto weniger Mehrertrag bieten Aktien gegenüber sicheren Anleihen. Dividendenrendite: Ausschüttungen des ETF der letzten zwölf Monate geteilt durch den Kurs, selbst berechnet. Nur aktuelle Werte; einen frei abrufbaren Verlauf gibt es nicht.</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
+    </div>
+    <div class="mu-zinsen mu-rollen"><table class="mu-tab mu-bewertab"><thead><tr><th>Markt</th><th>KGV</th><th>Gewinnrendite</th><th>10J Staatsanleihe</th><th>Risikoprämie</th><th>Dividendenrendite</th></tr></thead><tbody data-draw="bewertung" data-source="aktienmarkt zinsen"></tbody></table></div>
   </section>
 
   <section class="mu-abschnitt" id="indizes">
@@ -562,7 +628,7 @@
 
   document.querySelectorAll('.mu-neu').forEach((b) => b.addEventListener('click', () => {
     b.disabled = true;
-    ['werte', 'aktien', 'zinsen', 'verlauf', 'news', 'umsatz', 'kryptogewinner', 'makro', 'makroverlauf', 'usa'].forEach((id) => dash.refresh(id));
+    ['werte', 'aktien', 'zinsen', 'verlauf', 'news', 'umsatz', 'kryptogewinner', 'makro', 'makroverlauf', 'usa', 'aktienmarkt'].forEach((id) => dash.refresh(id));
     setTimeout(() => { b.disabled = false; }, 2500);
   }));
 
@@ -600,7 +666,9 @@
     anwenden(abschnitte().map((s) => s.id));
   }));
   document.querySelectorAll('.mu-schieben button').forEach((b) => b.addEventListener('click', () => {
-    const id = b.closest('section').id, ids = aktuell(), i = ids.indexOf(id), j = i + Number(b.dataset.schritt);
+    const id = b.closest('section').id, ids = aktuell(), i = ids.indexOf(id), schritt = Number(b.dataset.schritt);
+    let j = i + schritt;
+    while (j >= 0 && j < ids.length && document.getElementById(ids[j]).hidden) j += schritt;  // verborgene überspringen
     if (j < 0 || j >= ids.length) return;
     [ids[i], ids[j]] = [ids[j], ids[i]];
     schreiben(ids); anwenden(ids);
@@ -706,6 +774,8 @@
     if (w.status !== 'ok') { MU.fehler(el, 'werte', 'verlauf'); return; }
     el.classList.remove('dash-skeleton');
     const zeilen = w.data.filter((r) => r.klasse === el.dataset.klasse && (!el.dataset.gruppe || r.gruppe === el.dataset.gruppe));
+    const nurIndizes = el.closest('#indizes') && MU.seite && MU.seite.filter && MU.seite.filter.indizes;
+    if (nurIndizes) zeilen.splice(0, zeilen.length, ...zeilen.filter((r) => nurIndizes.includes(r.id)));
     const verlauf = v.status === 'ok' ? d3.group(v.data, (p) => p.id) : new Map();
     const kacheln = zeilen.map((r) => {
       const k = MU.neu('article', 'mu-kachel');
@@ -867,7 +937,8 @@
     if (a.status !== 'ok') { MU.fehler(el, 'aktien'); return; }
     el.classList.remove('dash-skeleton');
     const nachIndex = d3.group(a.data, (r) => r.index);
-    const karten = INDEXFOLGE.filter((id) => nachIndex.has(id)).map((id) => {
+    const nurIndizes = MU.seite && MU.seite.filter && MU.seite.filter.indizes;
+    const karten = INDEXFOLGE.filter((id) => nachIndex.has(id) && (!nurIndizes || nurIndizes.includes(id))).map((id) => {
       const zeilen = nachIndex.get(id).slice().sort((x, y) => x.rang - y.rang);
       const karte = MU.neu('article', 'mu-karte');
       const kk = MU.neu('div', 'mu-karte-kopf');
@@ -1294,7 +1365,7 @@
       const breite = Math.max(300, el.clientWidth || 700), hoehe = opt.hoehe || (breite < 560 ? 230 : 280);
       const rand = {o: 12, r: 12, u: 24, l: opt.links || 56};
       let [lo, hi] = d3.extent(werte);
-      if (lo > 0) lo = 0;
+      if (lo > 0 && !opt.ohneNull) lo = 0;
       const y = d3.scaleLinear([lo, hi], [hoehe - rand.u, rand.o]).nice(5);
       const svg = document.createElementNS(NS, 'svg');
       svg.setAttribute('viewBox', `0 0 ${breite} ${hoehe}`); svg.setAttribute('width', '100%'); svg.setAttribute('role', 'img');
@@ -1346,7 +1417,8 @@
       reihen = reihen.filter((r) => r.punkte && r.punkte.length > 1);
       const zeit = (s) => new Date(s + 'T00:00:00Z');
       const alle = reihen.flatMap((r) => r.punkte.filter((p) => p[1] != null));
-      const {svg, g, y, breite, hoehe, rand} = rahmen(el, alle.map((p) => p[1]), {achse: opt.achse || fmt, links: opt.links});
+      const {svg, g, y, breite, hoehe, rand} = rahmen(el, alle.map((p) => p[1]), {achse: opt.achse || fmt, links: opt.links, ohneNull: opt.ohneNull});
+      (opt.linien || []).forEach((w) => { if (w >= y.domain()[0] && w <= y.domain()[1]) g.append('line').attr('x1', rand.l).attr('x2', breite - rand.r).attr('y1', y(w)).attr('y2', y(w)).attr('stroke', 'var(--color-fg-muted)').attr('stroke-dasharray', '2 4'); });
       const x = d3.scaleUtc(d3.extent(alle, (p) => zeit(p[0])), [rand.l, breite - rand.r]);
       jahresachse(g, x, breite, hoehe);
       const linie = d3.line().x((p) => x(zeit(p[0]))).y((p) => y(p[1])).defined((p) => p[1] != null);
@@ -1373,6 +1445,7 @@
       }
     }
 
+    MU.linien = linien;  // auch für die Aktienseite
     dash.draw('usa-stand', (el) => {
       const a = teil('gesamt'), z = teil('zinslast');
       if (!a) { el.textContent = dash.data('usa').status === 'loading' ? '—' : ''; return; }
@@ -1521,58 +1594,98 @@
       });
     });
 
-    // Seiten je Anlageklasse: vorerst mit den bestehenden Sektionen als Ausgangspunkt
+    // Seiten je Anlageklasse und Regionsseiten unter Aktien (#/aktien/europa)
     const SEITEN = {
-      aktien: {name: 'Aktien', abschnitte: ['indizes', 'titel', 'umsatz']},
+      aktien: {name: 'Aktien', abschnitte: ['regionen', 'sektoren', 'breite', 'stress', 'bewertung', 'indizes', 'titel', 'umsatz']},
       anleihen: {name: 'Anleihen', abschnitte: ['zinsen']},
       immobilien: {name: 'Immobilien', abschnitte: []},
       gold: {name: 'Gold', abschnitte: ['rohstoffe']},
       silber: {name: 'Silber', abschnitte: ['rohstoffe']},
       krypto: {name: 'Krypto', abschnitte: ['krypto']},
     };
-    const aktuelleSeite = () => { const m = location.hash.match(/^#\/([a-z]+)/); return m && SEITEN[m[1]] ? m[1] : null; };
+    // Regionen: welche Indizes, Sektoren und Bewertungszeilen gehören dazu
+    const REGIONEN = {
+      welt: {name: 'Welt', indizes: null, sektoren: 'welt', bewertung: ['welt'], extra: []},
+      usa: {name: 'USA', indizes: ['spx', 'rut', 'ixic'], sektoren: 'usa', bewertung: ['usa', 'nasdaq'], extra: ['breite', 'stress', 'umsatz']},
+      europa: {name: 'Europa', indizes: ['dax', 'smi', 'ibex', 'mib'], sektoren: 'europa', bewertung: ['europa'], extra: []},
+      japan: {name: 'Japan', indizes: ['n225'], sektoren: null, bewertung: ['japan'], extra: []},
+      schwellen: {name: 'Schwellenländer', indizes: ['shcomp', 'kospi'], sektoren: null, bewertung: ['schwellen'], extra: []},
+    };
+    Object.entries(REGIONEN).forEach(([k, r]) => {
+      SEITEN['aktien/' + k] = {name: r.name, eltern: 'aktien', region: k, filter: r,
+        abschnitte: [...(r.sektoren ? ['sektoren'] : []), ...r.extra.filter((x) => x !== 'umsatz'), 'bewertung', 'indizes', 'titel', ...(r.extra.includes('umsatz') ? ['umsatz'] : [])]};
+    });
+    MU.REGIONEN = REGIONEN;
+    const aktuelleSeite = () => { const m = location.hash.match(/^#\/([a-z]+(?:\/[a-z]+)?)/); return m && SEITEN[m[1]] ? m[1] : null; };
     const kopf = document.querySelector('.mu-seitenkopf'), nav = document.querySelector('.mu-nav');
     let letzte;
     const zeigen = () => {
       const s = aktuelleSeite();
-      document.querySelectorAll('.mu > section.mu-abschnitt').forEach((sec) => { sec.hidden = !!s && !SEITEN[s].abschnitte.includes(sec.id); });
+      MU.seite = s ? {id: s, ...SEITEN[s]} : null;
+      document.querySelectorAll('.mu > section.mu-abschnitt').forEach((sec) => {
+        sec.hidden = s ? !SEITEN[s].abschnitte.includes(sec.id) : sec.hasAttribute('data-unterseite');
+      });
       if (kopf) kopf.hidden = !s;
       if (nav) nav.hidden = !!s;
-      document.title = s ? 'Marktübersicht · ' + SEITEN[s].name : 'Marktübersicht';
+      document.title = s ? 'Marktübersicht · ' + (SEITEN[s].eltern ? SEITEN[SEITEN[s].eltern].name + ' · ' : '') + SEITEN[s].name : 'Marktübersicht';
       if (letzte !== undefined && letzte !== s) window.scrollTo(0, 0);
       letzte = s;
       if (dash.neuZeichnen) dash.neuZeichnen();
     };
+    const knopf = (text, ziel, aktiv, klasse) => {
+      const a = MU.neu('a', klasse || null, text); a.href = '#/' + ziel;
+      if (aktiv) a.setAttribute('aria-current', 'page');
+      return a;
+    };
+    const chips = (r, felder) => {
+      const c = MU.neu('div', 'mu-chips');
+      c.style.gridTemplateColumns = `repeat(${felder.length}, minmax(0, 1fr))`;
+      felder.forEach(([feld, label]) => {
+        const x = MU.neu('div', 'mu-chip');
+        x.append(MU.neu('span', 'mu-chip-label', label), MU.neu('span', 'mu-chip-wert ' + MU.klasse(r[feld]), MU.prozent(r[feld])));
+        c.appendChild(x);
+      });
+      return c;
+    };
     dash.draw('seitenkopf', (el) => {
       const s = aktuelleSeite();
       if (!s) { el.replaceChildren(); return; }
+      const seite = SEITEN[s], klasse = seite.eltern || s;
       const wahl = MU.neu('nav', 'mu-seitenwahl'); wahl.setAttribute('aria-label', 'Anlageklassen');
-      const zurueck = MU.neu('a', 'mu-zurueck', '← Übersicht'); zurueck.href = '#/';
-      wahl.appendChild(zurueck);
-      Object.entries(SEITEN).forEach(([id, seite]) => {
-        const a = MU.neu('a', null, seite.name); a.href = '#/' + id;
-        if (id === s) a.setAttribute('aria-current', 'page');
-        wahl.appendChild(a);
-      });
-      const titel = MU.neu('div', 'mu-seitentitel');
-      titel.appendChild(MU.neu('h2', null, SEITEN[s].name));
-      const w = dash.data('werte');
-      const r = w.status === 'ok' ? w.data.find((x) => x.id === 'ak-' + s) : null;
-      const teile = [wahl, titel];
-      if (r) {
-        const p = MU.neu('p');
-        p.append(document.createTextNode('Weltweiter Wert '), MU.neu('b', null, MU.kompakt(r.kurs) + ' USD'),
-          document.createTextNode(' · ' + MU.anteil(r.anteil) + ' aller erfassten Anlageklassen'));
-        titel.appendChild(p);
-        const chips = MU.neu('div', 'mu-chips');
-        MU.perioden.forEach(([feld, label]) => {
-          const c = MU.neu('div', 'mu-chip');
-          c.append(MU.neu('span', 'mu-chip-label', label), MU.neu('span', 'mu-chip-wert ' + MU.klasse(r[feld]), MU.prozent(r[feld])));
-          chips.appendChild(c);
-        });
-        teile.push(chips);
+      wahl.appendChild(knopf('← Übersicht', '', false, 'mu-zurueck'));
+      Object.entries(SEITEN).filter(([, x]) => !x.eltern).forEach(([id, x]) => wahl.appendChild(knopf(x.name, id, id === klasse)));
+      const teile = [wahl];
+      if (klasse === 'aktien') {
+        const unter = MU.neu('nav', 'mu-seitenwahl mu-unterwahl'); unter.setAttribute('aria-label', 'Regionen');
+        unter.append(MU.neu('span', null, 'Regionen:'));
+        Object.entries(REGIONEN).forEach(([k, r]) => unter.appendChild(knopf(r.name, 'aktien/' + k, s === 'aktien/' + k)));
+        teile.push(unter);
       }
-      if (!SEITEN[s].abschnitte.length) teile.push(MU.neu('div', 'mu-platzhalter', 'Für ' + SEITEN[s].name + ' gibt es noch keine eigenen Sektionen. Diese Seite wird als Nächstes ausgebaut.'));
+      const titel = MU.neu('div', 'mu-seitentitel');
+      titel.appendChild(MU.neu('h2', null, seite.eltern ? SEITEN[seite.eltern].name + ' · ' + seite.name : seite.name));
+      teile.push(titel);
+      if (seite.region) {
+        const a = dash.data('aktienmarkt');
+        const reg = a.status === 'ok' ? (a.data.find((t) => t.teil === 'regionen') || {zeilen: []}).zeilen.find((z) => z.key === seite.region) : null;
+        if (reg) {
+          const p = MU.neu('p');
+          p.append(document.createTextNode('In USD einschliesslich Dividenden, gemessen am '), MU.neu('b', null, reg.text),
+            document.createTextNode(reg.pa10 != null ? ' · 10 Jahre ' + MU.prozent(reg.pa10) + ' pro Jahr' : ''));
+          titel.appendChild(p);
+          teile.push(chips(reg, [['t1', '1T'], ['ytd', 'YTD'], ['j1', '1J'], ['j5', '5J'], ['j10', '10J']]));
+        }
+      } else {
+        const w = dash.data('werte');
+        const r = w.status === 'ok' ? w.data.find((x) => x.id === 'ak-' + s) : null;
+        if (r) {
+          const p = MU.neu('p');
+          p.append(document.createTextNode('Weltweiter Wert '), MU.neu('b', null, MU.kompakt(r.kurs) + ' USD'),
+            document.createTextNode(' · ' + MU.anteil(r.anteil) + ' aller erfassten Anlageklassen'));
+          titel.appendChild(p);
+          teile.push(chips(r, MU.perioden));
+        }
+      }
+      if (!seite.abschnitte.length) teile.push(MU.neu('div', 'mu-platzhalter', 'Für ' + seite.name + ' gibt es noch keine eigenen Sektionen. Diese Seite wird als Nächstes ausgebaut.'));
       el.replaceChildren(...teile);
     });
     // Klick oder Enter auf ein Element mit data-seite (Kuchen, Legende, Kachel) öffnet die Seite der Anlageklasse
@@ -1586,5 +1699,149 @@
     document.addEventListener('keydown', oeffnen);
     window.addEventListener('hashchange', zeigen);
     zeigen();
+  })();
+</script>
+
+<script>
+  // Aktienseite: Regionen, Sektoren, Marktbreite, Stress, Bewertung (Daten: aktienmarkt.json)
+  (() => {
+    const f1 = new Intl.NumberFormat('de-CH', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+    const f2 = new Intl.NumberFormat('de-CH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    const teil = (name) => { const a = dash.data('aktienmarkt'); return a.status === 'ok' ? a.data.find((t) => t.teil === name) : null; };
+    const bereit = (el, name, tabelle) => {
+      const t = teil(name);
+      if (t) { el.classList.remove('dash-skeleton'); return t; }
+      const st = dash.data('aktienmarkt').status;
+      if (tabelle) { const tr = MU.neu('tr'), td = MU.neu('td', 'mu-klein', st === 'loading' ? '…' : 'Noch keine Daten'); td.colSpan = 9; tr.append(td); el.replaceChildren(tr); }
+      else if (st === 'ok') el.replaceChildren(MU.neu('div', 'mu-fehler', 'Noch keine Daten')); else MU.fehler(el, 'aktienmarkt');
+      return null;
+    };
+    const pzZelle = (v) => { const td = MU.neu('td', MU.klasse(v), MU.prozent(v)); return td; };
+    const FARBE = {welt: '#e4e9f0', usa: '#5b9cf6', europa: '#ffd166', japan: '#f0605d', schwellen: '#3fbf7f'};
+
+    // Regionen: Tabelle mit Klick auf die Regionsseite, Linien über fünf Jahre
+    dash.draw('regionen', (tbody) => {
+      const t = bereit(tbody, 'regionen', true); if (!t) return;
+      tbody.replaceChildren(...t.zeilen.map((r) => {
+        const tr = MU.neu('tr', 'mu-klickbar');
+        tr.dataset.seite = 'aktien/' + r.key; tr.tabIndex = 0; tr.setAttribute('role', 'link'); tr.title = r.name + ': ' + r.text + ', eigene Seite öffnen';
+        const name = MU.neu('td'); const p = MU.neu('i', 'mu-ampel'); p.style.background = FARBE[r.key]; name.append(p, document.createTextNode(r.name));
+        tr.append(name, ...['t1', 'w1', 'm1', 'ytd', 'j1', 'j5', 'j10'].map((f) => pzZelle(r[f])), pzZelle(r.pa10));
+        return tr;
+      }));
+    });
+    dash.draw('regionenchart', (el) => {
+      const t = bereit(el, 'regionen'); if (!t) return;
+      MU.linien(el, t.zeilen.map((r) => ({name: r.name, farbe: FARBE[r.key], punkte: r.reihe})),
+        {fmt: (v) => v == null ? '—' : f1.format(v), achse: (v) => f1.format(v).replace(/\.0$/, ''), datum: MU.datum, ohneNull: true, linien: [100], links: 44});
+    });
+
+    // Sektoren als Farbtabelle
+    const sektorZustand = {region: 'welt', feld: 'ytd', richtung: -1};
+    const sektorRegion = () => (MU.seite && MU.seite.filter && MU.seite.filter.sektoren) || sektorZustand.region;
+    dash.draw('sektorreiter', (el) => {
+      const t = teil('sektoren');
+      // nicht über hidden verbergen: verborgene Elemente zeichnet das Gerüst nicht neu
+      if (!t || (MU.seite && MU.seite.filter)) { el.replaceChildren(); el.style.display = 'none'; return; }
+      el.style.display = '';
+      const namen = {welt: 'Welt', usa: 'USA', europa: 'Europa'};
+      el.replaceChildren(...Object.keys(t.regionen).map((k) => {
+        const b = MU.neu('button', null, namen[k] || k); b.type = 'button'; b.setAttribute('role', 'tab');
+        b.setAttribute('aria-selected', String(k === sektorZustand.region));
+        b.addEventListener('click', () => { sektorZustand.region = k; dash.neuZeichnen(); });
+        return b;
+      }));
+    });
+    dash.draw('sektoren', (tbody) => {
+      const t = bereit(tbody, 'sektoren', true); if (!t) return;
+      const felder = ['t1', 'w1', 'm1', 'ytd', 'j1', 'j5'];
+      const zeilen = (t.regionen[sektorRegion()] || []).slice();
+      const {feld, richtung} = sektorZustand;
+      zeilen.sort((a, b) => feld === 'name' ? -richtung * a.name.localeCompare(b.name, 'de') : ((b[feld] ?? -1e9) - (a[feld] ?? -1e9)) * -richtung);
+      const max = Object.fromEntries(felder.map((f) => [f, d3.max(zeilen, (z) => Math.abs(z[f] || 0)) || 1]));
+      tbody.replaceChildren(...zeilen.map((z) => {
+        const tr = MU.neu('tr');
+        const name = MU.neu('td', null, z.name); name.title = z.symbol;
+        tr.append(name, ...felder.map((f) => {
+          const td = MU.neu('td', 'mu-heat', MU.prozent(z[f]));
+          if (z[f] != null) {
+            const a = Math.min(1, Math.abs(z[f]) / max[f]) * 0.55 + 0.05;
+            td.style.background = z[f] >= 0 ? `rgba(63, 191, 127, ${a})` : `rgba(240, 96, 93, ${a})`;
+          }
+          return td;
+        }));
+        return tr;
+      }));
+      tbody.closest('table').querySelectorAll('th[data-feld]').forEach((th) => {
+        th.setAttribute('aria-sort', th.dataset.feld === feld ? (richtung === -1 ? (feld === 'name' ? 'ascending' : 'descending') : (feld === 'name' ? 'descending' : 'ascending')) : 'none');
+        th.onclick = () => {
+          if (sektorZustand.feld === th.dataset.feld) sektorZustand.richtung *= -1; else { sektorZustand.feld = th.dataset.feld; sektorZustand.richtung = -1; }
+          dash.neuZeichnen();
+        };
+      });
+    });
+
+    // Marktbreite: drei Kacheln und ein Chart
+    const BFARBE = {gleich: '#5b9cf6', klein: '#e8a33d', stil: '#c678dd'};
+    dash.draw('breitekacheln', (el) => {
+      const t = bereit(el, 'breite'); if (!t) return;
+      el.replaceChildren(...t.zeilen.map((z) => {
+        const k = MU.neu('article', 'mu-kachel');
+        const kopf = MU.neu('div', 'mu-kachel-kopf'); kopf.append(MU.neu('span', 'mu-kachel-name', z.name));
+        const c = MU.neu('div', 'mu-chips'); c.style.gridTemplateColumns = 'repeat(2, minmax(0, 1fr))';
+        [['1J', 'j1'], ['5J', 'j5']].forEach(([l, f]) => { const x = MU.neu('div', 'mu-chip'); x.append(MU.neu('span', 'mu-chip-label', l), MU.neu('span', 'mu-chip-wert ' + MU.klasse(z[f]), MU.prozent(z[f]))); c.append(x); });
+        k.append(kopf, c, MU.neu('span', 'mu-pa', z.text));
+        return k;
+      }));
+    });
+    dash.draw('breitechart', (el) => {
+      const t = bereit(el, 'breite'); if (!t) return;
+      MU.linien(el, t.zeilen.map((z) => ({name: z.name, farbe: BFARBE[z.key], punkte: z.reihe})),
+        {fmt: (v) => v == null ? '—' : f1.format(v), achse: (v) => f1.format(v).replace(/\.0$/, ''), datum: MU.datum, ohneNull: true, linien: [100], links: 44});
+    });
+
+    // Stress: VIX, VIX3M und ihr Verhältnis
+    dash.draw('stresskacheln', (el) => {
+      const t = bereit(el, 'stress'); if (!t) return;
+      const lage = t.vix >= 30 ? ['var(--color-bad)', 'angespannt'] : t.vix >= 20 ? ['#e8a33d', 'erhöht'] : ['var(--color-ok)', 'ruhig'];
+      const kurve = t.verhaeltnis > 1 ? ['var(--color-bad)', 'Kurzfristige Angst über der langfristigen: akuter Stress'] : t.verhaeltnis > 0.9 ? ['#e8a33d', 'Abstand klein: wachsende Nervosität'] : ['var(--color-ok)', 'Normaler Verlauf: kurzfristig ruhiger als langfristig'];
+      const kachel = (name, wert, ampel, text, region) => {
+        const k = MU.neu('article', 'mu-kachel');
+        const kopf = MU.neu('div', 'mu-kachel-kopf'); kopf.append(MU.neu('span', 'mu-kachel-name', name), MU.neu('span', 'mu-kachel-region', region || MU.zeit(t.stand)));
+        const kurs = MU.neu('div', 'mu-kurs'); const a = MU.neu('i', 'mu-ampel'); a.style.background = ampel[0];
+        kurs.append(a, MU.neu('span', 'mu-kurs-wert', wert));
+        k.append(kopf, kurs, MU.neu('span', 'mu-pa', text));
+        return k;
+      };
+      el.replaceChildren(
+        kachel('VIX', f1.format(t.vix), lage, 'Lage: ' + lage[1] + '. Mittel der letzten zehn Jahre ' + f1.format(t.mittel10) + ', Höchststand ' + f1.format(t.hoch10) + '.'),
+        kachel('VIX3M', f1.format(t.vix3m), ['var(--color-fg-muted)'], 'Erwartete Schwankung über drei Monate.'),
+        kachel('VIX / VIX3M', f2.format(t.verhaeltnis), kurve, kurve[1] + '. Über 1,00 gilt als Stresssignal.'));
+    });
+    dash.draw('stresschart', (el) => {
+      const t = bereit(el, 'stress'); if (!t) return;
+      MU.linien(el, [{name: 'VIX', farbe: '#f0605d', punkte: t.reihe.map((p) => [p[0], p[1]])}, {name: 'VIX3M', farbe: '#8794a6', punkte: t.reihe.map((p) => [p[0], p[2]])}],
+        {fmt: (v) => v == null ? '—' : f1.format(v), achse: (v) => String(v), datum: MU.datum, linien: [20, 30], links: 36});
+    });
+
+    // Bewertung: KGV, Gewinnrendite, Anleiherendite, Risikoprämie, Dividende
+    const ANLEIHE = {welt: 'US-10J', usa: 'US-10J', nasdaq: 'US-10J', europa: 'DE-10J', japan: 'JP-10J'};
+    dash.draw('bewertung', (tbody) => {
+      const t = bereit(tbody, 'bewertung', true); if (!t) return;
+      const z = dash.data('zinsen');
+      const rendite = (key) => { const r = z.status === 'ok' ? z.data.find((x) => x.key === ANLEIHE[key]) : null; return r ? r.rendite : null; };
+      const nur = MU.seite && MU.seite.filter && MU.seite.filter.bewertung;
+      tbody.replaceChildren(...t.zeilen.filter((r) => !nur || nur.includes(r.key)).map((r) => {
+        const gewinn = r.kgv ? 100 / r.kgv : null, anl = rendite(r.key);
+        const praemie = gewinn != null && anl != null ? gewinn - anl : null;
+        const tr = MU.neu('tr');
+        const name = MU.neu('td', null, r.name); name.title = 'Gemessen am ETF ' + r.symbol;
+        const anlZelle = MU.neu('td', null, anl == null ? '—' : MU.rendite(anl)); if (anl != null) anlZelle.title = ANLEIHE[r.key].replace('-10J', '') + ' 10 Jahre';
+        const pr = MU.neu('td', praemie == null ? 'mu-null' : praemie < 0 ? 'mu-minus' : praemie < 1.5 ? '' : 'mu-plus', praemie == null ? '—' : (praemie > 0 ? '+' : praemie < 0 ? '−' : '') + f2.format(Math.abs(praemie)) + ' Pp');
+        tr.append(name, MU.neu('td', null, r.kgv == null ? '—' : f1.format(r.kgv)), MU.neu('td', null, gewinn == null ? '—' : MU.rendite(gewinn)),
+          anlZelle, pr, MU.neu('td', null, r.dividende == null ? '—' : MU.rendite(r.dividende)));
+        return tr;
+      }));
+    });
   })();
 </script>
