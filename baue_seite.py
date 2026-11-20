@@ -63,6 +63,7 @@ KOPF = """<!doctype html>
       colors: ["#5b9cf6", "#3fbf7f", "#e8a33d", "#c678dd", "#56b6c2", "#f0605d", "#d19a66", "#98c379"],
       refresh: (id) => laden(id), params: () => ({}), setParams: () => {}, resetParams: () => {},
       calc: () => {}, loader: () => {},
+      neuZeichnen: () => allesZeichnen(),  // nach Ein-/Ausklappen oder Seitenwechsel
     };
     // Laufende Daten kommen aus dem Zweig "live", den der Dauerlauf schreibt; sonst der Stand der Seite.
     const LIVE = "https://raw.githubusercontent.com/bopsinger/marktuebersicht/live/";

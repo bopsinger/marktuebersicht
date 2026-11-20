@@ -213,13 +213,40 @@
   .mu-linienchart .mu-tipp i { width: .55rem; height: .55rem; border-radius: 50%; display: inline-block; margin-right: 6px; }
   .mu-karte-text { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
   .mu-karte-text b { color: var(--color-fg); font-weight: var(--cds-font-weight-medium); }
+  /* Einklappen und eigene Seiten je Anlageklasse */
+  .mu-zuklappen { font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; text-align: left; }
+  .mu-zuklappen::before { content: "▾"; color: var(--color-fg-muted); font-size: .8em; display: inline-block; transition: transform var(--cds-dur-slow); }
+  .mu-abschnitt.mu-zu .mu-zuklappen::before { transform: rotate(-90deg); }
+  .mu-zuklappen:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .mu-zuklappen:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; border-radius: 2px; }
+  .mu-abschnitt.mu-zu > :not(.mu-h2) { display: none !important; }
+  .mu-klickbar { cursor: pointer; }
+  path.mu-klickbar:hover { filter: brightness(1.18); }
+  .mu-kuchen-zeile.mu-klickbar { border-radius: 4px; padding-inline: 4px; }
+  .mu-kuchen-zeile.mu-klickbar:hover, .mu-kuchen-zeile.mu-klickbar:focus-visible { background: rgba(255, 255, 255, .05); outline: none; }
+  .mu-kuchen-zeile.mu-klickbar .mu-kz-name::after { content: " ›"; color: var(--color-fg-muted); }
+  .mu-kachel.mu-klickbar:hover, .mu-kachel.mu-klickbar:focus-visible { border-color: var(--color-fg-muted); outline: none; }
+  .mu-titel a { color: inherit; text-decoration: none; }
+  .mu-seitenkopf { display: grid; gap: var(--cds-gap-md); }
+  .mu-seitenwahl { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); align-items: center; }
+  .mu-seitenwahl a { font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: 999px; background: var(--color-panel); color: var(--color-fg-muted); text-decoration: none; }
+  .mu-seitenwahl a:hover { color: var(--color-fg); border-color: var(--color-fg-muted); }
+  .mu-seitenwahl a[aria-current="page"] { color: var(--color-fg); border-color: var(--color-fg); font-weight: var(--cds-font-weight-medium); }
+  .mu-seitenwahl a:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+  .mu-seitenwahl .mu-zurueck { color: var(--color-fg); border-color: var(--color-fg-muted); }
+  .mu-seitentitel { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--cds-gap-xs) var(--cds-gap-lg); }
+  .mu-seitentitel h2 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; }
+  .mu-seitentitel p { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); }
+  .mu-seitentitel p b { color: var(--color-fg); font-weight: var(--cds-font-weight-medium); }
+  .mu-seitenkopf .mu-chips { max-width: 26rem; }
+  .mu-platzhalter { background: var(--color-panel); border: 1px dashed var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); color: var(--color-fg-muted); font-size: var(--cds-font-size-body); }
   [data-dash-source-state=empty] { color: transparent; }
   [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
 </style>
 
 <div class="mu">
   <header class="mu-kopf">
-    <h1 class="mu-titel">Marktübersicht</h1>
+    <h1 class="mu-titel"><a href="#/" title="Zur Übersicht">Marktübersicht</a></h1>
     <div class="mu-kopfzeile">
       <p class="mu-lage" data-draw="lage" data-source="werte">—</p>
       <div class="mu-kopfknoepfe">
@@ -242,6 +269,7 @@
       <button type="button" data-ziel="laender">Länder</button>
       <button type="button" data-ziel="krypto">Krypto</button>
     </nav>
+    <div class="mu-seitenkopf" data-draw="seitenkopf" data-source="werte" hidden></div>
   </header>
 
   <section class="mu-abschnitt" id="news">
@@ -260,7 +288,7 @@
   <section class="mu-abschnitt" id="anlageklassen">
     <div class="mu-h2">
       <h2>Anlageklassen</h2>
-      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Anlageklassen">i<span class="mu-info-text" role="tooltip">Geschätzter weltweiter Wert je Anlageklasse in US-Dollar, aus den breitesten frei verfügbaren Schätzungen. Immobilien: 393,3 Bio. (Savills, alle Wohn-, Gewerbe- und Agrarimmobilien der Welt, Stand Ende 2024). Savills schätzt nur einmal im Jahr; die Linie zeigt die Jahreswerte 2020 bis 2024 (2023 aus dem Rückgang 2024 zurückgerechnet), 1J ist die Veränderung 2024 (−0,5 %), 5J die gegenüber 2019 (+21,3 %). Der Sprung von 2020 auf 2021 geht teils auf Methodenänderungen zwischen den Berichten zurück. Anleihen: 160,7 Bio. und Aktien: 157,8 Bio. (SIFMA Capital Markets Fact Book 2026, Stand Ende 2025), seither fortgeschrieben mit dem Mittel aus AGG und BNDX bzw. mit dem MSCI ACWI; bei Anleihen nur die Kursänderung, neu ausgegebene Anleihen sind nicht erfasst. Gold: oberirdischer Bestand von 220 700 Tonnen (World Gold Council, Ende 2025) zum aktuellen Goldpreis. Silber: rund 1,6 Mio. Tonnen (CPM Group, Stand 2018; andere Schätzungen reichen von 0,6 bis 2,5 Mio. Tonnen) zum aktuellen Silberpreis. Krypto: Marktkapitalisierung von CoinMarketCap. Übrige Rohstoffe fehlen, weil sie verbraucht und nicht als Bestand gehalten werden; Private Equity und Private Debt fehlen, weil es dafür keine täglichen Werte gibt.</span></span>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Anlageklassen">i<span class="mu-info-text" role="tooltip">Geschätzter weltweiter Wert je Anlageklasse in US-Dollar, aus den breitesten frei verfügbaren Schätzungen. Immobilien: 393,3 Bio. (Savills, alle Wohn-, Gewerbe- und Agrarimmobilien der Welt, Stand Ende 2024). Savills schätzt nur einmal im Jahr; die Linie zeigt die Jahreswerte 2020 bis 2024 (2023 aus dem Rückgang 2024 zurückgerechnet), 1J ist die Veränderung 2024 (−0,5 %), 5J die gegenüber 2019 (+21,3 %). Der Sprung von 2020 auf 2021 geht teils auf Methodenänderungen zwischen den Berichten zurück. Anleihen: 160,7 Bio. und Aktien: 157,8 Bio. (SIFMA Capital Markets Fact Book 2026, Stand Ende 2025), seither fortgeschrieben mit dem Mittel aus AGG und BNDX bzw. mit dem MSCI ACWI; bei Anleihen nur die Kursänderung, neu ausgegebene Anleihen sind nicht erfasst. Gold: oberirdischer Bestand von 220 700 Tonnen (World Gold Council, Ende 2025) zum aktuellen Goldpreis. Silber: rund 1,6 Mio. Tonnen (CPM Group, Stand 2018; andere Schätzungen reichen von 0,6 bis 2,5 Mio. Tonnen) zum aktuellen Silberpreis. Krypto: Marktkapitalisierung von CoinMarketCap. Übrige Rohstoffe fehlen, weil sie verbraucht und nicht als Bestand gehalten werden; Private Equity und Private Debt fehlen, weil es dafür keine täglichen Werte gibt. Ein Klick auf ein Kuchenstück, eine Zeile oder eine Kachel öffnet die eigene Seite der Anlageklasse.</span></span>
       <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
     <div class="mu-kuchen dash-skeleton" data-draw="kuchen" data-klasse="Anlageklasse" data-source="werte">—</div>
@@ -682,6 +710,10 @@
     const kacheln = zeilen.map((r) => {
       const k = MU.neu('article', 'mu-kachel');
       k.id = 'k-' + r.id;
+      if (r.klasse === 'Anlageklasse') {
+        k.dataset.seite = r.id.replace(/^ak-/, ''); k.classList.add('mu-klickbar');
+        k.tabIndex = 0; k.setAttribute('role', 'link'); k.setAttribute('aria-label', r.name + ' im Detail ansehen');
+      }
       const kopf = MU.neu('div', 'mu-kachel-kopf');
       const nm = MU.neu('span', 'mu-kachel-name', r.name);
       if (r.klasse === 'Anlageklasse') nm.title = 'Veränderungen: ' + r.symbol;
@@ -747,6 +779,7 @@
       const p = document.createElementNS(NS, 'path');
       p.setAttribute('d', bogen(s));
       p.setAttribute('fill', dash.colors[i % dash.colors.length]);
+      if (s.data.klasse === 'Anlageklasse') { p.dataset.seite = s.data.id.replace(/^ak-/, ''); p.classList.add('mu-klickbar'); }
       p.dataset.source = 'werte'; p.dataset.field = feld; p.dataset.where = 'id=' + s.data.id;
       const zeige = (ev) => {
         tipp.replaceChildren(MU.neu('span', null, s.data.name), document.createTextNode((mitText ? '' : MU.kompakt(s.data.kurs) + ' USD · ') + MU.anteil(s.data[feld])));
@@ -780,6 +813,10 @@
     const legende = MU.neu('div', 'mu-kuchen-legende');
     zeilen.forEach((r, i) => {
       const z = MU.neu('div', 'mu-kuchen-zeile');
+      if (r.klasse === 'Anlageklasse') {
+        z.dataset.seite = r.id.replace(/^ak-/, ''); z.classList.add('mu-klickbar');
+        z.tabIndex = 0; z.setAttribute('role', 'link'); z.title = r.name + ' im Detail ansehen';
+      }
       const punkt = MU.neu('i'); punkt.style.background = dash.colors[i % dash.colors.length];
       const wert = MU.neu('span', 'mu-kz-wert', vergleich ? 'Jan. 2026: ' + MU.anteil(r[vergleich]) : MU.kompakt(r.kurs) + ' USD');
       wert.dataset.source = 'werte'; wert.dataset.field = vergleich || 'kurs'; wert.dataset.where = 'id=' + r.id;
@@ -1452,5 +1489,102 @@
       linien(el, [{name: 'Anteil Ausland', farbe: '#56b6c2', punkte: t.reihe_anteil}, {name: 'Anteil Fed', farbe: '#e8a33d', punkte: t.reihe_fed}],
         {fmt: (v) => v == null ? '—' : f1.format(v) + ' %', achse: (v) => f0.format(v) + ' %', links: 44});
     });
+  })();
+</script>
+
+<script>
+  // Sektionen einklappen (Zustand im Browser gemerkt) und eigene Seiten je Anlageklasse (Adresse #/aktien usw.).
+  (() => {
+    const ZU = 'mu-zu';
+    const lies = () => { try { return new Set(JSON.parse(localStorage.getItem(ZU)) || []); } catch (e) { return new Set(); } };
+    const schreib = (s) => { try { localStorage.setItem(ZU, JSON.stringify([...s])); } catch (e) {} };
+    const zu = lies();
+    document.querySelectorAll('.mu > section.mu-abschnitt').forEach((sec) => {
+      const h2 = sec.querySelector(':scope > .mu-h2 > h2');
+      if (!h2) return;
+      const knopf = document.createElement('button');
+      knopf.type = 'button'; knopf.className = 'mu-zuklappen';
+      knopf.append(...h2.childNodes);
+      h2.appendChild(knopf);
+      const setzen = (offen) => {
+        sec.classList.toggle('mu-zu', !offen);
+        knopf.setAttribute('aria-expanded', String(offen));
+        knopf.title = offen ? 'Einklappen' : 'Ausklappen';
+      };
+      setzen(!zu.has(sec.id));
+      knopf.addEventListener('click', () => {
+        const offen = sec.classList.contains('mu-zu');
+        setzen(offen);
+        offen ? zu.delete(sec.id) : zu.add(sec.id);
+        schreib(zu);
+        if (offen && dash.neuZeichnen) dash.neuZeichnen();
+      });
+    });
+
+    // Seiten je Anlageklasse: vorerst mit den bestehenden Sektionen als Ausgangspunkt
+    const SEITEN = {
+      aktien: {name: 'Aktien', abschnitte: ['indizes', 'titel', 'umsatz']},
+      anleihen: {name: 'Anleihen', abschnitte: ['zinsen']},
+      immobilien: {name: 'Immobilien', abschnitte: []},
+      gold: {name: 'Gold', abschnitte: ['rohstoffe']},
+      silber: {name: 'Silber', abschnitte: ['rohstoffe']},
+      krypto: {name: 'Krypto', abschnitte: ['krypto']},
+    };
+    const aktuelleSeite = () => { const m = location.hash.match(/^#\/([a-z]+)/); return m && SEITEN[m[1]] ? m[1] : null; };
+    const kopf = document.querySelector('.mu-seitenkopf'), nav = document.querySelector('.mu-nav');
+    let letzte;
+    const zeigen = () => {
+      const s = aktuelleSeite();
+      document.querySelectorAll('.mu > section.mu-abschnitt').forEach((sec) => { sec.hidden = !!s && !SEITEN[s].abschnitte.includes(sec.id); });
+      if (kopf) kopf.hidden = !s;
+      if (nav) nav.hidden = !!s;
+      document.title = s ? 'Marktübersicht · ' + SEITEN[s].name : 'Marktübersicht';
+      if (letzte !== undefined && letzte !== s) window.scrollTo(0, 0);
+      letzte = s;
+      if (dash.neuZeichnen) dash.neuZeichnen();
+    };
+    dash.draw('seitenkopf', (el) => {
+      const s = aktuelleSeite();
+      if (!s) { el.replaceChildren(); return; }
+      const wahl = MU.neu('nav', 'mu-seitenwahl'); wahl.setAttribute('aria-label', 'Anlageklassen');
+      const zurueck = MU.neu('a', 'mu-zurueck', '← Übersicht'); zurueck.href = '#/';
+      wahl.appendChild(zurueck);
+      Object.entries(SEITEN).forEach(([id, seite]) => {
+        const a = MU.neu('a', null, seite.name); a.href = '#/' + id;
+        if (id === s) a.setAttribute('aria-current', 'page');
+        wahl.appendChild(a);
+      });
+      const titel = MU.neu('div', 'mu-seitentitel');
+      titel.appendChild(MU.neu('h2', null, SEITEN[s].name));
+      const w = dash.data('werte');
+      const r = w.status === 'ok' ? w.data.find((x) => x.id === 'ak-' + s) : null;
+      const teile = [wahl, titel];
+      if (r) {
+        const p = MU.neu('p');
+        p.append(document.createTextNode('Weltweiter Wert '), MU.neu('b', null, MU.kompakt(r.kurs) + ' USD'),
+          document.createTextNode(' · ' + MU.anteil(r.anteil) + ' aller erfassten Anlageklassen'));
+        titel.appendChild(p);
+        const chips = MU.neu('div', 'mu-chips');
+        MU.perioden.forEach(([feld, label]) => {
+          const c = MU.neu('div', 'mu-chip');
+          c.append(MU.neu('span', 'mu-chip-label', label), MU.neu('span', 'mu-chip-wert ' + MU.klasse(r[feld]), MU.prozent(r[feld])));
+          chips.appendChild(c);
+        });
+        teile.push(chips);
+      }
+      if (!SEITEN[s].abschnitte.length) teile.push(MU.neu('div', 'mu-platzhalter', 'Für ' + SEITEN[s].name + ' gibt es noch keine eigenen Sektionen. Diese Seite wird als Nächstes ausgebaut.'));
+      el.replaceChildren(...teile);
+    });
+    // Klick oder Enter auf ein Element mit data-seite (Kuchen, Legende, Kachel) öffnet die Seite der Anlageklasse
+    const oeffnen = (ev) => {
+      const ziel = ev.target.closest('[data-seite]');
+      if (!ziel || (ev.type === 'keydown' && ev.key !== 'Enter')) return;
+      if (ev.target.closest('a') && !ev.target.closest('a').matches('[data-seite]')) return;
+      location.hash = '#/' + ziel.dataset.seite;
+    };
+    document.addEventListener('click', oeffnen);
+    document.addEventListener('keydown', oeffnen);
+    window.addEventListener('hashchange', zeigen);
+    zeigen();
   })();
 </script>
