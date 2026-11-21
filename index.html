@@ -282,6 +282,13 @@
   .mu-immotab td:first-child, .mu-reittab td:first-child { font-weight: var(--cds-font-weight-medium); }
   .mu-immotab tr.mu-aggregat td { background: rgba(255, 255, 255, .03); }
   .mu-immotab tr.mu-aggregat + tr:not(.mu-aggregat) td { border-top: 1px solid var(--color-fg-muted); }
+  .mu-mehrlink { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); text-decoration: none; border: 1px solid var(--color-border-line); border-radius: 999px; padding: 2px var(--cds-pad-sm); }
+  .mu-mehrlink:hover { color: var(--color-fg); border-color: var(--color-fg-muted); }
+  .mu-mehrlink:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+  .mu-kurventab { min-width: 40rem; font-size: var(--cds-font-size-body); }
+  .mu-kurventab td { padding-block: 7px; }
+  .mu-kurventab td:first-child { font-weight: var(--cds-font-weight-medium); }
+  .mu-kurventab small { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin-left: 4px; }
   .mu-unterwahl { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
   [data-dash-source-state=empty] { color: transparent; }
   [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
@@ -482,9 +489,41 @@
     <div class="mu-karte"><h3>Entwicklung über zehn Jahre (Start = 100, in Handelswährung)</h3><div class="mu-linienchart" data-draw="reitchart" data-source="immobilien">—</div></div>
   </section>
 
+  <section class="mu-abschnitt" id="rohwelt" data-unterseite>
+    <div class="mu-h2">
+      <h2>Wert der Weltproduktion</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Wert der Weltproduktion">i<span class="mu-info-text" role="tooltip">Rohstoffe werden verbraucht und kaum als Bestand gehalten; einen Börsenwert wie bei Aktien gibt es deshalb nicht. Als Mass für die wirtschaftliche Grösse dient der Wert der Jahresproduktion: Fördermenge oder Ernte eines Jahres mal aktueller Terminpreis. Nach demselben Prinzip gewichtet der S&amp;P GSCI. Mengen: Rohöl und Kondensat 82,8 Mio. Fass pro Tag, Erdgas 4124 Mrd. m³ und Kohle 182 EJ (alle Energy Institute, Jahr 2024; Kohle umgerechnet auf Kraftwerkskohle mit 6000 kcal/kg, bewertet zum europäischen API2-Preis); Gold 3300 t, Silber 26 000 t, Kupfer 23 Mio. t, Eisenerz 2,6 Mrd. t (USGS, 2025; der World Gold Council nennt für Gold rund 3600 t); Aluminium 73,8 Mio. t (International Aluminium Institute, 2025); Platin rund 170 t und Palladium rund 190 t; Mais 1291,6, Weizen 827,5 und Soja 442,5 Mio. t (US-Agrarministerium, Saison 2026/27); Zucker rund 180 Mio. t (Internationale Zuckerorganisation; das US-Agrarministerium nennt 184,9); Kaffee 178,8 Mio. Sack zu 60 kg (2025/26, bewertet zum Arabica-Preis, der über dem Robusta-Preis liegt); Kakao rund 5 Mio. t (Schätzung StoneX). Erdgas ist zum Mittel aus US-Preis (Henry Hub) und europäischem Preis (TTF) bewertet; je nach Preis schwankt sein Wert stark (Spanne in der Legende). Raffinerieprodukte wie Benzin fehlen, weil sie aus Rohöl entstehen. Renditen der vorderen Terminkontrakte in USD (TTF in EUR); bei laufend erneuerten Kontrakten weichen sie vom Kassapreis ab. Wo Yahoo keine 20 Jahre führt (Brent seit 2007, Kohle, Eisenerz, Aluminium), fehlt der Wert.</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
+    </div>
+    <div class="mu-karten mu-weltkarten">
+      <div class="mu-kuchen mu-kuchen-breit" data-draw="rohprod" data-source="rohstoffseite">—</div>
+      <div class="mu-kuchen mu-kuchen-breit" data-draw="rohsektoren" data-source="rohstoffseite">—</div>
+    </div>
+  </section>
+
+  <section class="mu-abschnitt" id="terminkurven" data-unterseite>
+    <div class="mu-h2">
+      <h2>Terminkurven</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Terminkurven">i<span class="mu-info-text" role="tooltip">Preis des vordersten Terminkontrakts gegenüber den Kontrakten in rund 6 und 12 Monaten (Yahoo Finance, Börsen NYMEX, COMEX und CBOT). Backwardation: spätere Kontrakte billiger als heute; der Markt zahlt für sofortige Lieferung einen Aufschlag, das Angebot ist knapp. Contango: spätere Kontrakte teurer; das Angebot ist reichlich, Lagerkosten und Zinsen werden eingepreist. Bei Gold ist ein leichter Contango normal (Zinsen). Erdgas und Agrarrohstoffe schwanken zusätzlich mit den Jahreszeiten (Heizperiode, Ernte); dort ist der Vergleich über 12 Monate aussagekräftiger. Fehlt ein Kontrakt in rund 12 Monaten, bleibt das Feld leer. Im Chart ist jede Kurve auf den vordersten Kontrakt = 100 gesetzt.</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
+    </div>
+    <div class="mu-zinsen mu-rollen"><table class="mu-tab mu-kurventab"><thead><tr><th>Rohstoff</th><th>Vorderster Kontrakt</th><th>in ~6 Monaten</th><th>in ~12 Monaten</th><th>Struktur</th></tr></thead><tbody data-draw="kurventab" data-source="rohstoffseite"></tbody></table></div>
+    <div class="mu-karte"><h3>Kurven (vorderster Kontrakt = 100)</h3><div class="mu-linienchart" data-draw="kurvenchart" data-source="rohstoffseite">—</div></div>
+  </section>
+
+  <section class="mu-abschnitt" id="verhaeltnisse" data-unterseite>
+    <div class="mu-h2">
+      <h2>Preisverhältnisse</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Preisverhältnisse">i<span class="mu-info-text" role="tooltip">Drei klassische Verhältnisse aus den vorderen Terminkontrakten, Wochenwerte über 20 Jahre (Yahoo Finance). Gold zu Silber: wie viele Unzen Silber eine Unze Gold kostet; hoch in Krisen, wenn Gold als sicherer Hafen gesucht ist. Kupfer zu Gold: Kupferpreis in USD je Pfund je 1000 USD Goldpreis; Kupfer steht für Industrie und Konjunktur, Gold für Sicherheit, deshalb gilt ein steigendes Verhältnis als Zeichen für Aufschwung und folgt oft den langfristigen Zinsen. Gold zu Öl: wie viele Fass Rohöl WTI eine Unze Gold kauft. Im April 2020 war der WTI-Kontrakt kurzzeitig negativ; Wochen ohne positiven Ölpreis fehlen.</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
+    </div>
+    <div class="mu-karten" data-draw="verhaeltnisse" data-source="rohstoffseite">—</div>
+  </section>
+
   <section class="mu-abschnitt" id="rohstoffe">
     <div class="mu-h2">
       <h2>Rohstoffe</h2>
+      <a class="mu-mehrlink" href="#/rohstoffe" data-nur-start>Mehr ›</a>
       <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Rohstoffe">i<span class="mu-info-text" role="tooltip">Kurs mit Veränderung seit Jahresbeginn in Klammern, darunter 1T, 1J, 5J und 10J wie bei den Indizes. Für TTF (Daten ab 2017) und den Uran-Trust (ab 2021) fehlt der 10-Jahres-Wert. Uran ist als Kernbrennstoff ein Energierohstoff und steht deshalb bei Energie. Vordere Terminkontrakte. Veränderungen beziehen sich auf den jeweils vordersten Kontrakt; beim Wechsel des Kontraktmonats kann das die Langfristwerte verzerren. Für Uran gibt es keinen frei abrufbaren Terminkurs; gezeigt wird der Sprott Physical Uranium Trust, der physisches Uran hält und dem Spotpreis eng folgt. Agrarpreise in US-Cent je Bushel (Weizen, Mais, Soja) bzw. je Pfund (Kaffee, Zucker), Kupfer in USD je Pfund, Aluminium in USD je Tonne. Struktur nach Sektoren: Gewichte des S&P GSCI 2026, die sich am weltweiten Produktionswert der Rohstoffe orientieren (Mittel über fünf Jahre), mit der Preisentwicklung seit Jahresbeginn fortgeschrieben. In Klammern das Ausgangsgewicht vom Januar 2026. Einen Marktwert im Sinne eines Bestands gibt es für Rohstoffe nicht; das ist die übliche Annäherung.</span></span>
       <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
@@ -698,7 +737,7 @@
 
   document.querySelectorAll('.mu-neu').forEach((b) => b.addEventListener('click', () => {
     b.disabled = true;
-    ['werte', 'aktien', 'zinsen', 'verlauf', 'news', 'umsatz', 'kryptogewinner', 'makro', 'makroverlauf', 'usa', 'aktienmarkt', 'immobilien'].forEach((id) => dash.refresh(id));
+    ['werte', 'aktien', 'zinsen', 'verlauf', 'news', 'umsatz', 'kryptogewinner', 'makro', 'makroverlauf', 'usa', 'aktienmarkt', 'immobilien', 'rohstoffseite'].forEach((id) => dash.refresh(id));
     setTimeout(() => { b.disabled = false; }, 2500);
   }));
 
@@ -1465,7 +1504,7 @@
       reihen = reihen.filter((r) => r.punkte && r.punkte.length > 1);
       const zeit = (s) => new Date(s + 'T00:00:00Z');
       const alle = reihen.flatMap((r) => r.punkte.filter((p) => p[1] != null));
-      const {svg, g, y, breite, hoehe, rand} = rahmen(el, alle.map((p) => p[1]), {achse: opt.achse || fmt, links: opt.links, ohneNull: opt.ohneNull});
+      const {svg, g, y, breite, hoehe, rand} = rahmen(el, alle.map((p) => p[1]), {achse: opt.achse || fmt, links: opt.links, ohneNull: opt.ohneNull, hoehe: opt.hoehe});
       (opt.linien || []).forEach((w) => { if (w >= y.domain()[0] && w <= y.domain()[1]) g.append('line').attr('x1', rand.l).attr('x2', breite - rand.r).attr('y1', y(w)).attr('y2', y(w)).attr('stroke', 'var(--color-fg-muted)').attr('stroke-dasharray', '2 4'); });
       const x = d3.scaleUtc(d3.extent(alle, (p) => zeit(p[0])), [rand.l, breite - rand.r]);
       jahresachse(g, x, breite, hoehe);
@@ -1648,6 +1687,7 @@
       aktien: {name: 'Aktien', abschnitte: ['weltmarkt', 'bewertung', 'indizes', 'titel', 'stress']},
       anleihen: {name: 'Anleihen', abschnitte: ['zinsen']},
       immobilien: {name: 'Immobilien', abschnitte: ['immowelt', 'wohnpreise', 'gewerbepreise', 'reits']},
+      rohstoffe: {name: 'Rohstoffe', abschnitte: ['rohwelt', 'terminkurven', 'verhaeltnisse', 'rohstoffe']},
       gold: {name: 'Gold', abschnitte: ['rohstoffe']},
       silber: {name: 'Silber', abschnitte: ['rohstoffe']},
       krypto: {name: 'Krypto', abschnitte: ['krypto']},
@@ -1682,6 +1722,7 @@
         sec.hidden = s ? !SEITEN[s].abschnitte.includes(sec.id) : sec.hasAttribute('data-unterseite');
       });
       if (kopf) kopf.hidden = !s;
+      document.querySelectorAll('[data-nur-start]').forEach((x) => { x.hidden = !!s; });
       if (nav) nav.hidden = !!s;
       document.title = s ? 'Marktübersicht · ' + (SEITEN[s].eltern ? SEITEN[SEITEN[s].eltern].name + ' · ' : '') + SEITEN[s].name : 'Marktübersicht';
       if (letzte !== undefined && letzte !== s) window.scrollTo(0, 0);
@@ -2119,6 +2160,90 @@
       const farben = {welt: '#e4e9f0', usa: '#5b9cf6', international: '#c678dd', europa: '#ffd166', japan: '#f0605d', schweiz: '#3fbf7f'};
       MU.linien(el, t.zeilen.map((r) => ({name: r.name, farbe: farben[r.key], punkte: r.reihe})),
         {fmt: (v) => v == null ? '—' : f1.format(v), achse: (v) => f0.format(v), datum: MU.datum, ohneNull: true, linien: [100], links: 40});
+    });
+  })();
+</script>
+
+<script>
+  // Rohstoffseite: Wert der Weltproduktion, Terminkurven, Preisverhältnisse (Daten: rohstoffseite.json)
+  (() => {
+    const f0 = new Intl.NumberFormat('de-CH', {maximumFractionDigits: 0});
+    const f1 = new Intl.NumberFormat('de-CH', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+    const f2 = new Intl.NumberFormat('de-CH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    const teil = (name) => { const a = dash.data('rohstoffseite'); return a.status === 'ok' ? a.data.find((t) => t.teil === name) : null; };
+    const bereit = (el, name, tabelle) => {
+      const t = teil(name);
+      if (t) { el.classList.remove('dash-skeleton'); return t; }
+      const st = dash.data('rohstoffseite').status;
+      if (tabelle) { const tr = MU.neu('tr'), td = MU.neu('td', 'mu-klein', st === 'loading' ? '…' : 'Noch keine Daten'); td.colSpan = 5; tr.append(td); el.replaceChildren(tr); }
+      else if (st === 'ok') el.replaceChildren(MU.neu('div', 'mu-fehler', 'Noch keine Daten')); else MU.fehler(el, 'rohstoffseite');
+      return null;
+    };
+    const mrd = (v) => v >= 1000 ? f1.format(v / 1000) + ' Bio.' : f0.format(v) + ' Mrd.';
+    // Farben nach Sektor: Energie rot-orange, Edelmetalle gelb, Industriemetalle blau, Agrar grün
+    const FARBE = {oel: '#f0605d', gas: '#ff8a5b', kohle: '#b0675a', gold: '#ffd166', silber: '#d9dde3', platin: '#a0a8ff', palladium: '#cdb4db',
+      kupfer: '#5b9cf6', alu: '#8ecae6', eisen: '#56b6c2', mais: '#3fbf7f', weizen: '#98c379', soja: '#b5e48c', zucker: '#c3e88d', kaffee: '#d19a66', kakao: '#a0785a'};
+    const SFARBE = {Energie: '#f0605d', Edelmetalle: '#ffd166', Industriemetalle: '#5b9cf6', Agrar: '#3fbf7f'};
+
+    dash.draw('rohprod', (el) => {
+      const t = bereit(el, 'produktion'); if (!t) return;
+      const summe = d3.sum(t.zeilen, (z) => z.wert);
+      MU.kuchen(el, t.zeilen.map((z) => ({...z, anteil: z.wert / summe * 100, wert: z.wert * 1e9, farbe: FARBE[z.key],
+        symbol: z.symbol + ' · ' + z.preis + ' · ' + z.quelle + (z.spanne ? ' · nur Henry Hub ' + mrd(z.spanne[0]) + ', nur TTF ' + mrd(z.spanne[1]) : '')})),
+        {titel: 'Rohstoff', mitte: mrd(summe), unter: 'USD pro Jahr', fuss: 'Jahresproduktion mal aktueller Preis; Preis und Quelle beim Darüberfahren über den Namen. Erdgas: ' +
+          (t.zeilen.find((z) => z.key === 'gas') || {}).preis + '.'});
+    });
+    dash.draw('rohsektoren', (el) => {
+      const t = bereit(el, 'produktion'); if (!t) return;
+      const summe = d3.sum(t.zeilen, (z) => z.wert);
+      const sektoren = d3.rollups(t.zeilen, (zs) => d3.sum(zs, (z) => z.wert), (z) => z.sektor).sort((a, b) => b[1] - a[1]);
+      MU.kuchen(el, sektoren.map(([name, wert]) => ({name, anteil: wert / summe * 100, wert: wert * 1e9, farbe: SFARBE[name],
+        teile: t.zeilen.filter((z) => z.sektor === name).map((z) => z.name).join(', ')})),
+        {titel: 'Sektor', mitte: '4 Sektoren', unter: 'Anteil am Produktionswert', klasse: 'mu-kz3', spalten: [],
+          fuss: sektoren.map(([n]) => n + ': ' + t.zeilen.filter((z) => z.sektor === n).map((z) => z.name).join(', ')).join(' · ')});
+    });
+
+    // Terminkurven: Tabelle mit Struktur und Chart mit allen Kurven (vorderster Kontrakt = 100)
+    const monat = new Intl.DateTimeFormat('de-CH', {month: 'short', year: 'numeric', timeZone: 'UTC'});
+    const mtext = (ym) => monat.format(new Date(ym + '-15T00:00:00Z'));
+    const preis = (v) => v >= 100 ? f0.format(v) : f2.format(v);
+    dash.draw('kurventab', (tbody) => {
+      const t = bereit(tbody, 'terminkurven', true); if (!t) return;
+      tbody.replaceChildren(...t.kurven.map((k) => {
+        const tr = MU.neu('tr');
+        const zelle = (p, s) => { const td = MU.neu('td'); if (!p) { td.textContent = '—'; td.className = 'mu-null'; return td; }
+          td.append(document.createTextNode(preis(p[1])), MU.neu('small', null, mtext(p[0])));
+          if (s != null) td.append(MU.neu('small', MU.klasse(s), '(' + MU.prozent(s) + ')')); return td; };
+        const massgebend = k.spread12 != null ? k.spread12 : k.spread6;
+        const struktur = massgebend == null ? ['—', 'mu-null'] : massgebend < -1 ? ['Backwardation: knapp', 'mu-minus'] : massgebend > 1 ? ['Contango: reichlich', 'mu-plus'] : ['flach', 'mu-null'];
+        tr.append(MU.neu('td', null, k.name), zelle(k.front), zelle(k.m6, k.spread6), zelle(k.m12, k.spread12), MU.neu('td', struktur[1], struktur[0]));
+        return tr;
+      }));
+    });
+    dash.draw('kurvenchart', (el) => {
+      const t = bereit(el, 'terminkurven'); if (!t) return;
+      const farben = ['#f0605d', '#ff8a5b', '#8ecae6', '#56b6c2', '#5b9cf6', '#ffd166', '#3fbf7f', '#98c379', '#c3e88d'];
+      MU.linien(el, t.kurven.map((k, i) => ({name: k.name, farbe: farben[i % farben.length],
+        punkte: k.punkte.map((p) => [p[0] + '-15', Math.round(p[1] / k.front[1] * 1000) / 10])})),
+      {fmt: (v) => v == null ? '—' : f1.format(v), achse: (v) => f0.format(v), datum: (d) => mtext(d.slice(0, 7)), ohneNull: true, linien: [100], links: 40});
+    });
+
+    // Preisverhältnisse: je eine Karte mit Kennzahlen und Verlauf über 20 Jahre
+    dash.draw('verhaeltnisse', (el) => {
+      const t = bereit(el, 'verhaeltnisse'); if (!t) return;
+      const farben = {gold_silber: '#ffd166', kupfer_gold: '#5b9cf6', oel_gold: '#f0605d'};
+      el.replaceChildren(...t.zeilen.map((z) => {
+        const k = MU.neu('div', 'mu-karte');
+        const kopf = MU.neu('div', 'mu-karte-kopf'); kopf.append(MU.neu('h3', null, z.name), MU.neu('span', MU.klasse(z.j1), '1J ' + MU.prozent(z.j1)));
+        const fmt = z.wert < 10 ? f2 : f1;
+        const p = MU.neu('p', 'mu-karte-text');
+        p.append(MU.neu('b', null, fmt.format(z.wert)), document.createTextNode(' · Mittel 20 Jahre ' + fmt.format(z.mittel) + ' · Hoch ' + fmt.format(z.hoch[1]) + ' (' + MU.datum(z.hoch[0]) + ') · Tief ' + fmt.format(z.tief[1]) + ' (' + MU.datum(z.tief[0]) + ')'));
+        const chart = MU.neu('div', 'mu-linienchart');
+        k.append(kopf, p, MU.neu('p', 'mu-karte-text', z.text), chart);
+        requestAnimationFrame(() => MU.linien(chart, [{name: z.name, farbe: farben[z.key], punkte: z.reihe}, {name: 'Mittel 20 Jahre', farbe: '#8794a6', gestrichelt: true, punkte: [[z.reihe[0][0], z.mittel], [z.reihe[z.reihe.length - 1][0], z.mittel]]}],
+          {fmt: (v) => v == null ? '—' : fmt.format(v), achse: (v) => fmt.format(v), datum: MU.datum, ohneNull: true, links: 44, hoehe: 200}));
+        return k;
+      }));
     });
   })();
 </script>

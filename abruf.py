@@ -25,6 +25,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import aktien_markt
 import immobilien
+import rohstoffe_seite
 import land_usa
 
 UA = "Mozilla/5.0"
@@ -1062,12 +1063,13 @@ def main(ziel, vorher=None):
     gewinner = sicher(krypto_gewinner) or []
     makrodaten, makroverlauf = sicher(makro) or ([], [])
     usa = mit_vorstand(land_usa.usa(sicher), "daten/usa.json", land_usa.TEILE)
+    rohseite = mit_vorstand(rohstoffe_seite.rohstoffseite(hole, yahoo_crumb, sicher), "daten/rohstoffseite.json", rohstoffe_seite.TEILE)
     immo = mit_vorstand(immobilien.immobilien(hole, sicher), "daten/immobilien.json", immobilien.TEILE)
     aktienmarkt = mit_vorstand(aktien_markt.aktienmarkt(hole, yahoo_crumb, sicher), "daten/aktienmarkt.json", aktien_markt.TEILE)
     dateien = {"werte.json": werte, "aktien.json": aktien, "zinsen.json": zinsen,
                "verlauf.json": verlauf, "news.json": news, "umsatz.json": umsatz,
                "kryptogewinner.json": gewinner, "makro.json": makrodaten,
-               "makroverlauf.json": makroverlauf, "usa.json": usa, "aktienmarkt.json": aktienmarkt, "immobilien.json": immo}
+               "makroverlauf.json": makroverlauf, "usa.json": usa, "aktienmarkt.json": aktienmarkt, "immobilien.json": immo, "rohstoffseite.json": rohseite}
     for name, zeilen in dateien.items():
         with open(f"{ziel}/{name}", "w", encoding="utf-8") as f:
             json.dump({"rows": zeilen}, f, ensure_ascii=False, separators=(",", ":"))
