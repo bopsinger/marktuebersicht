@@ -49,5 +49,13 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
+      # GitHub findet das eben hochgeladene Paket gelegentlich nicht sofort; dann nach einer Minute erneut versuchen
       - id: pages
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+      - name: Warten vor zweitem Versuch
+        if: steps.pages.outcome == 'failure'
+        run: sleep 60
+      - id: pages2
+        if: steps.pages.outcome == 'failure'
         uses: actions/deploy-pages@v4
