@@ -257,9 +257,9 @@
   .mu-ampel { display: inline-block; width: .55rem; height: .55rem; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
   #breite .mu-kacheln, #stress .mu-kacheln { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15.5rem), 1fr)); min-height: 0; }
   .mu-kuchen-breit { min-height: 18rem; gap: var(--cds-gap-lg); }
-  .mu-kuchen-breit svg { width: min(220px, 100%); }
-  .mu-kuchen-breit .mu-kuchen-legende { flex: 1 1 20rem; }
-  .mu-kz5 { display: grid; grid-template-columns: .75rem 1fr 4.6rem 3.4rem 3.9rem 3.9rem; align-items: center; gap: 6px; padding: 4px; border-bottom: 1px solid var(--color-border-line); font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .mu-kuchen-breit svg { width: min(300px, 100%); }
+  .mu-kuchen-breit .mu-kuchen-legende { flex: 1 1 34rem; }
+  .mu-kz5 { display: grid; grid-template-columns: .75rem minmax(7rem, 1fr) 4.4rem 3.3rem 3.8rem 3.8rem 3.8rem 3.8rem 4rem; align-items: center; gap: 6px; padding: 4px; border-bottom: 1px solid var(--color-border-line); font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
   .mu-kz5:last-child { border-bottom: 0; }
   .mu-kz5 > span { text-align: right; white-space: nowrap; }
   .mu-kz5 > span:nth-child(2) { text-align: left; font-weight: var(--cds-font-weight-medium); font-size: var(--cds-font-size-body); white-space: normal; }
@@ -269,8 +269,8 @@
   .mu-kz5.mu-klickbar:hover, .mu-kz5.mu-klickbar:focus-visible { background: rgba(255, 255, 255, .05); outline: none; }
   .mu-kz5.mu-klickbar > span:nth-child(2)::after { content: " ›"; color: var(--color-fg-muted); }
   .mu-weltkarten { grid-template-columns: 1fr !important; }
-  .mu-weltkarten .mu-kuchen-legende { max-width: 46rem; }
-  @media (max-width: 560px) { .mu-kz5 { grid-template-columns: .75rem 1fr 3.3rem 3.3rem 3.6rem; } .mu-kz5 > span:nth-child(3) { display: none; } }
+  .mu-weltkarten .mu-kuchen-legende { max-width: 54rem; }
+  @media (max-width: 700px) { .mu-kz5 { grid-template-columns: .75rem minmax(0, 1fr) 3.1rem 3.4rem 3.4rem 3.6rem; } .mu-kz5 > span:nth-child(3), .mu-kz5 > span:nth-child(5), .mu-kz5 > span:nth-child(8) { display: none; } }
   .mu-unterwahl { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
   [data-dash-source-state=empty] { color: transparent; }
   [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
@@ -330,7 +330,7 @@
   <section class="mu-abschnitt" id="weltmarkt" data-unterseite>
     <div class="mu-h2">
       <h2>Weltaktienmarkt</h2>
-      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Weltaktienmarkt">i<span class="mu-info-text" role="tooltip">Wie sich der Wert aller börsennotierten Aktien weltweit auf Märkte und Branchen verteilt. Märkte: Gewichte der rund 3000 Titel im SPDR Portfolio MSCI Global Stock Market ETF (State Street, bildet den MSCI ACWI IMI nach), nach Handelswährung den Märkten zugeordnet; in US-Dollar gehandelte Auslandstitel wie TSMC oder Samsung sind ihrem Heimatmarkt zugerechnet. Eurozone: alle Titel in Euro. Gewichte nach frei handelbaren Aktien (Streubesitz); der volle Börsenwert ist anders verteilt: laut Weltbank stand Ende 2025 die USA bei rund der Hälfte des Welt-Börsenwerts, weil etwa in China viele Aktien in Staatsbesitz und nicht frei handelbar sind. Sektoren: Gewichte des iShares MSCI ACWI laut Yahoo Finance. Der Wert in USD ist geschätzt: Anteil mal Weltaktienmarkt aus den Anlageklassen. Renditen in USD einschliesslich Dividenden, gemessen an Länder-ETF (Märkte) und den iShares-Global-Sektor-ETF (Sektoren). Ein Klick auf einen Markt öffnet seine eigene Seite.</span></span>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Weltaktienmarkt">i<span class="mu-info-text" role="tooltip">Wie sich der Wert aller börsennotierten Aktien weltweit auf Märkte und Branchen verteilt. Märkte: Gewichte der rund 3000 Titel im SPDR Portfolio MSCI Global Stock Market ETF (State Street, bildet den MSCI ACWI IMI nach), nach Handelswährung den Märkten zugeordnet; in US-Dollar gehandelte Auslandstitel wie TSMC oder Samsung sind ihrem Heimatmarkt zugerechnet. Eurozone: alle Titel in Euro. Gewichte nach frei handelbaren Aktien (Streubesitz); der volle Börsenwert ist anders verteilt: laut Weltbank stand Ende 2025 die USA bei rund der Hälfte des Welt-Börsenwerts, weil etwa in China viele Aktien in Staatsbesitz und nicht frei handelbar sind. Sektoren: Gewichte des iShares MSCI ACWI laut Yahoo Finance. Der Wert in USD ist geschätzt: Anteil mal Weltaktienmarkt aus den Anlageklassen. Renditen in USD einschliesslich Dividenden, gemessen an Länder-ETF (Märkte) und den iShares-Global-Sektor-ETF (Sektoren); 10J und 20J kumuliert, „p.a. 20J“ als durchschnittliche jährliche Rendite. Wo der ETF jünger als 20 Jahre ist (Welt seit 2008, China seit 2011, Indien seit 2012, Immobilien seit 2014), fehlen die langen Werte. Auf dem Handy sind Wert, YTD und 20J ausgeblendet. Ein Klick auf einen Markt öffnet seine eigene Seite.</span></span>
       <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
     <div class="mu-karten mu-weltkarten">
@@ -1688,6 +1688,7 @@
       }
       const titel = MU.neu('div', 'mu-seitentitel');
       titel.appendChild(MU.neu('h2', null, seite.eltern ? SEITEN[seite.eltern].name + ' · ' + seite.name : seite.name));
+      if (s === 'aktien') { el.replaceChildren(...teile); return; }  // Aktienseite beginnt direkt mit dem Weltaktienmarkt
       teile.push(titel);
       if (seite.region) {
         const a = dash.data('aktienmarkt');
@@ -1786,7 +1787,7 @@
       svg.append(mitte, unter);
       const liste = MU.neu('div', 'mu-kuchen-legende');
       const kopf = MU.neu('div', 'mu-kz5 mu-kz-kopf');
-      [' ', opt.titel, 'Wert', 'Anteil', 'YTD', '1J'].forEach((x) => kopf.append(MU.neu('span', null, x)));
+      [' ', opt.titel, 'Wert', 'Anteil', 'YTD', '1J', '10J', '20J', 'p.a. 20J'].forEach((x) => kopf.append(MU.neu('span', null, x)));
       liste.append(kopf);
       eintraege.forEach((e, i) => {
         const z = MU.neu('div', 'mu-kz5');
@@ -1794,7 +1795,7 @@
         const f = MU.neu('i'); f.style.background = e.farbe || PALETTE[i % PALETTE.length];
         const name = MU.neu('span', null, e.name); if (e.symbol) name.title = 'Rendite gemessen am ' + e.symbol;
         z.append(f, name, MU.neu('span', 'mu-klein', e.wert ? MU.kompakt(e.wert) : '—'), MU.neu('span', null, MU.anteil(e.anteil)),
-          MU.neu('span', MU.klasse(e.ytd), MU.prozent(e.ytd)), MU.neu('span', MU.klasse(e.j1), MU.prozent(e.j1)));
+          ...['ytd', 'j1', 'j10', 'j20', 'pa20'].map((f) => MU.neu('span', MU.klasse(e[f]), f === 'j10' || f === 'j20' ? MU.pz(e[f]) : MU.prozent(e[f]))));
         liste.append(z);
       });
       if (opt.fuss) liste.append(MU.neu('div', 'mu-kuchen-summe', opt.fuss));
@@ -1805,9 +1806,9 @@
       const t = bereit(el, 'maerkte'); if (!t) return;
       const gesamt = weltwert();
       const eintraege = t.zeilen.map((z) => ({...z, seite: 'aktien/' + z.key, wert: gesamt ? gesamt * z.anteil / 100 : null}));
-      eintraege.push({name: 'Übrige', anteil: t.uebrige, farbe: '#4a5568', wert: gesamt ? gesamt * t.uebrige / 100 : null, ytd: null, j1: null});
+      eintraege.push({name: 'Übrige', anteil: t.uebrige, farbe: '#4a5568', wert: gesamt ? gesamt * t.uebrige / 100 : null});
       kuchen(el, eintraege, {titel: 'Markt', mitte: gesamt ? MU.kompakt(gesamt) : '100 %', unter: 'USD Börsenwert',
-        fuss: 'Welt (MSCI ACWI) YTD ' + MU.prozent(t.welt.ytd) + ', 1J ' + MU.prozent(t.welt.j1) + ' · Gewichte vom ' + t.stand + ', ' + t.titel + ' Titel'});
+        fuss: 'Welt (MSCI ACWI): YTD ' + MU.prozent(t.welt.ytd) + ', 1J ' + MU.prozent(t.welt.j1) + ', 10J ' + MU.pz(t.welt.j10) + ' (' + MU.prozent(t.welt.pa10) + ' p.a.); 20 Jahre nicht verfügbar, der ETF besteht seit 2008 · Gewichte vom ' + t.stand + ', ' + t.titel + ' Titel'});
     });
     dash.draw('weltsektoren', (el) => {
       const t = bereit(el, 'sektorgewichte'); if (!t) return;

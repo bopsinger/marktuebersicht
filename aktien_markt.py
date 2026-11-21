@@ -42,6 +42,8 @@ AUSLAND_IN_USD = [
     ("grossbritannien", r"ASTRAZENECA|COMPASS GROUP"),
 ]
 
+FELDER = ("t1", "ytd", "j1", "j5", "j10", "pa10", "j20", "pa20")
+
 SEKTORNAMEN = {"technology": ("Technologie", "IXN"), "financial_services": ("Finanzen", "IXG"),
                "healthcare": ("Gesundheit", "IXJ"), "industrials": ("Industrie", "EXI"),
                "consumer_cyclical": ("Zyklischer Konsum", "RXI"), "communication_services": ("Kommunikation", "IXP"),
@@ -67,7 +69,7 @@ BEWERTUNG = [("welt", "Welt", "ACWI"), ("usa", "USA (S&P 500)", "SPY"), ("nasdaq
     [(k, n, e) for k, n, _, e, _ in MAERKTE if k != "usa"]
 
 
-def _reihe(hole, symbol, tage=3652 + 40):
+def _reihe(hole, symbol, tage=7305 + 40):
     """Tägliche Schlusskurse, um Dividenden bereinigt (adjclose), als [(date, wert)]."""
     start = int((dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=tage)).timestamp())
     url = (f"https://query1.finance.yahoo.com/v8/finance/chart/{urllib.parse.quote(symbol)}"
@@ -121,8 +123,9 @@ def _kennzahlen(reihe):
     heute = reihe[-1][0]
     aus = {"t1": _rendite(reihe, 1), "w1": _rendite(reihe, 7), "m1": _rendite(reihe, 30),
            "ytd": _rendite(reihe, seit=dt.date(heute.year - 1, 12, 31)), "j1": _rendite(reihe, 365),
-           "j5": _rendite(reihe, 365 * 5 + 1), "j10": _rendite(reihe, 3652)}
+           "j5": _rendite(reihe, 365 * 5 + 1), "j10": _rendite(reihe, 3652), "j20": _rendite(reihe, 7305)}
     aus["pa10"] = None if aus["j10"] is None else round(((1 + aus["j10"] / 100) ** 0.1 - 1) * 100, 2)
+    aus["pa20"] = None if aus["j20"] is None else round(((1 + aus["j20"] / 100) ** 0.05 - 1) * 100, 2)
     return aus
 
 
@@ -191,11 +194,11 @@ def maerkte(daten):
         r = daten.get(etf)
         k = _kennzahlen(r["reihe"]) if r else {}
         zeilen.append({"key": key, "name": name, "anteil": round(anteil[key] / summe * 100, 2), "symbol": etf, "text": text,
-                       **{f: k.get(f) for f in ("t1", "ytd", "j1", "j5", "j10", "pa10")}})
+                       **{f: k.get(f) for f in FELDER}})
     zeilen.sort(key=lambda z: -z["anteil"])
     welt = _kennzahlen(daten["ACWI"]["reihe"]) if "ACWI" in daten else {}
     return {"teil": "maerkte", "stand": stand, "titel": len(bestand), "uebrige": round(anteil["uebrige"] / summe * 100, 2),
-            "zeilen": zeilen, "welt": {f: welt.get(f) for f in ("t1", "ytd", "j1", "j5", "j10", "pa10")}}
+            "zeilen": zeilen, "welt": {f: welt.get(f) for f in FELDER}}
 
 
 def sektorgewichte(hole, crumb, daten):
@@ -209,7 +212,7 @@ def sektorgewichte(hole, crumb, daten):
             name, etf = SEKTORNAMEN.get(schluessel, (schluessel, None))
             k = _kennzahlen(daten[etf]["reihe"]) if etf in daten else {}
             zeilen.append({"name": name, "anteil": round((wert.get("raw") or 0) * 100, 2), "symbol": etf,
-                           **{f: k.get(f) for f in ("t1", "ytd", "j1", "j5")}})
+                           **{f: k.get(f) for f in FELDER}})
     if not zeilen:
         raise RuntimeError("Yahoo liefert keine Sektorgewichte")
     zeilen.sort(key=lambda z: -z["anteil"])
