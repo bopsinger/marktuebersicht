@@ -257,18 +257,18 @@
   .mu-kuchen-breit { min-height: 18rem; gap: var(--cds-gap-lg); }
   .mu-kuchen-breit svg { width: min(300px, 100%); }
   .mu-kuchen-breit .mu-kuchen-legende { flex: 1 1 34rem; }
-  .mu-kz5 { display: grid; grid-template-columns: .75rem minmax(7rem, 1fr) 4.4rem 3.3rem 3.8rem 3.8rem 3.8rem 3.8rem 4rem; align-items: center; gap: 6px; padding: 4px; border-bottom: 1px solid var(--color-border-line); font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .mu-kz5 { display: grid; grid-template-columns: .75rem minmax(8rem, 1fr) 5rem 4rem 4.4rem 4.4rem 4.6rem 4.8rem 4.6rem; align-items: center; gap: 6px; padding: 6px 4px; border-bottom: 1px solid var(--color-border-line); font-size: var(--cds-font-size-body); font-variant-numeric: tabular-nums; }
   .mu-kz5:last-child { border-bottom: 0; }
   .mu-kz5 > span { text-align: right; white-space: nowrap; }
   .mu-kz5 > span:nth-child(2) { text-align: left; font-weight: var(--cds-font-weight-medium); font-size: var(--cds-font-size-body); white-space: normal; }
-  .mu-kz5.mu-kz-kopf { color: var(--color-fg-muted); padding-top: 0; }
+  .mu-kz5.mu-kz-kopf { color: var(--color-fg-muted); padding-top: 0; font-size: var(--cds-font-size-caption); }
   .mu-kz5 i { width: .75rem; height: .75rem; border-radius: 3px; }
   .mu-kz5.mu-klickbar { border-radius: 4px; }
   .mu-kz5.mu-klickbar:hover, .mu-kz5.mu-klickbar:focus-visible { background: rgba(255, 255, 255, .05); outline: none; }
   .mu-kz5.mu-klickbar > span:nth-child(2)::after { content: " ›"; color: var(--color-fg-muted); }
   .mu-weltkarten { grid-template-columns: 1fr !important; }
-  .mu-weltkarten .mu-kuchen-legende { max-width: 54rem; }
-  @media (max-width: 700px) { .mu-kz5 { grid-template-columns: .75rem minmax(0, 1fr) 3.1rem 3.4rem 3.4rem 3.6rem; } .mu-kz5 > span:nth-child(3), .mu-kz5 > span:nth-child(5), .mu-kz5 > span:nth-child(8) { display: none; } }
+  .mu-weltkarten .mu-kuchen-legende { max-width: 60rem; }
+  @media (max-width: 700px) { .mu-kz5 { grid-template-columns: .75rem minmax(0, 1fr) 3.3rem 3.6rem 3.8rem 3.8rem; font-size: 12.5px; } .mu-kz5 > span:nth-child(3), .mu-kz5 > span:nth-child(5), .mu-kz5 > span:nth-child(8) { display: none; } }
   .mu-unterwahl { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
   [data-dash-source-state=empty] { color: transparent; }
   [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
