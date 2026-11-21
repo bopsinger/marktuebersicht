@@ -1,6 +1,6 @@
 <meta name="dash-one-writer">
 <style>
-  /* Raster: Kopfzeile mit Lagesatz, dann je Anlageklasse ein Abschnitt mit Kacheln oder Tabelle. */
+  /* Raster: Kopfzeile, dann je Anlageklasse ein Abschnitt mit Kacheln oder Tabelle. */
   /* Immer dunkel: die Farbtoken des Dashboards werden innerhalb der Seite überschrieben, damit alle Regeln unten mitziehen. */
   #dash-root { --dash-gutter: 0; }
   .mu {
@@ -15,8 +15,6 @@
   }
   .mu-kopf { display: grid; gap: var(--cds-gap-sm); }
   .mu-titel { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
-  .mu-lage { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); max-width: 70ch; }
-  .mu-lage b { font-weight: var(--cds-font-weight-medium); color: var(--color-fg); }
   .mu-nav { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); }
   .mu-nav button { font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: 999px; background: var(--color-panel); color: var(--color-fg); cursor: pointer; }
   .mu-nav button:hover { border-color: var(--color-fg-muted); }
@@ -280,7 +278,6 @@
   <header class="mu-kopf">
     <h1 class="mu-titel"><a href="#/" title="Zur Übersicht">Marktübersicht</a></h1>
     <div class="mu-kopfzeile">
-      <p class="mu-lage" data-draw="lage" data-source="werte">—</p>
       <div class="mu-kopfknoepfe">
         <button type="button" class="mu-neu" id="mu-anordnen" title="Abschnitte nach oben oder unten verschieben">⇅ Anordnen</button>
         <button type="button" class="mu-neu" id="mu-fertig" hidden>✓ Fertig</button>
@@ -696,28 +693,6 @@
     const ziel = document.getElementById(b.dataset.ziel);
     if (ziel) { ziel.scrollIntoView({behavior: 'smooth', block: 'start'}); dash.setLink(ziel.id); }
   }));
-</script>
-
-<script>
-  // Lagesatz unter dem Titel: Stand und drei Leitwerte des Tages.
-  dash.draw('lage', (el) => {
-    const w = dash.data('werte');
-    if (w.status !== 'ok') { el.textContent = '—'; return; }
-    const zeilen = w.data;
-    const stand = zeilen.map((r) => r.stand).filter(Boolean).sort().pop();
-    const teile = [];
-    teile.push(document.createTextNode('Stand ' + MU.zeit(stand) + '. Heute: '));
-    ['spx', 'dax', 'smi', 'gold', 'brent'].forEach((id, i, alle) => {
-      const r = zeilen.find((z) => z.id === id);
-      if (!r) return;
-      teile.push(document.createTextNode(r.name + ' '));
-      const b = MU.neu('b', MU.klasse(r.t1), MU.prozent(r.t1));
-      b.dataset.source = 'werte'; b.dataset.field = 't1'; b.dataset.where = 'id=' + id;
-      teile.push(b);
-      teile.push(document.createTextNode(i < alle.length - 1 ? ', ' : '.'));
-    });
-    el.replaceChildren(...teile);
-  });
 </script>
 
 <script>
