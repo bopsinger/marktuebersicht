@@ -269,6 +269,19 @@
   .mu-weltkarten { grid-template-columns: 1fr !important; }
   .mu-weltkarten .mu-kuchen-legende { max-width: 60rem; }
   @media (max-width: 700px) { .mu-kz5 { grid-template-columns: .75rem minmax(0, 1fr) 3.3rem 3.6rem 3.8rem 3.8rem; font-size: 12.5px; } .mu-kz5 > span:nth-child(3), .mu-kz5 > span:nth-child(5), .mu-kz5 > span:nth-child(8) { display: none; } }
+  .mu-kz3 { display: grid; grid-template-columns: .75rem minmax(8rem, 1fr) 5.5rem 4rem 5.5rem; align-items: center; gap: 6px; padding: 6px 4px; border-bottom: 1px solid var(--color-border-line); font-size: var(--cds-font-size-body); font-variant-numeric: tabular-nums; }
+  .mu-kz3:last-child { border-bottom: 0; }
+  .mu-kz3 > span { text-align: right; white-space: nowrap; }
+  .mu-kz3 > span:nth-child(2) { text-align: left; font-weight: var(--cds-font-weight-medium); white-space: normal; }
+  .mu-kz3.mu-kz-kopf { color: var(--color-fg-muted); padding-top: 0; font-size: var(--cds-font-size-caption); }
+  .mu-kz3 i { width: .75rem; height: .75rem; border-radius: 3px; }
+  @media (max-width: 560px) { .mu-kz3 { grid-template-columns: .75rem minmax(0, 1fr) 4.6rem 3.6rem 4.2rem; font-size: 12.5px; } }
+  .mu-immotab { min-width: 34rem; font-size: var(--cds-font-size-body); }
+  .mu-reittab { min-width: 52rem; font-size: var(--cds-font-size-body); }
+  .mu-immotab td, .mu-reittab td { padding-block: 7px; }
+  .mu-immotab td:first-child, .mu-reittab td:first-child { font-weight: var(--cds-font-weight-medium); }
+  .mu-immotab tr.mu-aggregat td { background: rgba(255, 255, 255, .03); }
+  .mu-immotab tr.mu-aggregat + tr:not(.mu-aggregat) td { border-top: 1px solid var(--color-fg-muted); }
   .mu-unterwahl { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
   [data-dash-source-state=empty] { color: transparent; }
   [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
@@ -424,6 +437,49 @@
     </div>
     <p class="mu-karte-text" data-draw="stresstext" data-source="aktienmarkt">—</p>
     <div class="mu-karte"><h3>VIX (Aktien) und MOVE (Anleihen) über 20 Jahre</h3><div class="mu-linienchart" data-draw="stresschart" data-source="aktienmarkt">—</div></div>
+  </section>
+
+  <section class="mu-abschnitt" id="immowelt" data-unterseite>
+    <div class="mu-h2">
+      <h2>Weltimmobilienmarkt</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Weltimmobilienmarkt">i<span class="mu-info-text" role="tooltip">Geschätzter Wert aller Immobilien der Welt laut Savills („Total value of global real estate“, Bericht 2025, Stand Ende 2024): 393,3 Bio. USD, davon Wohnimmobilien 286,9 Bio. (−2,7 % zum Vorjahr in USD), Gewerbeimmobilien 58,5 Bio. (+4,1 %) und Agrarland 47,9 Bio. (+7,9 %). Wohnimmobilien gehören überwiegend Privathaushalten; Gewerbe umfasst Büros, Läden, Logistik und Hotels. Regionen: Anteile am Wert der Wohnimmobilien laut Savills (China 26 %, Europa 25 %, Nordamerika 22 %, davon USA 18 %); der Rest der Welt ergibt sich als Differenz. Die Angaben widersprechen sich teils: Eine andere Savills-Fassung nennt für China 29 %, und für alle Immobilien zusammen nennt Savills China mit 23,5 % und die USA mit 20,7 %. Eine vollständige Aufteilung nach Ländern veröffentlicht Savills nicht frei. Savills schätzt einmal im Jahr; die Zahlen werden nach dem nächsten Bericht nachgetragen.</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
+    </div>
+    <div class="mu-karten mu-weltkarten">
+      <div class="mu-kuchen mu-kuchen-breit" data-draw="immoarten" data-source="immobilien">—</div>
+      <div class="mu-kuchen mu-kuchen-breit" data-draw="immoregionen" data-source="immobilien">—</div>
+    </div>
+  </section>
+
+  <section class="mu-abschnitt" id="wohnpreise" data-unterseite>
+    <div class="mu-h2">
+      <h2>Wohnimmobilien: Preise</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Wohnimmobilien: Preise">i<span class="mu-info-text" role="tooltip">Preisindizes für Wohnimmobilien der BIZ (Bank für Internationalen Zahlungsausgleich), vierteljährlich, aus den amtlichen Statistiken der Länder zusammengestellt; Welt, Industrie- und Schwellenländer und Eurozone sind Durchschnitte der BIZ (Welt ab 2007). Nominal: Preise in Landeswährung. Real: nach Abzug der Verbraucherpreisinflation; erst das zeigt, ob Wohnen tatsächlich teurer wurde. „vom Hoch“: Abstand zum höchsten Stand seit 2000 (Datum beim Darüberfahren). Die Länder veröffentlichen mit einem bis drei Quartalen Verzögerung, deshalb unterschiedliche Stände. Im Chart lassen sich Länder per Klick ein- und ausblenden; Indexstand 2010 = 100.</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
+    </div>
+    <div class="mu-reiter" role="tablist" aria-label="Messart" data-draw="wohnreiter" data-source="immobilien"></div>
+    <div class="mu-zinsen mu-rollen"><table class="mu-tab mu-immotab"><thead><tr><th>Land</th><th>Stand</th><th>1J</th><th>5J</th><th>10J</th><th>20J</th><th>vom Hoch</th></tr></thead><tbody data-draw="wohntab" data-source="immobilien"></tbody></table></div>
+    <div class="mu-karte"><h3>Verlauf seit 2006 (2010 = 100)</h3><div class="mu-linienchart" data-draw="wohnchart" data-source="immobilien">—</div></div>
+  </section>
+
+  <section class="mu-abschnitt" id="gewerbepreise" data-unterseite>
+    <div class="mu-h2">
+      <h2>Gewerbeimmobilien: Preise</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Gewerbeimmobilien: Preise">i<span class="mu-info-text" role="tooltip">Preisindizes für Gewerbeimmobilien der BIZ, nominal in Landeswährung. Die Länder messen unterschiedlich: meist alle Gewerbeimmobilien, für die Niederlande, Hongkong und Singapur nur Büros. Für China, Grossbritannien, die Schweiz und Frankreich (nur bis 2021) gibt es keine passende vergleichbare Reihe. Die Eurozone und Japan veröffentlichen mit Verzögerung. „vom Hoch“: Abstand zum höchsten Stand seit 2000. Im Chart sind alle Reihen vor zehn Jahren auf 100 gesetzt.</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
+    </div>
+    <div class="mu-zinsen mu-rollen"><table class="mu-tab mu-immotab"><thead><tr><th>Land</th><th>Erfasst</th><th>Stand</th><th>1J</th><th>5J</th><th>10J</th><th>vom Hoch</th></tr></thead><tbody data-draw="gewerbetab" data-source="immobilien"></tbody></table></div>
+    <div class="mu-karte"><h3>Verlauf über zehn Jahre (Start = 100)</h3><div class="mu-linienchart" data-draw="gewerbechart" data-source="immobilien">—</div></div>
+  </section>
+
+  <section class="mu-abschnitt" id="reits" data-unterseite>
+    <div class="mu-h2">
+      <h2>Börsenkotierte Immobilien (REITs)</h2>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Börsenkotierte Immobilien (REITs)">i<span class="mu-info-text" role="tooltip">Immobiliengesellschaften und -fonds an der Börse, gemessen an ETF: Welt iShares Global REIT, USA Vanguard Real Estate, International ohne USA SPDR Dow Jones International Real Estate, Europa iShares STOXX Europe 600 Real Estate, Japan NEXT FUNDS J-REIT Index, Schweiz UBS SXI Real Estate Funds. Sie reagieren täglich und damit viel schneller als die amtlichen Preisindizes, schwanken aber stärker und hängen eng an den Zinsen. Renditen einschliesslich Ausschüttungen in der Handelswährung des ETF. Ausschüttungsrendite: Ausschüttungen der letzten zwölf Monate geteilt durch den Kurs, selbst berechnet. Prämie: Ausschüttungsrendite minus Rendite der 10-jährigen Staatsanleihe im selben Währungsraum (Welt und International: US-Treasury). Eine negative Prämie heisst, dass sichere Staatsanleihen mehr abwerfen als die Ausschüttungen.</span></span>
+      <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
+    </div>
+    <div class="mu-zinsen mu-rollen"><table class="mu-tab mu-reittab"><thead><tr><th>Markt</th><th>Währung</th><th>1T</th><th>YTD</th><th>1J</th><th>5J</th><th>10J</th><th>p.a. 10J</th><th>Ausschüttung</th><th>10J Anleihe</th><th>Prämie</th></tr></thead><tbody data-draw="reittab" data-source="immobilien zinsen"></tbody></table></div>
+    <div class="mu-karte"><h3>Entwicklung über zehn Jahre (Start = 100, in Handelswährung)</h3><div class="mu-linienchart" data-draw="reitchart" data-source="immobilien">—</div></div>
   </section>
 
   <section class="mu-abschnitt" id="rohstoffe">
@@ -642,7 +698,7 @@
 
   document.querySelectorAll('.mu-neu').forEach((b) => b.addEventListener('click', () => {
     b.disabled = true;
-    ['werte', 'aktien', 'zinsen', 'verlauf', 'news', 'umsatz', 'kryptogewinner', 'makro', 'makroverlauf', 'usa', 'aktienmarkt'].forEach((id) => dash.refresh(id));
+    ['werte', 'aktien', 'zinsen', 'verlauf', 'news', 'umsatz', 'kryptogewinner', 'makro', 'makroverlauf', 'usa', 'aktienmarkt', 'immobilien'].forEach((id) => dash.refresh(id));
     setTimeout(() => { b.disabled = false; }, 2500);
   }));
 
@@ -1591,7 +1647,7 @@
     const SEITEN = {
       aktien: {name: 'Aktien', abschnitte: ['weltmarkt', 'bewertung', 'indizes', 'titel', 'stress']},
       anleihen: {name: 'Anleihen', abschnitte: ['zinsen']},
-      immobilien: {name: 'Immobilien', abschnitte: []},
+      immobilien: {name: 'Immobilien', abschnitte: ['immowelt', 'wohnpreise', 'gewerbepreise', 'reits']},
       gold: {name: 'Gold', abschnitte: ['rohstoffe']},
       silber: {name: 'Silber', abschnitte: ['rohstoffe']},
       krypto: {name: 'Krypto', abschnitte: ['krypto']},
@@ -1663,7 +1719,8 @@
       }
       const titel = MU.neu('div', 'mu-seitentitel');
       titel.appendChild(MU.neu('h2', null, seite.eltern ? SEITEN[seite.eltern].name + ' · ' + seite.name : seite.name));
-      if (s === 'aktien') { el.replaceChildren(...teile); return; }  // Aktienseite beginnt direkt mit dem Weltaktienmarkt
+      // Anlageklassen-Seiten mit eigenen Sektionen beginnen direkt mit diesen; nur Marktseiten und leere Seiten zeigen einen Kopf
+      if (!seite.eltern && seite.abschnitte.length) { el.replaceChildren(...teile); return; }
       teile.push(titel);
       if (seite.region) {
         const a = dash.data('aktienmarkt');
@@ -1761,21 +1818,24 @@
       unter.textContent = opt.unter;
       svg.append(mitte, unter);
       const liste = MU.neu('div', 'mu-kuchen-legende');
-      const kopf = MU.neu('div', 'mu-kz5 mu-kz-kopf');
-      [' ', opt.titel, 'Wert', 'Anteil', 'YTD', '1J', '10J', '20J', 'p.a. 20J'].forEach((x) => kopf.append(MU.neu('span', null, x)));
+      const klasse = opt.klasse || 'mu-kz5';
+      const spalten = opt.spalten || [['ytd', 'YTD', MU.prozent], ['j1', '1J', MU.prozent], ['j10', '10J', MU.pz], ['j20', '20J', MU.pz], ['pa20', 'p.a. 20J', MU.prozent]];
+      const kopf = MU.neu('div', klasse + ' mu-kz-kopf');
+      [' ', opt.titel, 'Wert', 'Anteil', ...spalten.map((s) => s[1])].forEach((x) => kopf.append(MU.neu('span', null, x)));
       liste.append(kopf);
       eintraege.forEach((e, i) => {
-        const z = MU.neu('div', 'mu-kz5');
+        const z = MU.neu('div', klasse);
         if (e.seite) { z.dataset.seite = e.seite; z.classList.add('mu-klickbar'); z.tabIndex = 0; z.setAttribute('role', 'link'); z.title = e.name + ' im Detail ansehen'; }
         const f = MU.neu('i'); f.style.background = e.farbe || PALETTE[i % PALETTE.length];
         const name = MU.neu('span', null, e.name); if (e.symbol) name.title = 'Rendite gemessen am ' + e.symbol;
         z.append(f, name, MU.neu('span', 'mu-klein', e.wert ? MU.kompakt(e.wert) : '—'), MU.neu('span', null, MU.anteil(e.anteil)),
-          ...['ytd', 'j1', 'j10', 'j20', 'pa20'].map((f) => MU.neu('span', MU.klasse(e[f]), f === 'j10' || f === 'j20' ? MU.pz(e[f]) : MU.prozent(e[f]))));
+          ...spalten.map(([f, , fmt]) => MU.neu('span', MU.klasse(e[f]), fmt(e[f]))));
         liste.append(z);
       });
       if (opt.fuss) liste.append(MU.neu('div', 'mu-kuchen-summe', opt.fuss));
       el.replaceChildren(svg, liste, tipp);
     }
+    MU.kuchen = kuchen;  // auch für die Immobilienseite
     const weltwert = () => { const w = dash.data('werte'); const r = w.status === 'ok' ? w.data.find((x) => x.id === 'ak-aktien') : null; return r ? r.kurs : null; };
     dash.draw('weltmaerkte', (el) => {
       const t = bereit(el, 'maerkte'); if (!t) return;
@@ -1938,6 +1998,127 @@
           anlZelle, pr, MU.neu('td', null, r.dividende == null ? '—' : MU.rendite(r.dividende)));
         return tr;
       }));
+    });
+  })();
+</script>
+
+<script>
+  // Immobilienseite: Weltwert nach Art und Region, Wohn- und Gewerbepreise, REITs (Daten: immobilien.json)
+  (() => {
+    const f0 = new Intl.NumberFormat('de-CH', {maximumFractionDigits: 0});
+    const f1 = new Intl.NumberFormat('de-CH', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+    const f2 = new Intl.NumberFormat('de-CH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    const teil = (name) => { const a = dash.data('immobilien'); return a.status === 'ok' ? a.data.find((t) => t.teil === name) : null; };
+    const bereit = (el, name, tabelle, spalten = 7) => {
+      const t = teil(name);
+      if (t) { el.classList.remove('dash-skeleton'); return t; }
+      const st = dash.data('immobilien').status;
+      if (tabelle) { const tr = MU.neu('tr'), td = MU.neu('td', 'mu-klein', st === 'loading' ? '…' : 'Noch keine Daten'); td.colSpan = spalten; tr.append(td); el.replaceChildren(tr); }
+      else if (st === 'ok') el.replaceChildren(MU.neu('div', 'mu-fehler', 'Noch keine Daten')); else MU.fehler(el, 'immobilien');
+      return null;
+    };
+    const quartal = (iso) => { const d = new Date(iso + 'T00:00:00Z'); return 'Q' + (Math.floor(d.getUTCMonth() / 3) + 1) + ' ' + d.getUTCFullYear(); };
+    const pzTd = (v) => MU.neu('td', MU.klasse(v), MU.prozent(v));
+    const mrd = (v) => v >= 1000 ? f1.format(v / 1000) + ' Bio.' : f0.format(v) + ' Mrd.';
+
+    // 1 Weltwert: nach Art und Wohnimmobilien nach Region
+    dash.draw('immoarten', (el) => {
+      const t = bereit(el, 'welt'); if (!t) return;
+      const farben = ['#5b9cf6', '#e8a33d', '#3fbf7f'];
+      MU.kuchen(el, t.arten.map(([name, wert, vj], i) => ({name, anteil: wert / t.gesamt * 100, wert: wert * 1e9, vj, farbe: farben[i]})),
+        {titel: 'Art', mitte: mrd(t.gesamt), unter: 'USD, ' + t.stand, klasse: 'mu-kz3', spalten: [['vj', 'Δ Vorjahr', MU.prozent]],
+          fuss: 'Savills, Wert aller Immobilien der Welt, ' + t.stand});
+    });
+    dash.draw('immoregionen', (el) => {
+      const t = bereit(el, 'welt'); if (!t) return;
+      const wohnen = t.arten[0][1];
+      const farben = ['#f0605d', '#ffd166', '#5b9cf6', '#56b6c2', '#8794a6'];
+      MU.kuchen(el, t.regionen.map(([name, anteil], i) => ({name, anteil, wert: wohnen * anteil / 100 * 1e9, farbe: farben[i]})),
+        {titel: 'Region (nur Wohnen)', mitte: mrd(wohnen), unter: 'USD Wohnimmobilien', klasse: 'mu-kz3', spalten: [],
+          fuss: 'Anteile am Wert der Wohnimmobilien laut Savills; übrige Welt als Differenz'});
+    });
+
+    // 2 Wohnpreise: nominal oder real, Tabelle und Verlauf mit ein- und ausblendbaren Ländern
+    const wohn = {art: 'real', sichtbar: new Set(['XW', 'US', 'CN', 'DE', 'CH', 'GB', 'ES'])};
+    const LFARBE = ['#e4e9f0', '#a0a8ff', '#c678dd', '#ffd166', '#5b9cf6', '#f0605d', '#3fbf7f', '#e8a33d', '#56b6c2', '#e06c9f', '#98c379', '#d19a66', '#8ecae6', '#b8b8b8', '#f78fb3', '#7bdff2', '#b5e48c', '#cdb4db', '#ff8a5b', '#c3e88d'];
+    dash.draw('wohnreiter', (el) => {
+      if (!teil('wohnpreise')) { el.replaceChildren(); return; }
+      el.replaceChildren(...[['real', 'Real (nach Inflation)'], ['nom', 'Nominal']].map(([k, n]) => {
+        const b = MU.neu('button', null, n); b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', String(wohn.art === k));
+        b.addEventListener('click', () => { wohn.art = k; dash.neuZeichnen(); });
+        return b;
+      }));
+    });
+    dash.draw('wohntab', (tbody) => {
+      const t = bereit(tbody, 'wohnpreise', true); if (!t) return;
+      const aggregate = ['XW', '5R', '4T', 'XM'];
+      tbody.replaceChildren(...t.zeilen.filter((z) => z[wohn.art]).map((z) => {
+        const k = z[wohn.art], tr = MU.neu('tr', aggregate.includes(z.key) ? 'mu-aggregat' : null);
+        const hoch = MU.neu('td', k.vom_hoch > -0.5 ? 'mu-plus' : 'mu-minus', k.vom_hoch > -0.5 ? 'Höchststand' : MU.prozent(k.vom_hoch));
+        hoch.title = 'Höchststand seit 2000: ' + quartal(k.hoch);
+        tr.append(MU.neu('td', null, z.name), MU.neu('td', 'mu-klein', quartal(k.stand)), pzTd(k.j1), pzTd(k.j5), pzTd(k.j10), pzTd(k.j20), hoch);
+        return tr;
+      }));
+    });
+    dash.draw('wohnchart', (el) => {
+      const t = bereit(el, 'wohnpreise'); if (!t) return;
+      const farbe = new Map(t.zeilen.map((z, i) => [z.key, LFARBE[i % LFARBE.length]]));
+      const knoepfe = MU.neu('div', 'mu-laender');
+      t.zeilen.forEach((z) => {
+        const b = MU.neu('button'); b.type = 'button'; b.setAttribute('aria-pressed', String(wohn.sichtbar.has(z.key)));
+        const p = MU.neu('i'); p.style.background = farbe.get(z.key); b.append(p, document.createTextNode(z.name));
+        b.addEventListener('click', () => { wohn.sichtbar.has(z.key) ? wohn.sichtbar.delete(z.key) : wohn.sichtbar.add(z.key); dash.neuZeichnen(); });
+        knoepfe.append(b);
+      });
+      const chart = MU.neu('div', 'mu-linienchart');
+      el.replaceChildren(knoepfe, chart);
+      MU.linien(chart, t.zeilen.filter((z) => wohn.sichtbar.has(z.key) && z[wohn.art + '_reihe']).map((z) => ({name: z.name, farbe: farbe.get(z.key), punkte: z[wohn.art + '_reihe']})),
+        {fmt: (v) => v == null ? '—' : f1.format(v), achse: (v) => f0.format(v), datum: quartal, ohneNull: true, linien: [100], links: 40});
+    });
+
+    // 3 Gewerbepreise
+    dash.draw('gewerbetab', (tbody) => {
+      const t = bereit(tbody, 'gewerbepreise', true); if (!t) return;
+      tbody.replaceChildren(...t.zeilen.map((z) => {
+        const tr = MU.neu('tr');
+        const hoch = MU.neu('td', z.vom_hoch > -0.5 ? 'mu-plus' : 'mu-minus', z.vom_hoch > -0.5 ? 'Höchststand' : MU.prozent(z.vom_hoch));
+        hoch.title = 'Höchststand seit 2000: ' + quartal(z.hoch);
+        tr.append(MU.neu('td', null, z.name), MU.neu('td', 'mu-klein', z.art), MU.neu('td', 'mu-klein', quartal(z.stand)), pzTd(z.j1), pzTd(z.j5), pzTd(z.j10), hoch);
+        return tr;
+      }));
+    });
+    dash.draw('gewerbechart', (el) => {
+      const t = bereit(el, 'gewerbepreise'); if (!t) return;
+      const ab = new Date(); ab.setUTCFullYear(ab.getUTCFullYear() - 10);
+      const grenze = ab.toISOString().slice(0, 10);
+      const farben = ['#5b9cf6', '#ffd166', '#e4e9f0', '#f0605d', '#e8a33d', '#56b6c2', '#98c379', '#c678dd', '#e06c9f'];
+      MU.linien(el, t.zeilen.map((z, i) => {
+        const r = z.reihe.filter((p) => p[0] >= grenze); const b = r.length ? r[0][1] : 1;
+        return {name: z.name + (z.art === 'Büros' ? ' (Büros)' : ''), farbe: farben[i % farben.length], punkte: r.map((p) => [p[0], Math.round(p[1] / b * 1000) / 10])};
+      }), {fmt: (v) => v == null ? '—' : f1.format(v), achse: (v) => f0.format(v), datum: quartal, ohneNull: true, linien: [100], links: 40});
+    });
+
+    // 4 REITs: Rendite, Ausschüttung und Prämie gegenüber der Staatsanleihe
+    dash.draw('reittab', (tbody) => {
+      const t = bereit(tbody, 'reits', true, 11); if (!t) return;
+      const z = dash.data('zinsen');
+      const anleihe = (key) => { const r = z.status === 'ok' ? z.data.find((x) => x.key === key) : null; return r ? r.rendite : null; };
+      tbody.replaceChildren(...t.zeilen.map((r) => {
+        const anl = anleihe(r.anleihe), praemie = r.ausschuettung != null && anl != null ? r.ausschuettung - anl : null;
+        const tr = MU.neu('tr');
+        const name = MU.neu('td', null, r.name); name.title = r.text + ' (' + r.symbol + ')';
+        const anlTd = MU.neu('td', null, anl == null ? '—' : MU.rendite(anl)); anlTd.title = r.anleihe.replace('-10J', '') + ' 10 Jahre';
+        const pr = MU.neu('td', praemie == null ? 'mu-null' : praemie < 0 ? 'mu-minus' : 'mu-plus', praemie == null ? '—' : (praemie > 0 ? '+' : praemie < 0 ? '−' : '') + f2.format(Math.abs(praemie)) + ' Pp');
+        tr.append(name, MU.neu('td', 'mu-klein', r.waehrung), pzTd(r.t1), pzTd(r.ytd), pzTd(r.j1), pzTd(r.j5), pzTd(r.j10), pzTd(r.pa10),
+          MU.neu('td', null, r.ausschuettung == null ? '—' : MU.rendite(r.ausschuettung)), anlTd, pr);
+        return tr;
+      }));
+    });
+    dash.draw('reitchart', (el) => {
+      const t = bereit(el, 'reits'); if (!t) return;
+      const farben = {welt: '#e4e9f0', usa: '#5b9cf6', international: '#c678dd', europa: '#ffd166', japan: '#f0605d', schweiz: '#3fbf7f'};
+      MU.linien(el, t.zeilen.map((r) => ({name: r.name, farbe: farben[r.key], punkte: r.reihe})),
+        {fmt: (v) => v == null ? '—' : f1.format(v), achse: (v) => f0.format(v), datum: MU.datum, ohneNull: true, linien: [100], links: 40});
     });
   })();
 </script>
