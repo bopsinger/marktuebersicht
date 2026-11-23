@@ -276,8 +276,8 @@
   .mu-kz3.mu-kz-kopf { color: var(--color-fg-muted); padding-top: 0; font-size: var(--cds-font-size-caption); }
   .mu-kz3 i { width: .75rem; height: .75rem; border-radius: 3px; }
   @media (max-width: 560px) { .mu-kz3 { grid-template-columns: .75rem minmax(0, 1fr) 4.6rem 3.6rem 4.2rem; font-size: 12.5px; } }
-  .mu-immotab { min-width: 34rem; font-size: var(--cds-font-size-body); }
-  .mu-reittab { min-width: 52rem; font-size: var(--cds-font-size-body); }
+  .mu-immotab { min-width: 38rem; font-size: var(--cds-font-size-body); }
+  .mu-reittab { min-width: 60rem; font-size: var(--cds-font-size-body); }
   .mu-immotab td, .mu-reittab td { padding-block: 7px; }
   .mu-immotab td:first-child, .mu-reittab td:first-child { font-weight: var(--cds-font-weight-medium); }
   .mu-immotab tr.mu-aggregat td { background: rgba(255, 255, 255, .03); }
@@ -466,27 +466,27 @@
     </div>
     <div class="mu-reiter" role="tablist" aria-label="Messart" data-draw="wohnreiter" data-source="immobilien"></div>
     <div class="mu-zinsen mu-rollen"><table class="mu-tab mu-immotab"><thead><tr><th>Land</th><th>Stand</th><th>1J</th><th>5J</th><th>10J</th><th>20J</th><th>vom Hoch</th></tr></thead><tbody data-draw="wohntab" data-source="immobilien"></tbody></table></div>
-    <div class="mu-karte"><h3>Verlauf seit 2006 (2010 = 100)</h3><div class="mu-linienchart" data-draw="wohnchart" data-source="immobilien">—</div></div>
+    <div class="mu-karte"><h3>Preisindex Wohnimmobilien seit 2006</h3><p class="mu-karte-text">BIZ-Index, 2010 = 100; real oder nominal je nach Auswahl oben. Länder per Klick ein- und ausblenden.</p><div data-draw="wohnchart" data-source="immobilien">—</div></div>
   </section>
 
   <section class="mu-abschnitt" id="gewerbepreise" data-unterseite>
     <div class="mu-h2">
       <h2>Gewerbeimmobilien: Preise</h2>
-      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Gewerbeimmobilien: Preise">i<span class="mu-info-text" role="tooltip">Preisindizes für Gewerbeimmobilien der BIZ, nominal in Landeswährung. Die Länder messen unterschiedlich: meist alle Gewerbeimmobilien, für die Niederlande, Hongkong und Singapur nur Büros. Für China, Grossbritannien, die Schweiz und Frankreich (nur bis 2021) gibt es keine passende vergleichbare Reihe. Die Eurozone und Japan veröffentlichen mit Verzögerung. „vom Hoch“: Abstand zum höchsten Stand seit 2000. Im Chart sind alle Reihen vor zehn Jahren auf 100 gesetzt.</span></span>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Gewerbeimmobilien: Preise">i<span class="mu-info-text" role="tooltip">Preisindizes für Gewerbeimmobilien der BIZ, nominal in Landeswährung. Die Länder messen unterschiedlich: meist alle Gewerbeimmobilien, für die Niederlande, Hongkong und Singapur nur Büros. Für China, Grossbritannien, die Schweiz und Frankreich (nur bis 2021) gibt es keine passende vergleichbare Reihe. Die Eurozone und Japan veröffentlichen mit Verzögerung. „vom Hoch“: Abstand zum höchsten Stand seit 2000. Deutschland beginnt erst 2013, Spanien 2014, Japan und die Niederlande 2008; dort fehlt der 20-Jahres-Wert. Im Chart sind alle Reihen vor 20 Jahren auf 100 gesetzt, kürzere bei ihrem ersten Wert.</span></span>
       <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
-    <div class="mu-zinsen mu-rollen"><table class="mu-tab mu-immotab"><thead><tr><th>Land</th><th>Erfasst</th><th>Stand</th><th>1J</th><th>5J</th><th>10J</th><th>vom Hoch</th></tr></thead><tbody data-draw="gewerbetab" data-source="immobilien"></tbody></table></div>
-    <div class="mu-karte"><h3>Verlauf über zehn Jahre (Start = 100)</h3><div class="mu-linienchart" data-draw="gewerbechart" data-source="immobilien">—</div></div>
+    <div class="mu-zinsen mu-rollen"><table class="mu-tab mu-immotab"><thead><tr><th>Land</th><th>Erfasst</th><th>Stand</th><th>1J</th><th>5J</th><th>10J</th><th>20J</th><th>vom Hoch</th></tr></thead><tbody data-draw="gewerbetab" data-source="immobilien"></tbody></table></div>
+    <div class="mu-karte"><h3>Preisindex Gewerbeimmobilien über 20 Jahre</h3><p class="mu-karte-text">Nominal in Landeswährung, jede Reihe vor 20 Jahren auf 100 gesetzt; kürzere Reihen beginnen bei ihrem ersten Wert mit 100. Länder per Klick ein- und ausblenden.</p><div data-draw="gewerbechart" data-source="immobilien">—</div></div>
   </section>
 
   <section class="mu-abschnitt" id="reits" data-unterseite>
     <div class="mu-h2">
       <h2>Börsenkotierte Immobilien (REITs)</h2>
-      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Börsenkotierte Immobilien (REITs)">i<span class="mu-info-text" role="tooltip">Immobiliengesellschaften und -fonds an der Börse, gemessen an ETF: Welt iShares Global REIT, USA Vanguard Real Estate, International ohne USA SPDR Dow Jones International Real Estate, Europa iShares STOXX Europe 600 Real Estate, Japan NEXT FUNDS J-REIT Index, Schweiz UBS SXI Real Estate Funds. Sie reagieren täglich und damit viel schneller als die amtlichen Preisindizes, schwanken aber stärker und hängen eng an den Zinsen. Renditen einschliesslich Ausschüttungen in der Handelswährung des ETF. Ausschüttungsrendite: Ausschüttungen der letzten zwölf Monate geteilt durch den Kurs, selbst berechnet. Prämie: Ausschüttungsrendite minus Rendite der 10-jährigen Staatsanleihe im selben Währungsraum (Welt und International: US-Treasury). Eine negative Prämie heisst, dass sichere Staatsanleihen mehr abwerfen als die Ausschüttungen.</span></span>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Börsenkotierte Immobilien (REITs)">i<span class="mu-info-text" role="tooltip">Immobiliengesellschaften und -fonds an der Börse, gemessen an ETF: Welt iShares Global REIT, USA Vanguard Real Estate, International ohne USA SPDR Dow Jones International Real Estate, Europa iShares STOXX Europe 600 Real Estate, Japan NEXT FUNDS J-REIT Index, Schweiz UBS SXI Real Estate Funds. Sie reagieren täglich und damit viel schneller als die amtlichen Preisindizes, schwanken aber stärker und hängen eng an den Zinsen. Renditen einschliesslich Ausschüttungen in der Handelswährung des ETF. Ausschüttungsrendite: Ausschüttungen der letzten zwölf Monate geteilt durch den Kurs, selbst berechnet. Prämie: Ausschüttungsrendite minus Rendite der 10-jährigen Staatsanleihe im selben Währungsraum (Welt und International: US-Treasury). Eine negative Prämie heisst, dass sichere Staatsanleihen mehr abwerfen als die Ausschüttungen. 20 Jahre gibt es nur für die USA; die übrigen ETF sind jünger.</span></span>
       <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
-    <div class="mu-zinsen mu-rollen"><table class="mu-tab mu-reittab"><thead><tr><th>Markt</th><th>Währung</th><th>1T</th><th>YTD</th><th>1J</th><th>5J</th><th>10J</th><th>p.a. 10J</th><th>Ausschüttung</th><th>10J Anleihe</th><th>Prämie</th></tr></thead><tbody data-draw="reittab" data-source="immobilien zinsen"></tbody></table></div>
-    <div class="mu-karte"><h3>Entwicklung über zehn Jahre (Start = 100, in Handelswährung)</h3><div class="mu-linienchart" data-draw="reitchart" data-source="immobilien">—</div></div>
+    <div class="mu-zinsen mu-rollen"><table class="mu-tab mu-reittab"><thead><tr><th>Markt</th><th>Währung</th><th>1T</th><th>YTD</th><th>1J</th><th>5J</th><th>10J</th><th>p.a. 10J</th><th>20J</th><th>p.a. 20J</th><th>Ausschüttung</th><th>10J Anleihe</th><th>Prämie</th></tr></thead><tbody data-draw="reittab" data-source="immobilien zinsen"></tbody></table></div>
+    <div class="mu-karte"><h3>Gesamtrendite börsenkotierter Immobilien über 20 Jahre</h3><p class="mu-karte-text">Kurs einschliesslich wieder angelegter Ausschüttungen, in der Handelswährung des ETF; Start = 100 vor 20 Jahren bzw. bei Auflage des ETF (Welt 2014, International 2006, Europa 2008, Japan 2008, Schweiz 2011, frühere Kurse dieses ETF sind bei Yahoo fehlerhaft). Märkte per Klick ein- und ausblenden.</p><div data-draw="reitchart" data-source="immobilien">—</div></div>
   </section>
 
   <section class="mu-abschnitt" id="rohwelt" data-unterseite>
@@ -922,7 +922,16 @@
     el.classList.remove('dash-skeleton');
     const feld = el.dataset.feld || 'anteil', vergleich = el.dataset.vergleich, mitText = el.dataset.mitte;
     const groesse = (r) => mitText ? r[feld] : r.kurs;
-    const zeilen = w.data.filter((r) => r.klasse === el.dataset.klasse && r[feld] != null).sort((a, b) => groesse(b) - groesse(a));
+    let zeilen = w.data.filter((r) => r.klasse === el.dataset.klasse && r[feld] != null);
+    if (el.dataset.klasse === 'Anlageklasse') {
+      // Gold und Silber als ein Stück „Rohstoffe“, das auf die Rohstoffseite führt
+      const roh = zeilen.filter((r) => r.id === 'ak-gold' || r.id === 'ak-silber');
+      if (roh.length) {
+        zeilen = zeilen.filter((r) => !roh.includes(r)).concat({id: 'ak-rohstoffe', name: 'Rohstoffe (Gold, Silber)', klasse: 'Anlageklasse',
+          kurs: d3.sum(roh, (r) => r.kurs), anteil: d3.sum(roh, (r) => r.anteil), symbol: roh.map((r) => r.name + ' ' + MU.anteil(r.anteil)).join(', ')});
+      }
+    }
+    zeilen.sort((a, b) => groesse(b) - groesse(a));
     const summe = d3.sum(zeilen, (r) => r.kurs || 0);
     const NS = 'http://www.w3.org/2000/svg', R = 120;
     const svg = document.createElementNS(NS, 'svg');
@@ -2124,24 +2133,38 @@
         const tr = MU.neu('tr');
         const hoch = MU.neu('td', z.vom_hoch > -0.5 ? 'mu-plus' : 'mu-minus', z.vom_hoch > -0.5 ? 'Höchststand' : MU.prozent(z.vom_hoch));
         hoch.title = 'Höchststand seit 2000: ' + quartal(z.hoch);
-        tr.append(MU.neu('td', null, z.name), MU.neu('td', 'mu-klein', z.art), MU.neu('td', 'mu-klein', quartal(z.stand)), pzTd(z.j1), pzTd(z.j5), pzTd(z.j10), hoch);
+        tr.append(MU.neu('td', null, z.name), MU.neu('td', 'mu-klein', z.art), MU.neu('td', 'mu-klein', quartal(z.stand)), pzTd(z.j1), pzTd(z.j5), pzTd(z.j10), pzTd(z.j20), hoch);
         return tr;
       }));
     });
+    // Gemeinsamer Chart mit Knöpfen zum Ein- und Ausblenden einzelner Reihen (wie bei den Wohnpreisen)
+    function umschaltChart(el, reihen, sichtbar, opt) {
+      const knoepfe = MU.neu('div', 'mu-laender');
+      reihen.forEach((r) => {
+        const b = MU.neu('button'); b.type = 'button'; b.setAttribute('aria-pressed', String(sichtbar.has(r.key)));
+        const p = MU.neu('i'); p.style.background = r.farbe; b.append(p, document.createTextNode(r.name));
+        b.addEventListener('click', () => { sichtbar.has(r.key) ? sichtbar.delete(r.key) : sichtbar.add(r.key); dash.neuZeichnen(); });
+        knoepfe.append(b);
+      });
+      const chart = MU.neu('div', 'mu-linienchart');
+      el.replaceChildren(knoepfe, chart);
+      MU.linien(chart, reihen.filter((r) => sichtbar.has(r.key)), opt);
+    }
+    const ab20 = () => { const d = new Date(); d.setUTCFullYear(d.getUTCFullYear() - 20); return d.toISOString().slice(0, 10); };
+    const gewerbeSichtbar = new Set(['US', 'XM', 'DE', 'JP', 'HK']);
     dash.draw('gewerbechart', (el) => {
       const t = bereit(el, 'gewerbepreise'); if (!t) return;
-      const ab = new Date(); ab.setUTCFullYear(ab.getUTCFullYear() - 10);
-      const grenze = ab.toISOString().slice(0, 10);
+      const grenze = ab20();
       const farben = ['#5b9cf6', '#ffd166', '#e4e9f0', '#f0605d', '#e8a33d', '#56b6c2', '#98c379', '#c678dd', '#e06c9f'];
-      MU.linien(el, t.zeilen.map((z, i) => {
+      umschaltChart(el, t.zeilen.map((z, i) => {
         const r = z.reihe.filter((p) => p[0] >= grenze); const b = r.length ? r[0][1] : 1;
-        return {name: z.name + (z.art === 'Büros' ? ' (Büros)' : ''), farbe: farben[i % farben.length], punkte: r.map((p) => [p[0], Math.round(p[1] / b * 1000) / 10])};
-      }), {fmt: (v) => v == null ? '—' : f1.format(v), achse: (v) => f0.format(v), datum: quartal, ohneNull: true, linien: [100], links: 40});
+        return {key: z.key, name: z.name + (z.art === 'Büros' ? ' (Büros)' : ''), farbe: farben[i % farben.length], punkte: r.map((p) => [p[0], Math.round(p[1] / b * 1000) / 10])};
+      }), gewerbeSichtbar, {fmt: (v) => v == null ? '—' : f1.format(v), achse: (v) => f0.format(v), datum: quartal, ohneNull: true, linien: [100], links: 40});
     });
 
     // 4 REITs: Rendite, Ausschüttung und Prämie gegenüber der Staatsanleihe
     dash.draw('reittab', (tbody) => {
-      const t = bereit(tbody, 'reits', true, 11); if (!t) return;
+      const t = bereit(tbody, 'reits', true, 13); if (!t) return;
       const z = dash.data('zinsen');
       const anleihe = (key) => { const r = z.status === 'ok' ? z.data.find((x) => x.key === key) : null; return r ? r.rendite : null; };
       tbody.replaceChildren(...t.zeilen.map((r) => {
@@ -2150,15 +2173,16 @@
         const name = MU.neu('td', null, r.name); name.title = r.text + ' (' + r.symbol + ')';
         const anlTd = MU.neu('td', null, anl == null ? '—' : MU.rendite(anl)); anlTd.title = r.anleihe.replace('-10J', '') + ' 10 Jahre';
         const pr = MU.neu('td', praemie == null ? 'mu-null' : praemie < 0 ? 'mu-minus' : 'mu-plus', praemie == null ? '—' : (praemie > 0 ? '+' : praemie < 0 ? '−' : '') + f2.format(Math.abs(praemie)) + ' Pp');
-        tr.append(name, MU.neu('td', 'mu-klein', r.waehrung), pzTd(r.t1), pzTd(r.ytd), pzTd(r.j1), pzTd(r.j5), pzTd(r.j10), pzTd(r.pa10),
+        tr.append(name, MU.neu('td', 'mu-klein', r.waehrung), pzTd(r.t1), pzTd(r.ytd), pzTd(r.j1), pzTd(r.j5), pzTd(r.j10), pzTd(r.pa10), pzTd(r.j20), pzTd(r.pa20),
           MU.neu('td', null, r.ausschuettung == null ? '—' : MU.rendite(r.ausschuettung)), anlTd, pr);
         return tr;
       }));
     });
+    const reitSichtbar = new Set(['welt', 'usa', 'europa', 'japan', 'schweiz']);
     dash.draw('reitchart', (el) => {
       const t = bereit(el, 'reits'); if (!t) return;
       const farben = {welt: '#e4e9f0', usa: '#5b9cf6', international: '#c678dd', europa: '#ffd166', japan: '#f0605d', schweiz: '#3fbf7f'};
-      MU.linien(el, t.zeilen.map((r) => ({name: r.name, farbe: farben[r.key], punkte: r.reihe})),
+      umschaltChart(el, t.zeilen.map((r) => ({key: r.key, name: r.name, farbe: farben[r.key], punkte: r.reihe})), reitSichtbar,
         {fmt: (v) => v == null ? '—' : f1.format(v), achse: (v) => f0.format(v), datum: MU.datum, ohneNull: true, linien: [100], links: 40});
     });
   })();

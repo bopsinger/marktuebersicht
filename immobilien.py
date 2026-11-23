@@ -130,11 +130,16 @@ def reits(hole):
     zeilen = []
     for key, name, sym, text, anleihe in REITS:
         r = am._reihe(hole, sym)
+        # Fehlerhafte Frühdaten (etwa beim Schweizer ETF 2010/11): erst nach dem letzten Tagessprung über 40 % beginnen
+        reihe = r["reihe"]
+        spruenge = [i for i in range(1, len(reihe)) if reihe[i - 1][1] and abs(reihe[i][1] / reihe[i - 1][1] - 1) > 0.4]
+        if spruenge:
+            r["reihe"] = reihe[spruenge[-1]:]
         k = am._kennzahlen(r["reihe"])
         rendite = r["dividende12"] / r["kurs"] * 100 if r.get("dividende12") and r.get("kurs") else None
         zeilen.append({"key": key, "name": name, "symbol": sym, "text": text, "waehrung": r["waehrung"], "anleihe": anleihe,
                        "ausschuettung": round(rendite, 2) if rendite else None, **k,
-                       "reihe": am._wochen(r["reihe"], jahre=10)})
+                       "reihe": am._wochen(r["reihe"], jahre=20)})
     return {"teil": "reits", "zeilen": zeilen}
 
 
