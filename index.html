@@ -293,6 +293,8 @@
   .mu-umschalter:hover { background: rgba(255, 255, 255, .06); }
   .mu-umschalter:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 1px; }
   .mu-umschalter.mu-aus { opacity: .4; text-decoration: line-through; }
+  .mu-hervor { background: rgba(255, 255, 255, .07); }
+  .mu-kuchen path { transform-box: view-box; }
   .mu-unterwahl { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
   [data-dash-source-state=empty] { color: transparent; }
   [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
@@ -503,16 +505,16 @@
       <div class="mu-kuchen mu-kuchen-breit" data-draw="rohprod" data-source="rohstoffseite">—</div>
       <div class="mu-kuchen mu-kuchen-breit" data-draw="rohsektoren" data-source="rohstoffseite">—</div>
     </div>
+    <div class="mu-karte"><h3>Preisentwicklung über 20 Jahre</h3><p class="mu-karte-text">Vorderster Terminkontrakt, Monatsende; jeder Rohstoff vor 20 Jahren auf 100 gesetzt, jüngere Reihen bei ihrem ersten Wert (Brent 2007, Kohle, Eisenerz und Aluminium später). Erdgas hier zum US-Preis (Henry Hub). Rohstoffe per Klick in der Legende ein- und ausblenden; zu Beginn sind die grössten sechs sichtbar.</p><div class="mu-linienchart" data-draw="rohkurse" data-source="rohstoffseite">—</div></div>
   </section>
 
   <section class="mu-abschnitt" id="terminkurven" data-unterseite>
     <div class="mu-h2">
       <h2>Terminkurven</h2>
-      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Terminkurven">i<span class="mu-info-text" role="tooltip">Preis des vordersten Terminkontrakts gegenüber den Kontrakten in rund 6 und 12 Monaten (Yahoo Finance, Börsen NYMEX, COMEX und CBOT). Backwardation: spätere Kontrakte billiger als heute; der Markt zahlt für sofortige Lieferung einen Aufschlag, das Angebot ist knapp. Contango: spätere Kontrakte teurer; das Angebot ist reichlich, Lagerkosten und Zinsen werden eingepreist. Bei Gold ist ein leichter Contango normal (Zinsen). Erdgas und Agrarrohstoffe schwanken zusätzlich mit den Jahreszeiten (Heizperiode, Ernte); dort ist der Vergleich über 12 Monate aussagekräftiger. Fehlt ein Kontrakt in rund 12 Monaten, bleibt das Feld leer. Im Chart ist jede Kurve auf den vordersten Kontrakt = 100 gesetzt.</span></span>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Terminkurven">i<span class="mu-info-text" role="tooltip">Preis des vordersten Terminkontrakts gegenüber den Kontrakten in rund 6 und 12 Monaten (Yahoo Finance, Börsen NYMEX, COMEX und CBOT). Backwardation: spätere Kontrakte billiger als heute; der Markt zahlt für sofortige Lieferung einen Aufschlag, das Angebot ist knapp. Contango: spätere Kontrakte teurer; das Angebot ist reichlich, Lagerkosten und Zinsen werden eingepreist. Bei Gold ist ein leichter Contango normal (Zinsen). Erdgas und Agrarrohstoffe schwanken zusätzlich mit den Jahreszeiten (Heizperiode, Ernte); dort ist der Vergleich über 12 Monate aussagekräftiger. Fehlt ein Kontrakt in rund 12 Monaten, bleibt das Feld leer.</span></span>
       <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
     <div class="mu-zinsen mu-rollen"><table class="mu-tab mu-kurventab"><thead><tr><th>Rohstoff</th><th>Vorderster Kontrakt</th><th>in ~6 Monaten</th><th>in ~12 Monaten</th><th>Struktur</th></tr></thead><tbody data-draw="kurventab" data-source="rohstoffseite"></tbody></table></div>
-    <div class="mu-karte"><h3>Kurven (vorderster Kontrakt = 100)</h3><div class="mu-linienchart" data-draw="kurvenchart" data-source="rohstoffseite">—</div></div>
   </section>
 
   <section class="mu-abschnitt" id="verhaeltnisse" data-unterseite>
@@ -860,6 +862,25 @@
 
   MU.spark = spark;
 
+  // Kuchen: Fahren über eine Legendenzeile hebt das Kuchenstück hervor (und umgekehrt)
+  MU.verknuepfe = (teile) => {
+    const setzen = (t, an) => {
+      const w = (t.s.startAngle + t.s.endAngle) / 2, d = an ? 9 : 0;
+      const tr = an ? `translate(${(Math.sin(w) * d).toFixed(1)}px, ${(-Math.cos(w) * d).toFixed(1)}px)` : '';
+      [t.pfad, t.text].forEach((e) => { if (e) { e.style.transition = 'transform .15s ease, filter .15s ease'; e.style.transform = tr; } });
+      t.pfad.style.filter = an ? 'brightness(1.2) drop-shadow(0 2px 6px rgba(0, 0, 0, .55))' : '';
+      if (t.zeile) t.zeile.classList.toggle('mu-hervor', an);
+    };
+    teile.forEach((t) => {
+      const ein = () => setzen(t, true), aus = () => setzen(t, false);
+      [t.pfad, t.zeile].forEach((e) => {
+        if (!e) return;
+        e.addEventListener('mouseenter', ein); e.addEventListener('mouseleave', aus);
+        e.addEventListener('focus', ein); e.addEventListener('blur', aus);
+      });
+    });
+  };
+
   dash.draw('kacheln', (el) => {
     const w = dash.data('werte'), v = dash.data('verlauf');
     if (w.status !== 'ok') { MU.fehler(el, 'werte', 'verlauf'); return; }
@@ -945,8 +966,10 @@
     svg.setAttribute('aria-label', zeilen.map((r) => r.name + ' ' + MU.anteil(r.anteil)).join(', '));
     const bogen = d3.arc().innerRadius(R * 0.58).outerRadius(R).padAngle(0.012).cornerRadius(2);
     const tipp = MU.neu('div', 'mu-tipp'); tipp.hidden = true;
+    const teile = [];
     d3.pie().sort(null).value(groesse)(zeilen).forEach((s, i) => {
       const p = document.createElementNS(NS, 'path');
+      teile[i] = {pfad: p, s};
       p.setAttribute('d', bogen(s));
       p.setAttribute('fill', dash.colors[i % dash.colors.length]);
       if (s.data.klasse === 'Anlageklasse') { p.dataset.seite = s.data.id.replace(/^ak-/, ''); p.classList.add('mu-klickbar'); }
@@ -968,6 +991,7 @@
         t.setAttribute('x', x); t.setAttribute('y', y); t.setAttribute('text-anchor', 'middle'); t.setAttribute('dominant-baseline', 'middle');
         t.setAttribute('fill', '#0c1117'); t.setAttribute('font-size', '13'); t.setAttribute('font-weight', '600'); t.setAttribute('pointer-events', 'none');
         t.textContent = Math.round(s.data[feld]) + ' %';
+        teile[i].text = t;
         svg.appendChild(t);
       }
     });
@@ -994,8 +1018,10 @@
       anteil.dataset.source = 'werte'; anteil.dataset.field = feld; anteil.dataset.where = 'id=' + r.id;
       const name = MU.neu('span', 'mu-kz-name', r.name); if (r.symbol) name.title = r.symbol;
       z.append(punkt, name, wert, anteil);
+      teile[i].zeile = z;
       legende.appendChild(z);
     });
+    MU.verknuepfe(teile);
     legende.appendChild(MU.neu('div', 'mu-kuchen-summe', mitText ? 'Gewichte heute, fortgeschrieben mit der Preisentwicklung seit Januar' : 'Gesamtmarkt ' + MU.kompakt(summe) + ' USD (Schätzung)'));
     el.replaceChildren(svg, legende, tipp);
   });
@@ -1857,8 +1883,10 @@
       svg.setAttribute('aria-label', eintraege.map((e) => e.name + ' ' + MU.anteil(e.anteil)).join(', '));
       const bogen = d3.arc().innerRadius(R * 0.58).outerRadius(R).padAngle(0.012).cornerRadius(2);
       const tipp = MU.neu('div', 'mu-tipp'); tipp.hidden = true;
+      const teile = [];
       d3.pie().sort(null).value((e) => e.anteil)(eintraege).forEach((s, i) => {
         const e = s.data, p = document.createElementNS(NS, 'path');
+        teile[i] = {pfad: p, s};
         p.setAttribute('d', bogen(s)); p.setAttribute('fill', e.farbe || PALETTE[i % PALETTE.length]);
         if (e.seite) { p.dataset.seite = e.seite; p.classList.add('mu-klickbar'); }
         const zeige = (ev) => {
@@ -1876,6 +1904,7 @@
           t.setAttribute('x', x); t.setAttribute('y', y); t.setAttribute('text-anchor', 'middle'); t.setAttribute('dominant-baseline', 'middle');
           t.setAttribute('fill', '#0c1117'); t.setAttribute('font-size', '12'); t.setAttribute('font-weight', '600'); t.setAttribute('pointer-events', 'none');
           t.textContent = Math.round(e.anteil) + ' %';
+          teile[i].text = t;
           svg.appendChild(t);
         }
       });
@@ -1899,9 +1928,11 @@
         const name = MU.neu('span', null, e.name); if (e.symbol) name.title = 'Rendite gemessen am ' + e.symbol;
         z.append(f, name, MU.neu('span', 'mu-klein', e.wert ? MU.kompakt(e.wert) : '—'), MU.neu('span', null, MU.anteil(e.anteil)),
           ...spalten.map(([f, , fmt]) => MU.neu('span', MU.klasse(e[f]), fmt(e[f]))));
+        if (teile[i]) teile[i].zeile = z;
         liste.append(z);
       });
       if (opt.fuss) liste.append(MU.neu('div', 'mu-kuchen-summe', opt.fuss));
+      MU.verknuepfe(teile);
       el.replaceChildren(svg, liste, tipp);
     }
     MU.kuchen = kuchen;  // auch für die Immobilienseite
@@ -2268,12 +2299,14 @@
         return tr;
       }));
     });
-    dash.draw('kurvenchart', (el) => {
-      const t = bereit(el, 'terminkurven'); if (!t) return;
-      const farben = ['#f0605d', '#ff8a5b', '#8ecae6', '#56b6c2', '#5b9cf6', '#ffd166', '#3fbf7f', '#98c379', '#c3e88d'];
-      MU.linien(el, t.kurven.map((k, i) => ({name: k.name, farbe: farben[i % farben.length],
-        punkte: k.punkte.map((p) => [p[0] + '-15', Math.round(p[1] / k.front[1] * 1000) / 10])})),
-      {fmt: (v) => v == null ? '—' : f1.format(v), achse: (v) => f0.format(v), datum: (d) => mtext(d.slice(0, 7)), ohneNull: true, linien: [100], links: 40});
+    // Kurschart: alle Rohstoffe des Kuchens über 20 Jahre, anfangs die sechs grössten sichtbar
+    dash.draw('rohkurse', (el) => {
+      const t = bereit(el, 'produktion'); if (!t) return;
+      const zeilen = t.zeilen.filter((z) => z.verlauf && z.verlauf.length > 1);
+      const name = (z) => z.key === 'gas' ? 'Erdgas (Henry Hub)' : z.name;
+      if (!el._versteckt) el._versteckt = new Set(zeilen.slice(6).map(name));
+      MU.linien(el, zeilen.map((z) => ({name: name(z), farbe: FARBE[z.key], punkte: z.verlauf})),
+        {fmt: (v) => v == null ? '—' : f0.format(v), achse: (v) => f0.format(v), datum: (d) => monat.format(new Date(d + 'T00:00:00Z')), ohneNull: true, linien: [100], links: 44});
     });
 
     // Preisverhältnisse: je eine Karte mit Kennzahlen und Verlauf über 20 Jahre

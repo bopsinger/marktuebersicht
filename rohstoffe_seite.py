@@ -89,7 +89,16 @@ def produktion(daten):
             wert = menge * je_t
             preistext = f"{notiz:,.{2 if notiz < 100 else 0}f} {EINHEIT.get(sym, 'USD/t')}".replace(",", "'")
         k = am._kennzahlen(daten[sym]["reihe"])
-        zeilen.append({"key": key, "name": name, "sektor": sektor, "symbol": sym, "wert": round(wert / 1e9, 1),
+        # Monatsende-Werte über 20 Jahre, auf 100 gesetzt beim ersten Wert im Zeitraum (für den Kurschart)
+        grenze = daten[sym]["reihe"][-1][0] - dt.timedelta(days=7305)
+        monate = {}
+        for d, w in daten[sym]["reihe"]:
+            if d >= grenze and w > 0:
+                monate[d.isoformat()[:7]] = (d, w)
+        punkte = sorted(monate.values())
+        basis = punkte[0][1]
+        verlauf = [(d.isoformat(), round(w / basis * 100, 1)) for d, w in punkte]
+        zeilen.append({"key": key, "name": name, "sektor": sektor, "symbol": sym, "wert": round(wert / 1e9, 1), "verlauf": verlauf,
                        "spanne": spanne if key == "gas" else None,
                        "preis": preistext, "quelle": quelle, **{f: k.get(f) for f in am.FELDER}})
     zeilen.sort(key=lambda z: -z["wert"])
