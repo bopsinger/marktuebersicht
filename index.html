@@ -863,8 +863,15 @@
   MU.spark = spark;
 
   // Kuchen: Fahren über eine Legendenzeile hebt das Kuchenstück hervor (und umgekehrt)
-  MU.verknuepfe = (teile) => {
+  // Optional: mitte und unter sind die Texte in der Ringmitte; beim Hervorheben zeigen sie Anteil und Name
+  MU.verknuepfe = (teile, mitte, unter) => {
+    const ruhe = mitte && unter ? [mitte.textContent, unter.textContent, mitte.getAttribute('font-size')] : null;
     const setzen = (t, an) => {
+      if (ruhe) {
+        mitte.textContent = an ? t.prozent : ruhe[0];
+        unter.textContent = an ? t.name : ruhe[1];
+        mitte.setAttribute('font-size', an ? '24' : ruhe[2]);
+      }
       const w = (t.s.startAngle + t.s.endAngle) / 2, d = an ? 9 : 0;
       const tr = an ? `translate(${(Math.sin(w) * d).toFixed(1)}px, ${(-Math.cos(w) * d).toFixed(1)}px)` : '';
       [t.pfad, t.text].forEach((e) => { if (e) { e.style.transition = 'transform .15s ease, filter .15s ease'; e.style.transform = tr; } });
@@ -969,7 +976,7 @@
     const teile = [];
     d3.pie().sort(null).value(groesse)(zeilen).forEach((s, i) => {
       const p = document.createElementNS(NS, 'path');
-      teile[i] = {pfad: p, s};
+      teile[i] = {pfad: p, s, name: s.data.name, prozent: MU.anteil(s.data[feld])};
       p.setAttribute('d', bogen(s));
       p.setAttribute('fill', dash.colors[i % dash.colors.length]);
       if (s.data.klasse === 'Anlageklasse') { p.dataset.seite = s.data.id.replace(/^ak-/, ''); p.classList.add('mu-klickbar'); }
@@ -1021,7 +1028,7 @@
       teile[i].zeile = z;
       legende.appendChild(z);
     });
-    MU.verknuepfe(teile);
+    MU.verknuepfe(teile, mitte, unter);
     legende.appendChild(MU.neu('div', 'mu-kuchen-summe', mitText ? 'Gewichte heute, fortgeschrieben mit der Preisentwicklung seit Januar' : 'Gesamtmarkt ' + MU.kompakt(summe) + ' USD (Schätzung)'));
     el.replaceChildren(svg, legende, tipp);
   });
@@ -1886,7 +1893,7 @@
       const teile = [];
       d3.pie().sort(null).value((e) => e.anteil)(eintraege).forEach((s, i) => {
         const e = s.data, p = document.createElementNS(NS, 'path');
-        teile[i] = {pfad: p, s};
+        teile[i] = {pfad: p, s, name: e.name, prozent: MU.anteil(e.anteil)};
         p.setAttribute('d', bogen(s)); p.setAttribute('fill', e.farbe || PALETTE[i % PALETTE.length]);
         if (e.seite) { p.dataset.seite = e.seite; p.classList.add('mu-klickbar'); }
         const zeige = (ev) => {
@@ -1932,7 +1939,7 @@
         liste.append(z);
       });
       if (opt.fuss) liste.append(MU.neu('div', 'mu-kuchen-summe', opt.fuss));
-      MU.verknuepfe(teile);
+      MU.verknuepfe(teile, mitte, unter);
       el.replaceChildren(svg, liste, tipp);
     }
     MU.kuchen = kuchen;  // auch für die Immobilienseite
