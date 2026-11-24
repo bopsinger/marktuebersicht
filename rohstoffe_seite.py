@@ -34,11 +34,14 @@ PRODUKTION = [
     ("zucker", "Zucker", "Agrar", "SB=F", 180e6, "t", "Internationale Zuckerorganisation rund 180 Mio. t (2025/26); USDA 184,9 Mio. t"),
     ("kaffee", "Kaffee", "Agrar", "KC=F", 178.8e6 * 60 / 1000, "t", "USDA: 178,8 Mio. Sack zu 60 kg (2025/26)"),
     ("kakao", "Kakao", "Agrar", "CC=F", 5.0e6, "t", "rund 5,0 Mio. t (2025/26, Schätzung StoneX)"),
+    ("rind", "Rindfleisch", "Vieh", "LE=F", 61e6, "t", "USDA: rund 61 Mio. t Schlachtgewicht (2026; Angaben zwischen 60 und 61,6), bewertet zum US-Lebendrindpreis"),
+    ("schwein", "Schweinefleisch", "Vieh", "HE=F", 120e6, "t", "USDA: rund 120 Mio. t Schlachtgewicht (2026), bewertet zum US-Mastschweinpreis"),
 ]
 
 # Terminkurven: Basissymbol, Börse, Name, gehandelte Kontraktmonate
 EINHEIT = {"GC=F": "USD/Unze", "SI=F": "USD/Unze", "PL=F": "USD/Unze", "PA=F": "USD/Unze", "HG=F": "USD/Pfund",
-           "ZC=F": "US-Cent/Bushel", "ZW=F": "US-Cent/Bushel", "ZS=F": "US-Cent/Bushel", "SB=F": "US-Cent/Pfund", "KC=F": "US-Cent/Pfund"}
+           "ZC=F": "US-Cent/Bushel", "ZW=F": "US-Cent/Bushel", "ZS=F": "US-Cent/Bushel", "SB=F": "US-Cent/Pfund", "KC=F": "US-Cent/Pfund",
+           "LE=F": "US-Cent/Pfund Lebendgewicht", "HE=F": "US-Cent/Pfund"}
 MONATE = "FGHJKMNQUVXZ"
 KURVEN = [("CL", "NYM", "Rohöl WTI", MONATE), ("BZ", "NYM", "Rohöl Brent", MONATE), ("NG", "NYM", "Erdgas USA", MONATE),
           ("TTF", "NYM", "Erdgas TTF", MONATE), ("HG", "CMX", "Kupfer", "HKNUZ"), ("GC", "CMX", "Gold", "GJMQVZ"),
@@ -59,8 +62,10 @@ def _usd_je_t(sym, preis, eurusd):
         return preis / 100 * 39.3683       # US-Cent je Bushel (25,4 kg)
     if sym in ("ZW=F", "ZS=F"):
         return preis / 100 * 36.7437       # US-Cent je Bushel (27,2 kg)
-    if sym in ("SB=F", "KC=F"):
-        return preis / 100 * LB_JE_T       # US-Cent je Pfund
+    if sym in ("SB=F", "KC=F", "HE=F"):
+        return preis / 100 * LB_JE_T       # US-Cent je Pfund (Mastschwein: je Pfund Schlachtgewicht)
+    if sym == "LE=F":
+        return preis / 100 * LB_JE_T / 0.63   # Lebendgewicht, umgerechnet auf Schlachtgewicht (Ausbeute rund 63 %)
     return preis                           # ALI, TIO, MTF, CC: USD je Tonne
 
 

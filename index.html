@@ -289,6 +289,10 @@
   .mu-kurventab td { padding-block: 7px; }
   .mu-kurventab td:first-child { font-weight: var(--cds-font-weight-medium); }
   .mu-kurventab small { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin-left: 4px; }
+  .mu-umschalter { cursor: pointer; border-radius: 4px; padding: 1px 4px; margin: -1px -4px; user-select: none; }
+  .mu-umschalter:hover { background: rgba(255, 255, 255, .06); }
+  .mu-umschalter:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 1px; }
+  .mu-umschalter.mu-aus { opacity: .4; text-decoration: line-through; }
   .mu-unterwahl { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
   [data-dash-source-state=empty] { color: transparent; }
   [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
@@ -492,7 +496,7 @@
   <section class="mu-abschnitt" id="rohwelt" data-unterseite>
     <div class="mu-h2">
       <h2>Wert der Weltproduktion</h2>
-      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Wert der Weltproduktion">i<span class="mu-info-text" role="tooltip">Rohstoffe werden verbraucht und kaum als Bestand gehalten; einen Börsenwert wie bei Aktien gibt es deshalb nicht. Als Mass für die wirtschaftliche Grösse dient der Wert der Jahresproduktion: Fördermenge oder Ernte eines Jahres mal aktueller Terminpreis. Nach demselben Prinzip gewichtet der S&amp;P GSCI. Mengen: Rohöl und Kondensat 82,8 Mio. Fass pro Tag, Erdgas 4124 Mrd. m³ und Kohle 182 EJ (alle Energy Institute, Jahr 2024; Kohle umgerechnet auf Kraftwerkskohle mit 6000 kcal/kg, bewertet zum europäischen API2-Preis); Gold 3300 t, Silber 26 000 t, Kupfer 23 Mio. t, Eisenerz 2,6 Mrd. t (USGS, 2025; der World Gold Council nennt für Gold rund 3600 t); Aluminium 73,8 Mio. t (International Aluminium Institute, 2025); Platin rund 170 t und Palladium rund 190 t; Mais 1291,6, Weizen 827,5 und Soja 442,5 Mio. t (US-Agrarministerium, Saison 2026/27); Zucker rund 180 Mio. t (Internationale Zuckerorganisation; das US-Agrarministerium nennt 184,9); Kaffee 178,8 Mio. Sack zu 60 kg (2025/26, bewertet zum Arabica-Preis, der über dem Robusta-Preis liegt); Kakao rund 5 Mio. t (Schätzung StoneX). Erdgas ist zum Mittel aus US-Preis (Henry Hub) und europäischem Preis (TTF) bewertet; je nach Preis schwankt sein Wert stark (Spanne in der Legende). Raffinerieprodukte wie Benzin fehlen, weil sie aus Rohöl entstehen. Renditen der vorderen Terminkontrakte in USD (TTF in EUR); bei laufend erneuerten Kontrakten weichen sie vom Kassapreis ab. Wo Yahoo keine 20 Jahre führt (Brent seit 2007, Kohle, Eisenerz, Aluminium), fehlt der Wert.</span></span>
+      <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Wert der Weltproduktion">i<span class="mu-info-text" role="tooltip">Rohstoffe werden verbraucht und kaum als Bestand gehalten; einen Börsenwert wie bei Aktien gibt es deshalb nicht. Als Mass für die wirtschaftliche Grösse dient der Wert der Jahresproduktion: Fördermenge oder Ernte eines Jahres mal aktueller Terminpreis. Nach demselben Prinzip gewichtet der S&amp;P GSCI. Mengen: Rohöl und Kondensat 82,8 Mio. Fass pro Tag, Erdgas 4124 Mrd. m³ und Kohle 182 EJ (alle Energy Institute, Jahr 2024; Kohle umgerechnet auf Kraftwerkskohle mit 6000 kcal/kg, bewertet zum europäischen API2-Preis); Gold 3300 t, Silber 26 000 t, Kupfer 23 Mio. t, Eisenerz 2,6 Mrd. t (USGS, 2025; der World Gold Council nennt für Gold rund 3600 t); Aluminium 73,8 Mio. t (International Aluminium Institute, 2025); Platin rund 170 t und Palladium rund 190 t; Mais 1291,6, Weizen 827,5 und Soja 442,5 Mio. t (US-Agrarministerium, Saison 2026/27); Zucker rund 180 Mio. t (Internationale Zuckerorganisation; das US-Agrarministerium nennt 184,9); Kaffee 178,8 Mio. Sack zu 60 kg (2025/26, bewertet zum Arabica-Preis, der über dem Robusta-Preis liegt); Kakao rund 5 Mio. t (Schätzung StoneX); Rindfleisch rund 61 Mio. t und Schweinefleisch rund 120 Mio. t Schlachtgewicht (US-Agrarministerium, 2026), bewertet zu US-Terminpreisen für Lebendrind (auf Schlachtgewicht umgerechnet) und Mastschwein; Fleisch ist ausserhalb der USA meist billiger, der Wert deshalb eher zu hoch. Erdgas ist zum Mittel aus US-Preis (Henry Hub) und europäischem Preis (TTF) bewertet; je nach Preis schwankt sein Wert stark (Spanne in der Legende). Raffinerieprodukte wie Benzin fehlen, weil sie aus Rohöl entstehen. Renditen der vorderen Terminkontrakte in USD (TTF in EUR); bei laufend erneuerten Kontrakten weichen sie vom Kassapreis ab. Wo Yahoo keine 20 Jahre führt (Brent seit 2007, Kohle, Eisenerz, Aluminium), fehlt der Wert.</span></span>
       <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
     <div class="mu-karten mu-weltkarten">
@@ -527,7 +531,7 @@
       <span class="mu-info" tabindex="0" role="button" aria-label="Erläuterung zu Rohstoffe">i<span class="mu-info-text" role="tooltip">Kurs mit Veränderung seit Jahresbeginn in Klammern, darunter 1T, 1J, 5J und 10J wie bei den Indizes. Für TTF (Daten ab 2017) und den Uran-Trust (ab 2021) fehlt der 10-Jahres-Wert. Uran ist als Kernbrennstoff ein Energierohstoff und steht deshalb bei Energie. Vordere Terminkontrakte. Veränderungen beziehen sich auf den jeweils vordersten Kontrakt; beim Wechsel des Kontraktmonats kann das die Langfristwerte verzerren. Für Uran gibt es keinen frei abrufbaren Terminkurs; gezeigt wird der Sprott Physical Uranium Trust, der physisches Uran hält und dem Spotpreis eng folgt. Agrarpreise in US-Cent je Bushel (Weizen, Mais, Soja) bzw. je Pfund (Kaffee, Zucker), Kupfer in USD je Pfund, Aluminium in USD je Tonne. Struktur nach Sektoren: Gewichte des S&P GSCI 2026, die sich am weltweiten Produktionswert der Rohstoffe orientieren (Mittel über fünf Jahre), mit der Preisentwicklung seit Jahresbeginn fortgeschrieben. In Klammern das Ausgangsgewicht vom Januar 2026. Einen Marktwert im Sinne eines Bestands gibt es für Rohstoffe nicht; das ist die übliche Annäherung.</span></span>
       <span class="mu-schieben" aria-label="Abschnitt verschieben"><button type="button" data-schritt="-1" aria-label="Nach oben">▲</button><button type="button" data-schritt="1" aria-label="Nach unten">▼</button></span>
     </div>
-    <div class="mu-gruppe">
+    <div class="mu-gruppe" data-nur-start>
       <h3>Struktur nach Sektoren</h3>
       <div class="mu-kuchen dash-skeleton" data-draw="kuchen" data-klasse="Rohstoffstruktur" data-feld="gewicht" data-vergleich="gewicht_2026" data-mitte="S&amp;P GSCI" data-source="werte">—</div>
     </div>
@@ -1510,9 +1514,12 @@
     // Zeitreihen-Linien: reihen = [{name, farbe, punkte: [[iso, wert]], gestrichelt}]
     function linien(el, reihen, opt = {}) {
       const fmt = opt.fmt || usd, datumText = opt.datum || quartal;
-      reihen = reihen.filter((r) => r.punkte && r.punkte.length > 1);
+      const gesamt = reihen.filter((r) => r.punkte && r.punkte.length > 1);
+      // Klick auf einen Legendeneintrag blendet die Reihe aus oder ein (Zustand am Element, bleibt beim Neuzeichnen)
+      const versteckt = el._versteckt || (el._versteckt = new Set());
+      reihen = gesamt.filter((r) => !versteckt.has(r.name));
       const zeit = (s) => new Date(s + 'T00:00:00Z');
-      const alle = reihen.flatMap((r) => r.punkte.filter((p) => p[1] != null));
+      const alle = (reihen.length ? reihen : gesamt).flatMap((r) => r.punkte.filter((p) => p[1] != null));
       const {svg, g, y, breite, hoehe, rand} = rahmen(el, alle.map((p) => p[1]), {achse: opt.achse || fmt, links: opt.links, ohneNull: opt.ohneNull, hoehe: opt.hoehe});
       (opt.linien || []).forEach((w) => { if (w >= y.domain()[0] && w <= y.domain()[1]) g.append('line').attr('x1', rand.l).attr('x2', breite - rand.r).attr('y1', y(w)).attr('y2', y(w)).attr('stroke', 'var(--color-fg-muted)').attr('stroke-dasharray', '2 4'); });
       const x = d3.scaleUtc(d3.extent(alle, (p) => zeit(p[0])), [rand.l, breite - rand.r]);
@@ -1530,7 +1537,19 @@
         regel.attr('x1', x(zeit(d))).attr('x2', x(zeit(d))).attr('visibility', 'visible');
         return {x: x(zeit(d)), knoten: [MU.neu('span', null, datumText(d)), ...werte.map(([s, p]) => zeile(s.farbe, s.name, fmt(p[1])))]};
       });
-      el.replaceChildren(legende(reihen.map((r) => [r.farbe, r.name, fmt(r.punkte[r.punkte.length - 1][1]), true])), svg, tipp);
+      const leg = legende(gesamt.map((r) => [r.farbe, r.name, fmt(r.punkte[r.punkte.length - 1][1]), true]));
+      if (gesamt.length > 1) {
+        [...leg.children].forEach((sp, i) => {
+          const name = gesamt[i].name, aus = versteckt.has(name);
+          sp.classList.add('mu-umschalter'); sp.classList.toggle('mu-aus', aus);
+          sp.tabIndex = 0; sp.setAttribute('role', 'button'); sp.setAttribute('aria-pressed', String(!aus));
+          sp.title = aus ? 'Einblenden' : 'Ausblenden';
+          const umschalten = () => { aus ? versteckt.delete(name) : versteckt.add(name); linien(el, gesamt, opt); };
+          sp.addEventListener('click', umschalten);
+          sp.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); umschalten(); } });
+        });
+      }
+      el.replaceChildren(leg, svg, tipp);
     }
     function jahresachse(g, x, breite, hoehe) {
       const [a, b] = x.domain();
@@ -1999,7 +2018,8 @@
       for (let j = a0.getUTCFullYear() + 1; j <= a1.getUTCFullYear(); j++) {
         if (j % schritt === 0) g.append('text').attr('x', x(new Date(Date.UTC(j, 0, 1)))).attr('y', hoehe - 6).attr('text-anchor', 'middle').attr('fill', 'var(--color-fg-muted)').attr('font-size', 11).text(j);
       }
-      [[A, ya], [B, yb]].forEach(([s, y]) => {
+      const aus = el._versteckt || (el._versteckt = new Set());
+      [[A, ya], [B, yb]].filter(([s]) => !aus.has(s.name)).forEach(([s, y]) => {
         s.grenzen.forEach((w) => g.append('line').attr('x1', rand.l).attr('x2', breite - rand.r).attr('y1', y(w)).attr('y2', y(w)).attr('stroke', s.farbe).attr('stroke-opacity', 0.45).attr('stroke-dasharray', '2 4'));
         g.append('path').attr('d', d3.line().x((p) => x(zeit(p[0]))).y((p) => y(p[1]))(s.punkte)).attr('fill', 'none').attr('stroke', s.farbe).attr('stroke-width', 1.6).attr('stroke-linejoin', 'round');
       });
@@ -2022,8 +2042,12 @@
       svg.addEventListener('pointerleave', () => { tipp.hidden = true; regel.attr('visibility', 'hidden'); });
       const legende = MU.neu('div', 'mu-legende');
       [[A, t.vix, 'gestrichelt: 20 und 30'], [B, t.move, 'gestrichelt: 100 und 120']].forEach(([s, w, z]) => {
-        const sp = MU.neu('span'), i = MU.neu('i'); i.style.background = s.farbe; i.style.height = '3px';
+        const sp = MU.neu('span', 'mu-umschalter' + (aus.has(s.name) ? ' mu-aus' : '')), i = MU.neu('i'); i.style.background = s.farbe; i.style.height = '3px';
         sp.append(i, document.createTextNode(s.name + ' '), MU.neu('b', null, f1.format(w)), MU.neu('small', null, ' · ' + z));
+        sp.tabIndex = 0; sp.setAttribute('role', 'button'); sp.setAttribute('aria-pressed', String(!aus.has(s.name)));
+        const umschalten = () => { aus.has(s.name) ? aus.delete(s.name) : aus.add(s.name); dash.neuZeichnen(); };
+        sp.addEventListener('click', umschalten);
+        sp.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); umschalten(); } });
         legende.append(sp);
       });
       el.replaceChildren(legende, svg, tipp);
@@ -2206,8 +2230,8 @@
     const mrd = (v) => v >= 1000 ? f1.format(v / 1000) + ' Bio.' : f0.format(v) + ' Mrd.';
     // Farben nach Sektor: Energie rot-orange, Edelmetalle gelb, Industriemetalle blau, Agrar grün
     const FARBE = {oel: '#f0605d', gas: '#ff8a5b', kohle: '#b0675a', gold: '#ffd166', silber: '#d9dde3', platin: '#a0a8ff', palladium: '#cdb4db',
-      kupfer: '#5b9cf6', alu: '#8ecae6', eisen: '#56b6c2', mais: '#3fbf7f', weizen: '#98c379', soja: '#b5e48c', zucker: '#c3e88d', kaffee: '#d19a66', kakao: '#a0785a'};
-    const SFARBE = {Energie: '#f0605d', Edelmetalle: '#ffd166', Industriemetalle: '#5b9cf6', Agrar: '#3fbf7f'};
+      kupfer: '#5b9cf6', alu: '#8ecae6', eisen: '#56b6c2', mais: '#3fbf7f', weizen: '#98c379', soja: '#b5e48c', zucker: '#c3e88d', kaffee: '#d19a66', kakao: '#a0785a', rind: '#c678dd', schwein: '#e06c9f'};
+    const SFARBE = {Energie: '#f0605d', Edelmetalle: '#ffd166', Industriemetalle: '#5b9cf6', Agrar: '#3fbf7f', Vieh: '#c678dd'};
 
     dash.draw('rohprod', (el) => {
       const t = bereit(el, 'produktion'); if (!t) return;
@@ -2223,7 +2247,7 @@
       const sektoren = d3.rollups(t.zeilen, (zs) => d3.sum(zs, (z) => z.wert), (z) => z.sektor).sort((a, b) => b[1] - a[1]);
       MU.kuchen(el, sektoren.map(([name, wert]) => ({name, anteil: wert / summe * 100, wert: wert * 1e9, farbe: SFARBE[name],
         teile: t.zeilen.filter((z) => z.sektor === name).map((z) => z.name).join(', ')})),
-        {titel: 'Sektor', mitte: '4 Sektoren', unter: 'Anteil am Produktionswert', klasse: 'mu-kz3', spalten: [],
+        {titel: 'Sektor', mitte: sektoren.length + ' Sektoren', unter: 'Anteil am Produktionswert', klasse: 'mu-kz3', spalten: [],
           fuss: sektoren.map(([n]) => n + ': ' + t.zeilen.filter((z) => z.sektor === n).map((z) => z.name).join(', ')).join(' · ')});
     });
 
