@@ -296,6 +296,11 @@
   .mu-hervor { background: rgba(255, 255, 255, .07); }
   .mu-kuchen path { transform-box: view-box; }
   .mu-unterwahl { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  /* Einbettungsmodus */
+  .mu-einbetten .mu-kopf, .mu-einbetten .mu-schieben { display: none !important; }
+  .mu-einbetten .mu { padding-block: var(--cds-pad-md); padding-inline: var(--cds-pad-sm); gap: var(--cds-gap-lg); border-radius: 0; }
+  .mu-einbetten .mu-quellen { font-size: 11px; }
+  .mu-transparent, .mu-transparent body, .mu-transparent .mu { background: transparent !important; }
   [data-dash-source-state=empty] { color: transparent; }
   [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
 </style>
@@ -748,10 +753,25 @@
   }));
 
   // Reihenfolge der Abschnitte: per ▲/▼ im Anordnen-Modus, gespeichert im Browser (nur für diesen Browser).
+  // Einbettungsmodus (?einbetten=1): ohne Kopf und Navigation, ohne gespeicherte Einstellungen, meldet die Höhe an die einbettende Seite.
+  // Optional: abschnitte=id,id (nur diese Sektionen), hintergrund=transparent, id=<Kennung für die Höhenmeldung>
+  (() => {
+    const q = new URLSearchParams(location.search);
+    MU.einbetten = {aktiv: q.has('einbetten'), abschnitte: q.get('abschnitte') ? q.get('abschnitte').split(',').map((s) => s.trim()).filter(Boolean) : null,
+      id: q.get('id') || ''};
+    if (!MU.einbetten.aktiv) return;
+    document.documentElement.classList.add('mu-einbetten');
+    if (q.get('hintergrund') === 'transparent') document.documentElement.classList.add('mu-transparent');
+    // Höhe des Inhalts messen, nicht des Dokuments: das Dokument ist nie kleiner als der Rahmen und könnte so nie schrumpfen
+    const inhalt = () => document.getElementById('dash-root') || document.body;
+    const melden = () => { try { parent.postMessage({typ: 'marktuebersicht-hoehe', id: MU.einbetten.id, hoehe: Math.ceil(inhalt().getBoundingClientRect().height)}, '*'); } catch (e) {} };
+    if (window.ResizeObserver) window.addEventListener('DOMContentLoaded', () => new ResizeObserver(melden).observe(inhalt()));
+    window.addEventListener('load', melden);
+  })();
   const SPEICHER = 'mu-reihenfolge';
   const wurzel = document.querySelector('.mu');
   const abschnitte = () => [...document.querySelectorAll('.mu > section.mu-abschnitt')];
-  const lesen = () => { try { return JSON.parse(localStorage.getItem(SPEICHER)) || []; } catch (e) { return []; } };
+  const lesen = () => { if (MU.einbetten.aktiv) return []; try { return JSON.parse(localStorage.getItem(SPEICHER)) || []; } catch (e) { return []; } };
   const schreiben = (ids) => { try { localStorage.setItem(SPEICHER, JSON.stringify(ids)); } catch (e) {} };
   const aktuell = () => {
     const ids = lesen().filter((id) => document.getElementById(id));
@@ -1718,7 +1738,7 @@
   // Sektionen einklappen (Zustand im Browser gemerkt) und eigene Seiten je Anlageklasse (Adresse #/aktien usw.).
   (() => {
     const ZU = 'mu-zu';
-    const lies = () => { try { return new Set(JSON.parse(localStorage.getItem(ZU)) || []); } catch (e) { return new Set(); } };
+    const lies = () => { if (MU.einbetten.aktiv) return new Set(); try { return new Set(JSON.parse(localStorage.getItem(ZU)) || []); } catch (e) { return new Set(); } };
     const schreib = (s) => { try { localStorage.setItem(ZU, JSON.stringify([...s])); } catch (e) {} };
     const zu = lies();
     document.querySelectorAll('.mu > section.mu-abschnitt').forEach((sec) => {
@@ -1779,8 +1799,9 @@
     const zeigen = () => {
       const s = aktuelleSeite();
       MU.seite = s ? {id: s, ...SEITEN[s]} : null;
+      const nur = MU.einbetten.abschnitte;  // eingebettet: genau die gewünschten Sektionen, unabhängig von der Seite
       document.querySelectorAll('.mu > section.mu-abschnitt').forEach((sec) => {
-        sec.hidden = s ? !SEITEN[s].abschnitte.includes(sec.id) : sec.hasAttribute('data-unterseite');
+        sec.hidden = nur ? !nur.includes(sec.id) : s ? !SEITEN[s].abschnitte.includes(sec.id) : sec.hasAttribute('data-unterseite');
       });
       if (kopf) kopf.hidden = !s;
       document.querySelectorAll('[data-nur-start]').forEach((x) => { x.hidden = !!s; });

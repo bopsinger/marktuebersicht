@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Einbettung: Beispiel</title>
+<style>
+  body { margin: 0; font: 16px/1.5 Georgia, serif; background: #f4f1ea; color: #222; }
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 16px; display: grid; gap: 28px; }
+  h1 { margin: 0; font-weight: 400; }
+  h2 { margin: 0 0 8px; font-size: 18px; }
+  code { background: #e8e3d8; padding: 2px 5px; border-radius: 4px; font-size: 13px; }
+  .karte { background: #fff; border-radius: 10px; padding: 16px; box-shadow: 0 1px 4px rgba(0, 0, 0, .08); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Beispiel: Bausteine der Marktübersicht auf einer fremden Website</h1>
+  <p>Diese Seite steht stellvertretend für die Website eines Kunden. Jeder Kasten unten ist ein eingebetteter Baustein, eingebunden mit einem Platzhalter und dem Skript <code>einbetten.js</code>.</p>
+
+  <section class="karte">
+    <h2>Anlageklassen (Startseite, eine Sektion)</h2>
+    <code>&lt;div data-marktuebersicht data-abschnitte="anlageklassen"&gt;&lt;/div&gt;</code>
+    <div data-marktuebersicht data-abschnitte="anlageklassen" data-titel="Anlageklassen"></div>
+  </section>
+
+  <section class="karte">
+    <h2>Weltaktienmarkt und Bewertung (Aktienseite, zwei Sektionen)</h2>
+    <code>&lt;div data-marktuebersicht data-seite="aktien" data-abschnitte="weltmarkt,bewertung"&gt;&lt;/div&gt;</code>
+    <div data-marktuebersicht data-seite="aktien" data-abschnitte="weltmarkt,bewertung" data-titel="Weltaktienmarkt"></div>
+  </section>
+
+  <section class="karte">
+    <h2>Ganze Rohstoffseite</h2>
+    <code>&lt;div data-marktuebersicht data-seite="rohstoffe"&gt;&lt;/div&gt;</code>
+    <div data-marktuebersicht data-seite="rohstoffe" data-titel="Rohstoffe"></div>
+  </section>
+</main>
+<script src="einbetten.js" async></script>
+</body>
+</html>

@@ -5,6 +5,7 @@ Die Dashboard-Seite erwartet die Umgebung von claude.ai: das Objekt `dash`, d3 u
 Dieses Skript legt einen kleinen Ersatz dafür um die Seite, der die Daten aus daten/*.json liest.
 Aufruf: python3 baue_seite.py <zielordner>
 """
+import os
 import pathlib
 import shutil
 import sys
@@ -66,10 +67,10 @@ KOPF = """<!doctype html>
       neuZeichnen: () => allesZeichnen(),  // nach Ein-/Ausklappen oder Seitenwechsel
     };
     // Laufende Daten kommen aus dem Zweig "live", den der Dauerlauf schreibt; sonst der Stand der Seite.
-    const LIVE = "https://raw.githubusercontent.com/bopsinger/marktuebersicht/live/";
+    const LIVE = "__DATEN_URL__";
     function laden(id) {
-      const url = LIVE + id + ".json?t=" + Date.now();
-      return fetch(url, {cache: "no-store"})
+      const live = LIVE ? fetch(LIVE + id + ".json?t=" + Date.now(), {cache: "no-store"}) : Promise.reject(new Error("keine Live-Adresse"));
+      return live
         .then((r) => { if (!r.ok) throw new Error(r.status); return r; })
         .catch(() => fetch("daten/" + id + ".json?t=" + Date.now(), {cache: "no-store"}))
         .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
@@ -102,12 +103,21 @@ FUSS = """
 """
 
 
+# Woher die laufend aktualisierten Daten kommen; bei anderem Hosting per Umgebungsvariable DATEN_URL setzen
+# (leer = nur die mitgelieferten Dateien im Ordner daten/ verwenden).
+DATEN_URL = os.environ.get("DATEN_URL", "https://raw.githubusercontent.com/bopsinger/marktuebersicht/live/")
+
+
 def main(ziel):
     quelle = pathlib.Path(__file__).with_name("index.html").read_text(encoding="utf-8")
     quelle = quelle.replace('<meta name="dash-one-writer">\n', "")
     ziel = pathlib.Path(ziel)
     ziel.mkdir(parents=True, exist_ok=True)
-    (ziel / "index.html").write_text(KOPF + quelle + FUSS, encoding="utf-8")
+    kopf = KOPF.replace("__DATEN_URL__", DATEN_URL)
+    (ziel / "index.html").write_text(kopf + quelle + FUSS, encoding="utf-8")
+    # Einbettung auf fremden Websites: Ladeskript und Beispielseite
+    for datei in ("einbetten.js", "beispiel-einbettung.html"):
+        shutil.copy(pathlib.Path(__file__).with_name(datei), ziel / datei)
     shutil.copy(pathlib.Path(__file__).with_name("d3.min.js"), ziel / "d3.min.js")  # d3 7.9.0, lokal statt über ein CDN
 
 
